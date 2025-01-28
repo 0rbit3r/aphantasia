@@ -1,0 +1,27 @@
+/* css taken from thoughtList */
+/* sith these modifications */
+
+
+.notification-header {
+    /* flex and opposite sides of time and title */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 98%;
+    
+    .notification-time {
+        font-size: 0.8rem;
+        color: #666;
+        margin-left: 0.5rem;
+        display: inline-block;
+    }
+    
+    .notification-title {
+        font-size: 0.8rem;
+        color: #666;
+        margin-left: 0.5rem;
+        display: inline-block;
+    }
+
+}
+

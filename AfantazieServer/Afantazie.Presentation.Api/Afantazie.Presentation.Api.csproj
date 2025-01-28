@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Afantazie.Core.Localization\Afantazie.Core.Localization.csproj" />
+    <ProjectReference Include="..\Afantazie.Presentation.Model\Afantazie.Presentation.Model.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.Authentication\Afantazie.Service.Interface.Authentication.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.SiteActivity\Afantazie.Service.Interface.SiteActivity.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.Thoughts\Afantazie.Service.Interface.Thoughts.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.UserSettings\Afantazie.Service.Interface.UserSettings.csproj" />
+    <ProjectReference Include="..\Afantazie.Services.Interface.Chat\Afantazie.Services.Interface.Chat.csproj" />
+  </ItemGroup>
+
+</Project>

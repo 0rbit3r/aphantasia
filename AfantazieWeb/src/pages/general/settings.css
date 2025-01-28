@@ -1,0 +1,95 @@
+.settings-container {
+    background-color: var(--black-color-light);
+
+    .color-picker-overlay {
+        position: fixed;
+        top: 0vh;
+        right: 0vw;
+        left: 0vw;
+        bottom: 0vh;
+        background-color: #000000;
+        /* border: 2px solid var(--accent-color-2); */
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    h1 {
+        color: var(--primary-color-light);
+    }
+
+    .color-picker-popup {
+        padding: 5px;
+        border-radius: 8px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .color-dot {
+        display: inline-block;
+    }
+
+    .color-dot.selected {
+        border: 6px solid black;
+    }
+
+    .username {
+        font-size: larger;
+        cursor: pointer;
+    }
+
+    .settings-label {
+        font-size: large;
+        margin: 0.8rem;
+    }
+
+    .color-hex-input{
+        background-color: var(--black-color);
+        color: white;
+        border: 0;
+        border-radius: 5px;
+        font-size: 1em;
+        margin: 10px;
+    }
+    .color-hex-input:focus {
+        outline-color: var(--primary-color);
+        outline-style: solid;
+    }
+
+    .max-thoughts-input{
+        background-color: var(--black-color);
+        color: white;
+        border: 0;
+        border-radius: 5px;
+        font-size: 1em;
+        margin: 10px;
+    }
+    .max-thoughts-input:focus {
+        outline-color: var(--primary-color);
+        outline-style: solid;
+    }
+
+    .settings-hint {
+        font-size: small;
+        color: #d0d0d0;
+        margin-left: 25px;
+    }
+
+    .settings-button {
+    font-size: medium;
+    background-color: var(--secondary-color);
+    }
+
+    .green-text {
+        color: var(--primary-color-lighter);
+        font-size: larger;
+        font-weight: bold;
+        border: 2px solid var(--primary-color);
+        padding: 3px;
+        text-align: center;
+        border-radius: 12px;
+      }
+      
+}
