@@ -10,6 +10,6 @@ namespace Afantazie.Core.Localization.ThoughtValidation
     {
         public string InvalidContentLength => "- Content must be between 5 and 1000 characters long";
 
-        public string InvalidTitleLength => "- Title must be between 1 and 100 characters long";
+        public string InvalidTitleLength => "- Title must be between 1 and 50 characters long";
     }
 }

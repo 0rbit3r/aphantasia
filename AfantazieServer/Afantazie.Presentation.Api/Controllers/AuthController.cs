@@ -22,6 +22,7 @@ namespace Afantazie.Presentation.Api.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<RegisterResponseDto>> Register(RegisterRequestDto dto)
         {
+
             var result = await _authService.Register(dto.Username, dto.Email, dto.Password);
 
             if (result.IsSuccess)

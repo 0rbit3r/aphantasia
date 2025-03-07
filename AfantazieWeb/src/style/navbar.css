@@ -1,0 +1,122 @@
+.top-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1000;
+
+    background-color: black;
+    /* width: 100vw; */
+    height: 40px;
+    border-bottom: 2px solid var(--white-color);
+
+    .aphantasia-title {
+        /* background-color: pink; */
+        color: var(--primary-color-light);
+        cursor: pointer;
+        /* font-weight: bold; */
+        margin-left: 10px;
+        font-size: 36px;
+        margin-right: 10px;
+    }
+
+
+    .top-row-icons-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 180px;
+        border-left: 1px solid var(--white-color);
+        padding-left: 5px;
+
+        .menu-button {
+            cursor: pointer;
+
+        }
+
+        .top-row-button {
+            color: var(--white-color);
+            padding-right: 15px;
+        }
+    }
+}
+
+
+.menu {
+    /* Position */
+    position: fixed;
+    right: 0;
+    top: 40px;
+    height: 0px;
+    width: 200px;
+    z-index: 1000;
+
+
+    /* flex */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: right;
+
+    /* appearance */
+    background: black;
+    /*linear-gradient(120deg, var(--black-color-light) 0%, var(--black-color) 100%);*/
+
+    border-right: 0;
+    border-top: 0;
+
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+.menu-long-expanded {
+    /* padding-top: 10px; */
+    height: auto;
+    width: 200px;
+    align-items: center;
+    border-left: 2px solid var(--white-color);
+    border-bottom: 2px solid var(--white-color);
+}
+
+.menu-short-expanded {
+    /* padding-top: 10px; */
+    height: auto;
+    width: 200px;
+    align-items: center;
+    border-left: 2px solid var(--white-color);
+    border-bottom: 2px solid var(--white-color);
+}
+
+.menu {
+
+    .menu-link-container {
+        /* background-color: aliceblue; */
+        width: 100%;
+        border-bottom: 1px solid var(--white-color-dark);
+        padding-left: 5px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        cursor: pointer;
+
+
+        .menu-link {
+            color: var(--white);
+            text-decoration: none;
+
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .menu-link-active {
+            text-decoration: underline;
+            color: var(--white-color-dark);
+        }
+    }
+
+}

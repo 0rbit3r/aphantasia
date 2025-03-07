@@ -55,7 +55,7 @@ export class Viewport {
 
         const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
 
-        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) / 2 });
+        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3});
     }
 
     //used for zoom by mouse wheel
@@ -68,7 +68,7 @@ export class Viewport {
 
         const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
 
-        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) / 2 });
+        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3 });
     }
 
     toViewportCoordinates = (position: XAndY): XAndY => {

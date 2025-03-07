@@ -7,7 +7,9 @@ namespace Afantazie.Data.Interface.Repository
     {
         Task<Result<List<Thought>>> GetAllThoughts();
 
-        Task<Result<List<Thought>>> GetLatestMetaData(int amount);
+        Task<Result<List<Thought>>> GetThoughtsAfterDate(DateTime date);
+
+        Task<Result<List<Thought>>> GetLatestLog(int amount);
 
         Task<Result<Thought>> GetThoughtById(int id);
 
@@ -18,9 +20,13 @@ namespace Afantazie.Data.Interface.Repository
         Task<Result<int>> GetTotalThoughtsCountAsync();
 
         Task<Result<List<Thought>>> TakeBeforeId(int amount, int id);
+
         Task<Result<List<Thought>>> TakeAfterId(int amount, int thoughtId);
+
         Task<Result<List<Thought>>> TakeAroundId(int amount, int thoughtId);
+
         Task<Result<List<Thought>>> TakeLatest(int amount);
+
         Task<Result<int>> BumpThoughtAsync(int targetId);
     }
 }

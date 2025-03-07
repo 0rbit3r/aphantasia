@@ -81,7 +81,7 @@ export default function runGraph(app: Application) {
             const viewport = graphState.viewport;
             if (highlightedThought !== null) {
                 const dx = viewport.position.x + viewport.width / 2 / viewport.zoom - highlightedThought.position.x;
-                const dy = viewport.position.y + viewport.height / 2 / viewport.zoom - highlightedThought.position.y;
+                const dy = viewport.position.y + viewport.height / 3 * 2 / viewport.zoom - highlightedThought.position.y;
                 // console.log(dx, dy, lockedOnHighlighted);
                 if (Math.abs(dx) > 0.01 && Math.abs(dy) > 0.01) {
                     graphState.viewport.moveBy({ x: dx / 10, y: dy / 10 });

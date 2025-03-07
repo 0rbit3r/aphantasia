@@ -1,3 +1,5 @@
+import { RenderedThought } from "../model/renderedThought";
+
 export const MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT = 100;
 
 // simulation container
@@ -53,7 +55,7 @@ export const MOMENTUM_DAMPENING_EASE_IN_FRAMES = 400;
 // A movement cap of nodes to prevent them from moving too fast
 export const MAX_MOVEMENT_SPEED = 50;
 
-// Mass allows unsymetric forces based on radius
+// Mass allows asymmetric forces based on radius
 export const NODE_MASS_ON = true;
 export const MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 1.1;
 export const MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 0.9;
@@ -61,7 +63,7 @@ export const MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 10;
 export const MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 0.9;
 
 //edges appearance
-export const ANIMATED_EDGES = false;
+export const ANIMATED_EDGES = true;
 
 export const BASE_EDGE_WIDTH = 9;
 export const BASE_EDGE_ALPHA = 0.8;
@@ -69,15 +71,15 @@ export const BASE_EDGE_ALPHA = 0.8;
 export const HIGHLIGHTED_EDGE_WIDTH = 14;
 export const HIGHLIGHTED_EDGE_ALPHA = 1;
 
-export const UNHIGHLIGHTED_EDGE_WIDTH = 4;
-export const UNHIGHLIGHTED_EDGE_ALPHA = 0.6;
+export const UNHIGHLIGHTED_EDGE_WIDTH = 8;
+export const UNHIGHLIGHTED_EDGE_ALPHA = 0.7;
 
 // zoom
 export const MAX_ZOOM = 5;
 export const MIN_ZOOM = 0.01;
 export const INITIAL_ZOOM = 0.1;
 // Titles are visible when the zoom is bigger than this value
-export const ZOOM_TEXT_VISIBLE_THRESHOLD = 0.3;
+export const ZOOM_TEXT_VISIBLE_THRESHOLD = 0.2;
 // Constants for controlling the zoop step on mouse wheel
 export const ZOOM_STEP_MULTIPLICATOR_WHEEL = 1.04;
 export const ZOOM_STEP_MULTIPLICATOR_BUTTONS = 1.02;
@@ -132,4 +134,11 @@ export const gravityForce = (centerDistance: number) => {
 
 // Makes bigger thoughts less active and thus reduces jitter after loading them
 export const backlinksNumberForceDivisor = (bl: number) => bl < 2 ? 1 : bl / 3;
+
+export const linksNumberForceDivisor = (source: RenderedThought, target: RenderedThought) => {
+    const maxReferences = Math.max(source.links.length, target.links.length);
+    const maxBacklinks = Math.max(source.backlinks.length, target.backlinks.length);
+
+    return maxBacklinks / 3 + Math.pow(maxReferences, 1.1);
+}
 

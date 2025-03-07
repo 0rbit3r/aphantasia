@@ -1,9 +1,20 @@
 import { sendAndExpectBody, API_URL } from "./ApiClient";
 import { apiResponseWithBody } from "./dto/ApiResponse";
-import { LogDto } from "./dto/LogDto";
+import { thoughtNodeDto } from "./dto/ThoughtDto";
 
-export async function getLatestLog(): Promise<apiResponseWithBody<LogDto[]>> {
-    const response = await sendAndExpectBody<LogDto[]>(`${API_URL}/log/latest?amount=3`, {
+export async function fetchLatestLog(amount: number): Promise<apiResponseWithBody<thoughtNodeDto[]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/log/latest?amount=${amount}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    return response;
+}
+
+export async function fetchHotLog(amount: number): Promise<apiResponseWithBody<thoughtNodeDto[]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/log/hot?amount=${amount}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

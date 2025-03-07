@@ -1,5 +1,8 @@
 .button-primary {
-    background-color: var(--primary-color);
+    font-family: inherit;
+
+    /* background-color: var(--primary-color); */
+    background-color: black;
     color: var(--white-color);
 
     font-size: large;
@@ -11,25 +14,30 @@
     border-right: var(--primary-color-dark) 3px solid;
     border-bottom: var(--primary-color-dark) 3px solid;
 
-    border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s;
-    
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
 }
 
-.button-primary:disabled{
+.button-primary:disabled {
     background-color: var(--primary-color-darker);
     color: var(--primary-color-dark);
 }
-.button-primary:disabled:hover{
+
+.button-primary:disabled:hover {
     cursor: not-allowed;
 }
 
 .button-secondary {
-    background-color: var(--secondary-color);
+    font-family: inherit;
+
+    background-color: black;
     color: var(--white-color);
 
     font-size: large;
@@ -41,13 +49,15 @@
     border-right: var(--secondary-color-dark) 2px solid;
     border-bottom: var(--secondary-color-dark) 2px solid;
 
-    border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.3s;
 
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
 }
 
 .link-button:link {

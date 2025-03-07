@@ -47,7 +47,8 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
       graphState.setMaxThoughtsOnScreen(userSettings.data?.maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT);
     }
 
-    const response = await fetchTemporalThoughts({ amount: userSettings.data?.maxThoughts!, aroundThoughtId: initialHighligthedId ?? undefined });
+    const response = await fetchTemporalThoughts({ amount: userSettings.data?.maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT,
+                                                    aroundThoughtId: initialHighligthedId ?? undefined });
     // console.log('fetched thoughts', response);
     if (response.ok) {
       graphState.setTemporalRenderedThoughts(mapDtosToRenderedThoughts(response.data!));

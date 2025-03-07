@@ -40,7 +40,7 @@ namespace Afantazie.Service.Auth
                     new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                     new Claim(ClaimTypes.Name, username)
                 },
-                expires: DateTime.Now.AddHours(24),
+                expires: DateTime.Now.AddHours(24 * 3),
                 signingCredentials: credentials
             );
 

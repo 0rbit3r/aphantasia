@@ -8,8 +8,8 @@ namespace Afantazie.Core.Localization.ThoughtValidation
 {
     internal class ThoughtValidationLocalization_CZ : IThoughtValidationLocalization
     {
-        public string InvalidContentLength => "- Obsah myšlenky musí mýt mezi 5 a 1000 znaky";
+        public string InvalidContentLength => "- Obsah myšlenky musí mít mezi 5 a 1000 znaky";
 
-        public string InvalidTitleLength => "- Název myšlenky musí mít mezi 1 a 100 znaky";
+        public string InvalidTitleLength => "- Název myšlenky musí mít mezi 1 a 50 znaky";
     }
 }

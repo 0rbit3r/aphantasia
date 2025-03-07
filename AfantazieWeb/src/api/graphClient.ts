@@ -1,7 +1,6 @@
 import { API_URL, sendAndExpectBody } from "./ApiClient";
 import { apiResponseWithBody as ApiResponseWithBody } from "./dto/ApiResponse";
-import { NotificationDto } from "./dto/NotificationDto";
-import { createThoughtDto, fullThoughtDto, thoughtColoredTitleDto, thoughtNodeDto, thoughtsTemporalFilterDto } from "./dto/ThoughtDto";
+import { createThoughtDto, fullThoughtDto, thoughtNodeDto, thoughtsTemporalFilterDto } from "./dto/ThoughtDto";
 
 export async function fetchTemporalThoughts(filter: thoughtsTemporalFilterDto): Promise<ApiResponseWithBody<thoughtNodeDto[]>> {
 
@@ -25,8 +24,8 @@ export async function fetchTemporalThoughts(filter: thoughtsTemporalFilterDto): 
     return response;
 }
 
-export async function fetchThoughtTitles(): Promise<ApiResponseWithBody<thoughtColoredTitleDto[]>> {
-    const response = await sendAndExpectBody<fullThoughtDto[]>(`${API_URL}/thoughts/titles`, {
+export async function fetchThoughtTitles(): Promise<ApiResponseWithBody<thoughtNodeDto[]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/thoughts/list`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -75,7 +74,7 @@ export async function postNewThought(thought: createThoughtDto): Promise<ApiResp
     return response;
 }
 
-export async function  getTotalThoughtsCount(): Promise<ApiResponseWithBody<number>> {
+export async function  fetchTotalThoughtsCount(): Promise<ApiResponseWithBody<number>> {
     const response = await sendAndExpectBody<number>(`${API_URL}/thoughts/total-count`, {
         method: 'GET',
         headers: {
@@ -87,8 +86,8 @@ export async function  getTotalThoughtsCount(): Promise<ApiResponseWithBody<numb
     return response;
 }
 
-export async function getNotifications(): Promise<ApiResponseWithBody<NotificationDto[]>> {
-    const response = await sendAndExpectBody<NotificationDto[]>(`${API_URL}/notifications`, {
+export async function fetchNotifications(amount: number): Promise<ApiResponseWithBody<thoughtNodeDto[]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/notifications?amount=${amount}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 ﻿using Afantazie.Core.Model;
+using Afantazie.Core.Model.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Afantazie.Service.Interface.Thoughts
 {
     public interface INotificationService
     {
-        Task<List<Thought>> GetNotificationsForUser(int userId);
+        Task<Result<List<Thought>>> GetNotificationsForUser(int userId, int amount);
     }
 }

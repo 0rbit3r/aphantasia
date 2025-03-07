@@ -30,6 +30,8 @@ namespace Afantazie.Tools
             for (int i = 0; i < allThoughtEntities.Count; i++)
             {
                 var thought = allThoughtEntities[i];
+                var originalSize= thought.SizeMultiplier;
+
                 var sizeMultiplier = 0;
 
                 var encounteredAuthors = new List<int> {};
@@ -50,9 +52,14 @@ namespace Afantazie.Tools
                     }
                 }
 
-                Console.WriteLine($"{sizeMultiplier}: {thought.Title}");
+                //Console.WriteLine($"{sizeMultiplier}: {thought.Title}");
                 thought.SizeMultiplier = sizeMultiplier;
+                if (originalSize != sizeMultiplier)
+                {
+                    Console.WriteLine($"[{thought.Id}] : {originalSize} > {sizeMultiplier}");
+                }
             }
+
             Console.WriteLine("Save changes?");
             Console.ReadLine();
             if (allThoughtEntities.Count > 0)

@@ -1,4 +1,5 @@
 ﻿using Afantazie.Core.Model;
+using Afantazie.Core.Model.Results;
 using Afantazie.Data.Interface.Repository;
 using Afantazie.Service.Interface.Thoughts;
 using System;
@@ -13,9 +14,9 @@ namespace Afantazie.Service.Thoughts
         INotificationsRepository _notificationsRepository
         ) : INotificationService
     {
-        public Task<List<Thought>> GetNotificationsForUser(int userId)
+        public Task<Result<List<Thought>>> GetNotificationsForUser(int userId, int amount)
         {
-           return _notificationsRepository.GetNotificationsForUser(userId);
+           return _notificationsRepository.GetNotificationsForUser(userId, amount);
         }
     }
 }

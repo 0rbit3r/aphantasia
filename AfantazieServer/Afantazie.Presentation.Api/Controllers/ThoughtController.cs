@@ -92,8 +92,9 @@ namespace Afantazie.Presentation.Api.Controllers
             return response.Payload!.Adapt<FullThoughtDto>();
         }
 
-        [HttpGet("titles")]
-        public async Task<ActionResult<List<ThoughtColoredTitleDto>>> GetThoughtTitles()
+        // todo - this is useless - use the endpoint above
+        [HttpGet("list")]
+        public async Task<ActionResult<List<ThoughtNodeDto>>> GetAllThoughts()
         {
             var response = await _thoughtService.GetAllThoughts();
 
@@ -102,19 +103,22 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(response.Error!);
             }
 
-            return response.Payload!.Adapt<List<ThoughtColoredTitleDto>>();
+            return response.Payload!.Adapt<List<ThoughtNodeDto>>();
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<int>> CreateThought([FromBody] CreateThoughtDto thoughtDto)
         {
+            thoughtDto.Content = thoughtDto.Content.Replace("\u200B", "").Trim();
+            thoughtDto.Title = thoughtDto.Title.Replace("\u200B", "").Trim();
+
             var errors = new StringBuilder();
             if(thoughtDto.Content.Length > 1000 || thoughtDto.Content.Length < 5)
             {
                 errors.AppendLine(_localization.InvalidContentLength);
             }
-            if (thoughtDto.Title.Length > 100 || thoughtDto.Title.Length < 1)
+            if (thoughtDto.Title.Length > 50 || thoughtDto.Title.Length < 1)
             {
                 errors.AppendLine(_localization.InvalidTitleLength);
             }

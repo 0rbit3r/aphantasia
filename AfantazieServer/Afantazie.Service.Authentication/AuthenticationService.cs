@@ -53,6 +53,7 @@ namespace Afantazie.Service.Auth
         {
             _log.LogInformation("Attempting to register user {username}", username);
 
+            username = username.Trim();
             var errors = new MultiError();
 
             if (username.Length < 3 || username.Length > 20)

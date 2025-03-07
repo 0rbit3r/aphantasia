@@ -9,7 +9,7 @@ const CONTENT_FOLDER = import.meta.env.VITE_CONTENT_FOLDER;
 
 export const MediaContent = (props: MediaContentProps) => {
     return (
-        <>
+        <div className="media-container">
             {import.meta.env.VITE_LANGUAGE === 'cz' &&
                 <>
                     {props.id === 46 && <AudioPlayer path={`${CONTENT_FOLDER}/46.wav`}></AudioPlayer>}
@@ -23,6 +23,6 @@ export const MediaContent = (props: MediaContentProps) => {
                     {props.id === 537 && <AudioPlayer path={`${CONTENT_FOLDER}/Growls.wav`}></AudioPlayer>}
                 </>
             }
-        </>
+        </div>
     );
 }

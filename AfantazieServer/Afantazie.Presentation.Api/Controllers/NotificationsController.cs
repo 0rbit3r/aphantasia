@@ -1,5 +1,7 @@
 ﻿using Afantazie.Core.Localization.Errors;
+using Afantazie.Presentation.Api.Helpers;
 using Afantazie.Presentation.Model.Dto;
+using Afantazie.Presentation.Model.Dto.Thought;
 using Afantazie.Service.Interface.Thoughts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,33 +21,29 @@ namespace Afantazie.Presentation.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<NotificationDto>>> GetNotifications()
+        public async Task<ActionResult<List<ThoughtNodeDto>>> GetNotifications([FromQuery] int amount)
         {
             if (UserId == null)
             {
                 return Unauthorized();
             }
-            var result = await _service.GetNotificationsForUser(UserId.Value);
+            var result = await _service.GetNotificationsForUser(UserId.Value, amount);
 
-            return result.Select(t => new NotificationDto
+            if (!result.IsSuccess)
+            {
+                return ResponseFromError(result.Error!);
+            }
+
+            return result.Payload!.Select(t => new ThoughtNodeDto
             {
                 Color = t.Author.Color,
-                Title = $"{t.Author.Username}",
-                Link = $"/graph/{t.Id}",
-                Time = ConvertSecondsToReadable(DateTime.Now - t.DateCreated),
-                Text = t.Title
-
+                Title = t.Title,
+                Id = t.Id,
+                DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - t.DateCreated),
+                Author = t.Author.Username,
+                Size = t.Size,
             })
             .ToList();
         }
-
-        private string ConvertSecondsToReadable(TimeSpan time) =>
-        time.TotalSeconds switch
-        {
-            < 60 => $"{time.Seconds} s",
-            < 3600 => $"{time.Minutes} min",
-            < 86400 => $"{time.Hours} h",
-            _ => $"{time.Days} d"
-        };
     }
 }

@@ -14,7 +14,7 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Author, src => src.Author.Username)
                 .Map(dest => dest.Color, src => src.Color)
                 .Map(dest => dest.Content, src => src.Content)
-                .Map(dest => dest.DateCreated, src => src.DateCreated.ToShortDateString())
+                .Map(dest => dest.DateCreated, src => src.DateCreated.ToString("yyyy-MM-dd"))
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
@@ -52,7 +52,7 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Color, src => src.Color)
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
-                .Map(dest => dest.DateCreated, src => src.DateCreated.ToShortDateString())
+                .Map(dest => dest.DateCreated, src => src.DateCreated.ToString("yyyy-MM-dd"))
                 .Map(dest => dest.Size, src => src.Size); ;
         }
     }

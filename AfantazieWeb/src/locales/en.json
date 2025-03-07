@@ -84,7 +84,6 @@
     "ColorLabel": "Color:",
     "SaveSettingsButton": "Save Settings",
     "LogoutButton": "Log out",
-    "Replies": "Replies",
     "ReplyButton": "Reply",
     "Loading": "Loading...",
     "Before": "ago",
@@ -104,5 +103,18 @@
     "NoNotifications": "No replies yet. Think of a thought and some will appear here;-)",
     "Notifications": "Notifications",
     "RightNow": "now...",
-    "AllThoughtsButton": "All thoughts"
+    "AllThoughtsButton": "All thoughts",
+    "MenuLogin": "LOG IN",
+    "MenuRegister": "REGISTER",
+    "MenuChat": "CHAT",
+    "MenuAbout": "ABOUT",
+    "MenuSettings": "SETTINGS",
+    "MenuHome": "HOME",
+    "MenuGraph": "GRAPH",
+    "New"   : "NEW",
+    "Hot"   : "HOT",
+    "Replies": "REPLIES",
+    "All"   : "ALL",
+    "LivePreview": "LIVE",
+    "More": "MORE"
 }

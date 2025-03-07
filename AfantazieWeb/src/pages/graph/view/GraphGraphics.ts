@@ -7,6 +7,7 @@ import { XAndY } from "../model/xAndY";
 import tinycolor from "tinycolor2";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
 import { getThoughtsOnScreen } from "../simulation/thoughtsProvider";
+import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
 
 
 const DRAG_TIME_THRESHOLD = 200;
@@ -157,14 +158,14 @@ export const initGraphics = (
                 ? tinycolor(thought.color).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
                 : thought.color;
             circle.beginFill(pulsingColor, 1);
-            circle.lineStyle(8 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 0.5);
+            circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 1);
             circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius);
             circle.endFill();
 
             if (explorable) {
                 circle.beginFill("black", 1);
-                circle.lineStyle(8 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), 0.5);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius - 1);
+                circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 1);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius * 0.5));
                 circle.endFill();
             }
 
@@ -184,11 +185,21 @@ export const initGraphics = (
             // }
 
             if (thought.highlighted) {
-                circle.lineStyle(6, "#ffffff", 0.4);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius + 6);
-            }
+                circle.lineStyle(500 * stateViewport.zoom, thought.color, 0.05);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 400));
+                
+                circle.lineStyle(400 * stateViewport.zoom, thought.color, 0.05);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 350));
 
-            // if there is something to explore...
+                circle.lineStyle(300 * stateViewport.zoom, thought.color, 0.05);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 300));
+
+                circle.lineStyle(200 * stateViewport.zoom, thought.color, 0.05);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 250));
+
+                circle.lineStyle(100 * stateViewport.zoom, thought.color, 0.2);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 200));
+            }
 
             circle.lineStyle(0);
             circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
@@ -285,10 +296,6 @@ const draw_edge = (
     const x2 = to.x;
     const y2 = to.y;
 
-    // Arrowhead properties
-    const arrowLength = 50 * zoom;
-    const arrowAngle = Math.PI / 5;
-
     // Calculate the angle of the arrow line
     const angle = Math.atan2(y2 - y1, x2 - x1);
 
@@ -302,7 +309,7 @@ const draw_edge = (
 
     graphics.zIndex = ARROW_Z;
 
-    if (!ANIMATED_EDGES) {
+    if (!useGraphControlsStore.getState().animatedEdgesEnabled) {
         // bezier curved edges
         graphics.lineStyle({ color: new Color(color), width: zoom * thickness, alpha: alpha });
         const normal = { x: y1 - y2, y: x2 - x1 };
@@ -329,7 +336,7 @@ const draw_edge = (
 
         segments.forEach((segment, index) => {
             if (index % 2 === 0) {
-                graphics.lineStyle({ color: new Color(color), width: zoom * thickness * 5, alpha: alpha / 3 });
+                graphics.lineStyle({ color: new Color(color), width: zoom * thickness * 5, alpha: alpha / 2 });
             }
             else {
                 graphics.lineStyle();
@@ -346,6 +353,10 @@ const draw_edge = (
     // graphics.lineTo(arrowTipX, arrowTipY);
     // graphics.beginFill();
 
+    // Arrowhead properties
+    const arrowLength = 70 * zoom;
+    const arrowAngle = Math.PI / 5;
+
     // Calculate the positions of the arrowhead lines
     const arrowX1 = arrowTipX - arrowLength * Math.cos(angle - arrowAngle);
     const arrowY1 = arrowTipY - arrowLength * Math.sin(angle - arrowAngle);
@@ -355,7 +366,7 @@ const draw_edge = (
 
     // Draw the left arrowhead line
     graphics.moveTo(arrowTipX, arrowTipY);
-    graphics.lineStyle({ color: new Color(color), width: zoom * thickness, alpha: alpha });
+    graphics.lineStyle({ color: new Color(color), width: zoom * thickness * 1.2, alpha: alpha });
     graphics.lineTo(arrowX1, arrowY1);
 
     // Draw the right arrowhead line

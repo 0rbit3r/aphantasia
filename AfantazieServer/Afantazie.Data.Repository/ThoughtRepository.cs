@@ -99,7 +99,7 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> GetLatestMetaData(int amount)
+        public async Task<Result<List<Thought>>> GetLatestLog(int amount)
         {
             using (var db = _contextProvider.GetDataContext())
             {
@@ -224,6 +224,21 @@ namespace Afantazie.Data.Repository
                 await db.SaveChangesAsync();
 
                 return thought.SizeMultiplier;
+            }
+        }
+
+        public async Task<Result<List<Thought>>> GetThoughtsAfterDate(DateTime date)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thoughtsList = await db.Thoughts
+                    .Include(t => t.Author)
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Where(t => t.DateCreated > date.ToUniversalTime())
+                    .ToListAsync();
+
+                return thoughtsList.Adapt<List<Thought>>();
             }
         }
     }
