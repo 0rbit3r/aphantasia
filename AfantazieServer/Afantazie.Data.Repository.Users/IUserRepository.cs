@@ -15,6 +15,9 @@ namespace Afantazie.Data.Interface.Repository
         Task<Result<string>> GetColor(int userId);
         Task<Result<int>> GetMaxThoughts(int userId);
         Task<Result<User>> GetUserByIdAsync(int id);
+
+        Task<Result<User>> GetUserByUsernameAsync(string username);
+
         Task<Result> UpdateMaxThoughts(int userId, int maxThoughts);
     }
 }

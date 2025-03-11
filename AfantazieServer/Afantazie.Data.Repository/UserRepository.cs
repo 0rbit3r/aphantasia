@@ -85,6 +85,20 @@ namespace Afantazie.Data.Repository
             }
         }
 
+        public async Task<Result<User>> GetUserByUsernameAsync(string username)
+        {
+            using (var context = _contextProvider.GetDataContext())
+            {
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Username == username);
+                if (user == null)
+                {
+                    return Error.NotFound();
+                }
+
+                return user.Adapt<User>();
+            }
+        }
+
         public async Task<Result> UpdateMaxThoughts(int userId, int maxThoughts)
         {
             using (var context = _contextProvider.GetDataContext())

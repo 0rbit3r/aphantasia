@@ -5,9 +5,11 @@ import { useParams } from 'react-router-dom';
 import { useGraphStore } from './state_and_parameters/GraphStore';
 import GraphContainer from './GraphContainer';
 import { fetchTemporalThoughts, fetchThought } from '../../api/graphClient';
-import { updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
+import { clearNeighborhoodThoughts, mapDtosToRenderedThoughts, updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
 import { ThoughtViewer } from '../../components/ThoughtViewer';
 import GraphControls from '../../components/GraphControls';
+import { fetchUserProfile } from '../../api/userProfileApi';
+import { useGraphControlsStore } from './state_and_parameters/GraphControlsStore';
 
 const COLOR_BACKGROUND = 0x000000;
 
@@ -28,6 +30,7 @@ const GraphPage: React.FC = () => {
     const setTemporalThoughts = useGraphStore((state) => state.setTemporalRenderedThoughts);
     const neighborhoodThoughts = useGraphStore((state => state.neighborhoodThoughts));
     const setNeighborhoodThoughts = useGraphStore((state => state.setNeighborhoodThoughts));
+    const setBeginningThoughtId = useGraphStore((state) => state.setBeginningThoughtId);
 
     // const [replies, setReplies] = useState<thoughtNodeDto[]>([]);
 
@@ -38,6 +41,7 @@ const GraphPage: React.FC = () => {
     // controls
     const [zoomingHeld, setZoomingHeld] = useState(0);
     const setZoomingControl = useGraphStore((state) => state.setZoomingControl);
+    const neighborhoodEnabled = useGraphControlsStore((state) => state.neighborhoodEnabled);
 
     const highlightedThought = useGraphStore((state) => state.highlightedThought);
     const setHighlightedThoughtId = useGraphStore((state) => state.setHighlightedThoughtById);
@@ -133,16 +137,20 @@ const GraphPage: React.FC = () => {
         setZoomingControl(zoomingHeld);
     }, [zoomingHeld]);
 
-    // handle overlay controls
-    const handleCloseOverlayButton = () => {
-    //     if (fullscreenPreview) {
-    //         setFullscreenPreview(false);
-    //     }
-    //     else {
-            unsetHighlightedThought();
-    //     }
-    };
+    const handleUserProfileClick = (username: string) => {
+        window.history.pushState(null, '', `/user/${username}`);
 
+        fetchUserProfile(username).then(response => {
+            if (response.ok) {
+                // setProfileUser(response.data!);
+                const temporalThoughts = mapDtosToRenderedThoughts(response.data!.thoughts);
+                setTemporalThoughts(temporalThoughts);
+                clearNeighborhoodThoughts();
+                setTimeShift(0);
+                setBeginningThoughtId(temporalThoughts[0].id);
+            }
+        });
+    }
 
     return (
         <>
@@ -153,7 +161,8 @@ const GraphPage: React.FC = () => {
                             thought={fullHighlightedThought}
                             landscapeMode={landscapeMode}
                             setHighlightedThoughtId={setHighlightedThoughtId}
-                            closePreview={handleCloseOverlayButton}
+                            closePreview={unsetHighlightedThought}
+                            clickedOnUser={username => handleUserProfileClick(username)}
                             neighborhoodThoughts={neighborhoodThoughts}>
                         </ThoughtViewer>
                 </div>

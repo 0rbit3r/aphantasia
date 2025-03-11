@@ -1,7 +1,7 @@
 import { Application } from 'pixi.js';
 import { simulate_one_frame } from './forcesSimulation';
 import { initGraphics } from '../view/GraphGraphics';
-import { SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME } from '../state_and_parameters/graphParameters';
+import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME } from '../state_and_parameters/graphParameters';
 import { useGraphStore } from '../state_and_parameters/GraphStore';
 import { ThoughtPositionCache } from '../model/thoughtPositionCache';
 import { updateTemporalThoughts } from './thoughtsProvider';
@@ -95,6 +95,13 @@ export default function runGraph(app: Application) {
             simulate_one_frame();
         }
         graphState.setFrame(frame + 1);
+
+        graphState.fadeOutThoughts.forEach(thought => {
+            thought.timeOnScreen -= 2;
+        });
+        if (graphState.fadeOutThoughts.length > 0 && graphState.fadeOutThoughts[0].timeOnScreen < NEW_NODE_INVISIBLE_FOR) {
+            graphState.setFadeOutThoughts([]);
+        }
 
         // render the graph
         renderGraph();

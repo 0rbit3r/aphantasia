@@ -1,7 +1,14 @@
 import { useGraphStore } from "../state_and_parameters/GraphStore";
-import { pullForce, backlinksNumberForceDivisor, pushForce, PUSH_THRESH, MAX_MOMENTUM_DAMPENING, FRAMES_WITH_OVERLAP, SLOW_SIM_EVERY_N_FRAMES, NODE_MASS_ON, MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER, MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER, SIM_HEIGHT, SIM_WIDTH, FRAMES_WITH_LESS_INFLUENCE, MAX_MOVEMENT_SPEED, MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER, MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER, GRAVITY_FREE_RADIUS, gravityForce, MOMENTUM_DAMPENING_EASE_IN_FRAMES, MOMENTUM_DAMPENING_START_AT, GRAVITY_ON } from "../state_and_parameters/graphParameters";
+import {
+    pullForce, backlinksNumberForceDivisor, pushForce, PUSH_THRESH, MAX_MOMENTUM_DAMPENING,
+    FRAMES_WITH_OVERLAP, SLOW_SIM_EVERY_N_FRAMES, NODE_MASS_ON, MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER, MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER,
+    SIM_HEIGHT, SIM_WIDTH, INFLUENCE_FADE_IN, MAX_MOVEMENT_SPEED, MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER, MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER,
+    GRAVITY_FREE_RADIUS, gravityForce, MOMENTUM_DAMPENING_EASE_IN_FRAMES, MOMENTUM_DAMPENING_START_AT,
+    FRAMES_WITH_NO_INFLUENCE
+} from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { getThoughtsOnScreen } from "./thoughtsProvider";
+import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
 
 export const get_border_distance = (thought1: RenderedThought, thought2: RenderedThought) => {
     const x1 = thought1.position.x;
@@ -27,25 +34,26 @@ const get_center_distance = (thought1: RenderedThought, thought2: RenderedThough
 
 export const simulate_one_frame = () => {
     const onScreenThoughts = getThoughtsOnScreen();
+    const graphControlsState = useGraphControlsStore.getState();
 
     for (let i = 0; i < onScreenThoughts.length; i++) {
-        const thought = onScreenThoughts[i];
-        handleOutOfBounds(thought);
+        const sourceThought = onScreenThoughts[i];
+        handleOutOfBounds(sourceThought);
 
         for (let j = 0; j < i; j++) {
-            const otherThought = onScreenThoughts[j];
-            if (thought.id > otherThought.id) { //This relies on the fact that thoughts can only reference older ones... and sorted array...
-                const borderDistance = get_border_distance(thought, otherThought);
+            const targetThought = onScreenThoughts[j];
+            if (sourceThought.id > targetThought.id) { //This relies on the fact that thoughts can only reference older ones... and sorted array...
+                const borderDistance = get_border_distance(sourceThought, targetThought);
 
-                if (thought.links.includes(otherThought.id)) {
-                    pull_or_push_connected_to_ideal_distance(thought, otherThought);
+                if (sourceThought.links.includes(targetThought.id)) {
+                    pull_or_push_connected_to_ideal_distance(sourceThought, targetThought);
                 } else if (borderDistance < PUSH_THRESH) {
-                    push_unconnected(thought, otherThought);
+                    push_unconnected(sourceThought, targetThought);
                 }
             }
         }
-        if (GRAVITY_ON){
-            gravity_pull(thought);
+        if (graphControlsState.gravityEnabled) {
+            gravity_pull(sourceThought);
         }
     }
 
@@ -64,8 +72,8 @@ export const simulate_one_frame = () => {
         thought.momentum.x += thought.forces.x;
         thought.momentum.y += thought.forces.y;
 
-        const frameAdjustedDampeningRate = 
-            MOMENTUM_DAMPENING_START_AT + 
+        const frameAdjustedDampeningRate =
+            MOMENTUM_DAMPENING_START_AT +
             Math.min(frame, MOMENTUM_DAMPENING_EASE_IN_FRAMES) / MOMENTUM_DAMPENING_EASE_IN_FRAMES * (MAX_MOMENTUM_DAMPENING - MOMENTUM_DAMPENING_START_AT);
 
         // console.log("frameAdjustedDampeningRate: ", frameAdjustedDampeningRate);
@@ -94,14 +102,19 @@ export const pull_or_push_connected_to_ideal_distance = (sourceThought: Rendered
     // if (borderDistance < 0) {
     //     return;
     // }
-    const force = pullForce(borderDistance) / backlinksNumberForceDivisor(targetThought.backlinks.length)
+    const force = pullForce(borderDistance, targetThought.size) / backlinksNumberForceDivisor(targetThought.backlinks.length)
 
     const nodeMassMultiplier = NODE_MASS_ON
         ? Math.min(Math.max(targetThought.radius / sourceThought.radius, MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER), MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER)
         : 1;
 
-    const sourceThoughtTimeOnScreenMultiplier = Math.min(targetThought.timeOnScreen, FRAMES_WITH_LESS_INFLUENCE) / FRAMES_WITH_LESS_INFLUENCE;
-    const targetThoughtTimeOnScreenMultiplier = Math.min(sourceThought.timeOnScreen, FRAMES_WITH_LESS_INFLUENCE) / FRAMES_WITH_LESS_INFLUENCE;
+    const sourceThoughtTimeOnScreenMultiplier = targetThought.timeOnScreen < FRAMES_WITH_NO_INFLUENCE
+        ? 0
+        : Math.min(1, (targetThought.timeOnScreen - FRAMES_WITH_NO_INFLUENCE) / INFLUENCE_FADE_IN);
+
+    const targetThoughtTimeOnScreenMultiplier = sourceThought.timeOnScreen < FRAMES_WITH_NO_INFLUENCE
+        ? 0
+        : Math.min(1, (sourceThought.timeOnScreen - FRAMES_WITH_NO_INFLUENCE) / INFLUENCE_FADE_IN);
 
 
     // get the x / y component of the force vector and multiply by the scalar compponent;
@@ -130,8 +143,10 @@ export const push_unconnected = (sourceThought: RenderedThought, targetThought: 
     //     : pushForce(centerDistance);
     // const force = pushForce(centerDistance);
 
+    const forceAtPushThresh = pushForce(PUSH_THRESH); //this might be a bit inefficient and weird but hey... it works to eliminate the noncontinuity of the push force at the edge
+
     const force = useGraphStore.getState().frame > FRAMES_WITH_OVERLAP
-        ? pushForce(borderDistance)
+        ? pushForce(borderDistance) - forceAtPushThresh
         : 0;
 
     const nodeMassMultiplier = NODE_MASS_ON
@@ -144,8 +159,13 @@ export const push_unconnected = (sourceThought: RenderedThought, targetThought: 
     //     console.log("target 3: ", nodeMassMultiplier);
     // }
 
-    const sourceThoughtTimeOnScreenMultiplier = Math.min(targetThought.timeOnScreen, FRAMES_WITH_LESS_INFLUENCE) / FRAMES_WITH_LESS_INFLUENCE;
-    const targetThoughtTimeOnScreenMultiplier = Math.min(sourceThought.timeOnScreen, FRAMES_WITH_LESS_INFLUENCE) / FRAMES_WITH_LESS_INFLUENCE;
+    const sourceThoughtTimeOnScreenMultiplier = targetThought.timeOnScreen < FRAMES_WITH_NO_INFLUENCE
+        ? 0
+        : Math.min(1, (targetThought.timeOnScreen - FRAMES_WITH_NO_INFLUENCE) / INFLUENCE_FADE_IN);
+
+    const targetThoughtTimeOnScreenMultiplier = sourceThought.timeOnScreen < FRAMES_WITH_NO_INFLUENCE
+        ? 0
+        : Math.min(1, (sourceThought.timeOnScreen - FRAMES_WITH_NO_INFLUENCE) / INFLUENCE_FADE_IN);
 
     sourceThought.forces.x -= (sourceThought.held ? 0 : (dx / centerDistance) * force)
         * nodeMassMultiplier

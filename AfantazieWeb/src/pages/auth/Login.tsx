@@ -25,7 +25,7 @@ function Login() {
         }
         else {
             setAccessToken(response.data?.token as string);
-            navigate('/', { state: { message: Localization.WelcomeBack } as LocationState })// Todo a set of quips.
+            navigate('/home', { state: { message: Localization.WelcomeBack } as LocationState })
         }
     }
 

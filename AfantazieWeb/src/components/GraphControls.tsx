@@ -15,10 +15,14 @@ const GraphControls = () => {
 
     // graph settings controls
     const setAnimatedEdgesEnabled = useGraphControlsStore(state => state.setAnimatedEdgesEnabled);
+    const setGravityEnabled = useGraphControlsStore(state => state.setGravityEnabled);
+    const setNeighborhoodEnabled = useGraphControlsStore(state => state.setNeighborhoodEnabled);
+    const neighborhoodEnabled = useGraphControlsStore(state => state.neighborhoodEnabled);
 
     // UI control states
     const [settingsWindowVisible, setSettingsWindowVisible] = useState(false);
     const [temporalControlsVisible, setTemporalControlsVisible] = useState(false);
+    const [newestDate, setNewestDate] = useState<string>('-');
 
     const [rewindMode, setRewindMode] = useState('pause');
 
@@ -26,7 +30,6 @@ const GraphControls = () => {
     const setTimeShiftControl = useGraphStore(state => state.setTimeShiftControl);
     const setTimeShift = useGraphStore(state => state.setTimeShift);
     const timeShift = useGraphStore((state) => state.timeShift);
-    const [newestDate, setNewestDate] = useState<string>('-');
 
     const handleModeChanged = (mode: string) => {
         if (mode === 'settings') {
@@ -90,6 +93,10 @@ const GraphControls = () => {
         setAnimatedEdgesEnabled(e.target.checked);
     }
 
+    function gravityCheckboxChanged(e: ChangeEvent<HTMLInputElement>): void {
+        setGravityEnabled(e.target.checked);
+    }
+
     return (
         <div className="graph-controls">
             <div className={`settings-window ${!settingsWindowVisible ? "settings-window-collapsed" : ""}`}>
@@ -97,6 +104,11 @@ const GraphControls = () => {
                 <label>
                     <input className="settings-window-checkbox" type="checkbox" onChange={e => animatedEdgesCheckboxChanged(e)}></input>
                     Animated edges
+                </label>
+                <br />
+                <label>
+                    <input className="settings-window-checkbox" type="checkbox" onChange={e => gravityCheckboxChanged(e)}></input>
+                    Gravity
                 </label>
             </div>
             <div className={`temporal-section ${!temporalControlsVisible ? "settings-window-collapsed" : ""}`}>
@@ -147,8 +159,13 @@ const GraphControls = () => {
                         : <img src={PUBLIC_FOLDER + "/icons/rewind_white.svg"}></img>
                     }
                 </button>
-                <button className='graph-controls-button'>
-                    <img src={PUBLIC_FOLDER + "/icons/neighborhood_white.svg"}></img>
+                <button className={`graph-controls-button ${neighborhoodEnabled ? 'graph-controls-button-active' : ''}`}
+                    onClick={_ => setNeighborhoodEnabled(!neighborhoodEnabled)}>
+                        {neighborhoodEnabled
+                            ? <img src={PUBLIC_FOLDER + "/icons/neighborhood_black.svg"}></img>
+                            : <img src={PUBLIC_FOLDER + "/icons/neighborhood_white.svg"}></img>
+
+                        }
                 </button>
                 <button className='graph-controls-button'>
                     <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img>

@@ -1,8 +1,9 @@
 
 import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchTotalThoughtsCount } from '../api/graphClient';
-import { getUserSettings, postUserSettings } from '../api/UserSettingsApiClient';
+import { fetchUserSettings, postUserSettings } from '../api/UserSettingsApiClient';
 import { Localization } from '../locales/localization';
+import { useUserSettingsStore } from './graph/state_and_parameters/UserSettingsStore';
 
 const colors = [
 "#85E085","#FFDD99","#BB8FCE","#FFB6C1","#ADD8E6","#D5DBDB","#7DCEA0","#F39C12","#DC7633","#8E44AD","#52BE80","#E59866","#D35400","#EB984E","#85C1C2",
@@ -28,7 +29,7 @@ const colors = [
 
 
 function UserAndSettings() {
-    const [username, setUsername] = useState<string>("");
+    const [username, setUsername] = useState<string>(""); //todo - these values are in the userSettings store now
     const [selectedColor, setSelectedColor] = useState<string>("#dddddd");
     const [isPickerOpen, setIsPickerOpen] = useState<boolean>(false);
     const [ColorValidationMessage, setColorValidationMessage] = useState<string | null>(null);
@@ -38,9 +39,11 @@ function UserAndSettings() {
     const [thoughtsCount, setThoughtsCount] = useState<number>(0);
     const [savedPositionsNumber, setSavedPositionsNumber] = useState<number>(0);
 
+    const fetchAndSetUserSettings = useUserSettingsStore(state => state.fetchAndSetUserSettings);
+
     useEffect(() => {
         const getSettings = async () => {
-            const response = await getUserSettings();
+            const response = await fetchUserSettings();
             if (response.ok) {
                 setSelectedColor(response.data?.color!);
                 setMaxThoughtsInput(response.data?.maxThoughts!.toString());
@@ -90,6 +93,7 @@ function UserAndSettings() {
         var result = await postUserSettings({ color: selectedColor, username: username, maxThoughts: parseInt(maxThoughtsInput) });
         if (result.ok) {
             setSuccessMessage(Localization.SettingsSaved);
+            fetchAndSetUserSettings();
         }
         else {
             setColorValidationMessage(result.error!);

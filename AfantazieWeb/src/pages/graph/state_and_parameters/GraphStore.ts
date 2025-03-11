@@ -16,6 +16,10 @@ interface GraphStore {
     neighborhoodThoughts: RenderedThought[];
     setNeighborhoodThoughts: (thoughts: RenderedThought[]) => void;
 
+    // Thoughts that are fading out
+    fadeOutThoughts: RenderedThought[];
+    setFadeOutThoughts: (thoughts: RenderedThought[]) => void;
+
     // The temporaly first thought beyond which it is useless to fetch more data
     beginningThoughtId: number | null;
     setBeginningThoughtId: (id: number) => void;
@@ -61,6 +65,9 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
 
     neighborhoodThoughts: [],
     setNeighborhoodThoughts: (thoughts: RenderedThought[]) => set({ neighborhoodThoughts: thoughts }),
+
+    fadeOutThoughts: [],
+    setFadeOutThoughts: (thoughts: RenderedThought[]) => set({ fadeOutThoughts: thoughts }),
 
     beginningThoughtId: null,
     setBeginningThoughtId: (id: number) => set({ beginningThoughtId: id }),

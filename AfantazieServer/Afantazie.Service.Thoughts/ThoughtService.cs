@@ -90,7 +90,7 @@ namespace Afantazie.Service.Thoughts
                 _logger.LogWarning("Thought with id {id} not found.", id);
                 return result;
             }
-            _logger.LogInformation("Requested thought [{id}] {title}", id, result.Payload!.Title);
+            _logger.LogInformation("Get thought [{id}] {title}", id, result.Payload!.Title);
             return result;
         }
 

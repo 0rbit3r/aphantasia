@@ -1,6 +1,6 @@
 import { Application, Color, Container, Graphics, TextStyle, Text } from "pixi.js";
 import { ARROW_Z, NODES_Z, TEXT_Z } from "./zIndexes";
-import { ANIMATED_EDGES, BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, SIM_HEIGHT, SIM_WIDTH, UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../state_and_parameters/graphParameters";
+import { ANIMATED_EDGES, BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, SIM_HEIGHT, SIM_WIDTH, UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { addDraggableViewport } from "./ViewportInitializer";
 import { XAndY } from "../model/xAndY";
@@ -108,10 +108,14 @@ export const initGraphics = (
         // clear textContainer
         textContainer.removeChildren();
 
-        const onScreenThoughts = getThoughtsOnScreen();
+        const graphState = useGraphStore.getState();
+
+        const onScreenThoughts = getThoughtsOnScreen()
+            .concat(graphState.fadeOutThoughts)
+            .sort(t => t.id);
+            // add sorting here?
         // console.log('thoughtsInCurrentTimeWindow', thoughtsInCurrentTimeWindow);
 
-        const graphState = useGraphStore.getState();
 
         const stateViewport = graphState.viewport;
         if (stateViewport === null) {
@@ -139,6 +143,11 @@ export const initGraphics = (
             // indicate that htere are neighbors not currently on screen
             const explorable = (thought.links.some(l => onScreenThoughts.filter(t => t.id === l).length === 0) || // any links or replies outside onscreen thoughts check 
                 thought.backlinks.some(l => onScreenThoughts.filter(t => t.id === l).length === 0));
+        
+            const explorableLowestTimeOnScreen = onScreenThoughts
+                .filter(t => thought.links.includes(t.id) || thought.backlinks.includes(t.id))
+                .map(t => t.timeOnScreen)
+                .reduce((min, cur) => Math.min(min, cur), Number.MAX_SAFE_INTEGER);
 
             const circle = thought.graphics as Graphics;
 
@@ -152,63 +161,77 @@ export const initGraphics = (
             }
 
             // draw node
-            // pulsating color if the node is explorable
-            const pulsingColor = graphState.frame % 150 < 50 &&
-                explorable
-                ? tinycolor(thought.color).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
-                : thought.color;
-            circle.beginFill(pulsingColor, 1);
-            circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 1);
-            circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius);
-            circle.endFill();
+            if (thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR) {
 
-            if (explorable) {
-                circle.beginFill("black", 1);
-                circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 1);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius * 0.5));
+                const opacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES); 
+
+                // pulsating color if the node is explorable
+                const pulsingColor = graphState.frame % 150 < 50 &&
+                    explorable
+                    ? tinycolor(thought.color).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
+                    : thought.color;
+                circle.beginFill(pulsingColor, opacity);
+                circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), opacity);
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius);
+                circle.endFill();
+
+                if (explorable) {
+                    circle.beginFill("black", 1);
+                    circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), 1);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius * 0.5));
+                    circle.endFill();
+                } else{
+                    const blackDotOpacity = explorableLowestTimeOnScreen > NEW_NODE_INVISIBLE_FOR
+                        ? 0
+                        : Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+
+                    circle.beginFill("black", blackDotOpacity);
+                    circle.lineStyle(10 * stateViewport.zoom, tinycolor(pulsingColor).lighten(15).toString(), blackDotOpacity);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius * 0.5));
+                    circle.endFill();
+                }
+
+                // muffins!
+                // if (thought.id == 318) {
+                //     (async () => {
+                //         const muffinSvg = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/muffin.svg');
+                //         const muffinTexture = new Sprite(muffinSvg as Texture);;
+                //         muffinTexture.width = (thought.radius * 2) * viewport.zoom;
+                //         muffinTexture.height = (thought.radius * 2) * viewport.zoom;
+                //         muffinTexture.position.set((circleCoors.x - muffinTexture.width/2), (circleCoors.y - muffinTexture.height/2));
+                //         muffinTexture.interactive = false;
+
+                //         circle.removeChildren();
+                //         circle.addChild(muffinTexture);
+                //     })();
+                // }
+
+                if (thought.highlighted) {
+                    circle.lineStyle(500 * stateViewport.zoom, thought.color, 0.05);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 400));
+
+                    circle.lineStyle(400 * stateViewport.zoom, thought.color, 0.05);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 350));
+
+                    circle.lineStyle(300 * stateViewport.zoom, thought.color, 0.05);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 300));
+
+                    circle.lineStyle(200 * stateViewport.zoom, thought.color, 0.05);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 250));
+
+                    circle.lineStyle(100 * stateViewport.zoom, thought.color, 0.2);
+                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 200));
+                }
+
+                circle.lineStyle(0);
+                circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
+                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius + 10);
                 circle.endFill();
             }
 
-            // muffins!
-            // if (thought.id == 318) {
-            //     (async () => {
-            //         const muffinSvg = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/muffin.svg');
-            //         const muffinTexture = new Sprite(muffinSvg as Texture);;
-            //         muffinTexture.width = (thought.radius * 2) * viewport.zoom;
-            //         muffinTexture.height = (thought.radius * 2) * viewport.zoom;
-            //         muffinTexture.position.set((circleCoors.x - muffinTexture.width/2), (circleCoors.y - muffinTexture.height/2));
-            //         muffinTexture.interactive = false;
-
-            //         circle.removeChildren();
-            //         circle.addChild(muffinTexture);
-            //     })();
-            // }
-
-            if (thought.highlighted) {
-                circle.lineStyle(500 * stateViewport.zoom, thought.color, 0.05);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 400));
-                
-                circle.lineStyle(400 * stateViewport.zoom, thought.color, 0.05);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 350));
-
-                circle.lineStyle(300 * stateViewport.zoom, thought.color, 0.05);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 300));
-
-                circle.lineStyle(200 * stateViewport.zoom, thought.color, 0.05);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 250));
-
-                circle.lineStyle(100 * stateViewport.zoom, thought.color, 0.2);
-                circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (thought.radius + 200));
-            }
-
-            circle.lineStyle(0);
-            circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
-            circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * thought.radius + 10);
-            circle.endFill();
-
             const text = thought.text as Text;
             // console.log(graphState.viewport.zoom, ZOOM_TEXT_VISIBLE_THRESHOLD);
-            if (graphState.viewport.zoom > ZOOM_TEXT_VISIBLE_THRESHOLD) {
+            if (graphState.viewport.zoom > ZOOM_TEXT_VISIBLE_THRESHOLD && thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR) {
 
                 const textCoors = graphState.viewport.toViewportCoordinates({
                     x: thought.position.x,
@@ -217,6 +240,7 @@ export const initGraphics = (
                 textCoors.x -= text.width / 2;
                 text.x = textCoors.x;
                 text.y = textCoors.y;
+                text.alpha = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
 
                 textContainer.addChild(text);
 
@@ -254,11 +278,18 @@ export const initGraphics = (
                         : highlightedThought === thought || highlightedThought === referencedThought
                             ? HIGHLIGHTED_EDGE_ALPHA
                             : UNHIGHLIGHTED_EDGE_ALPHA;
+                    
+                    const sourceOpacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES); 
+                    const targetOpacity = referencedThought.timeOnScreen <= NEW_NODE_INVISIBLE_FOR
+                        ? 0
+                        : Math.min(1, (referencedThought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+
+                    const edgeOpacity = Math.min(sourceOpacity, targetOpacity, arrowAlpha);
                     draw_edge(
                         nodeContainer,
                         stateViewport.toViewportCoordinates({ x: referencedThought.position.x, y: referencedThought.position.y }),
                         stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y }),
-                        arrowColor, stateViewport.zoom, thought.radius, arrowThickness, arrowAlpha);
+                        arrowColor, stateViewport.zoom, thought.radius, arrowThickness, edgeOpacity);
                 }
             });
 

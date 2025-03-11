@@ -1,5 +1,3 @@
-import { RenderedThought } from "../model/renderedThought";
-
 export const MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT = 100;
 
 // simulation container
@@ -29,27 +27,27 @@ export const MAX_RADIUS = 700;
 export const INITIAL_POSITIONS_RADIUS = 3000;
 
 // forces simulation
-export const IDEAL_LINKED_DISTANCE = 300;
+export const IDEAL_LINKED_DISTANCE = 350;
 // N > 1 make the connected nodes' push force weaker than the pull force and vice versa
-export const EDGE_COMPRESSIBILITY_FACTOR = 1.05;
+export const EDGE_COMPRESSIBILITY_FACTOR = 0.75;
 
 export const MAX_PULL_FORCE = 100;
 
-export const PUSH_THRESH = 1250;
+export const PUSH_THRESH = 2000;
 export const MAX_PUSH_FORCE = 100;
 
-export const GRAVITY_ON = false;
 export const GRAVITY_FREE_RADIUS = 1600;
 
 // When thoughts "appear" on screen they should not immediatelly start influenxcing other thoughts.
 // This parameter is the length of the "ease-in" period for influencing other thoughts
-export const FRAMES_WITH_LESS_INFLUENCE = 100;
+export const INFLUENCE_FADE_IN = 250;
+export const FRAMES_WITH_NO_INFLUENCE = 70;
 
 // Slows the simulation but makes it more stable
-export const MAX_MOMENTUM_DAMPENING = 1.8; //1.55
+export const MAX_MOMENTUM_DAMPENING = 1.7; //1.55
 
 // These parameters are the ease-in starting value for the momentum dampening rate
-export const MOMENTUM_DAMPENING_START_AT = 1.4;
+export const MOMENTUM_DAMPENING_START_AT = 1.45;
 export const MOMENTUM_DAMPENING_EASE_IN_FRAMES = 400;
 
 // A movement cap of nodes to prevent them from moving too fast
@@ -74,6 +72,10 @@ export const HIGHLIGHTED_EDGE_ALPHA = 1;
 export const UNHIGHLIGHTED_EDGE_WIDTH = 8;
 export const UNHIGHLIGHTED_EDGE_ALPHA = 0.7;
 
+// nodes appearing appearance
+export const NEW_NODE_INVISIBLE_FOR = 50;
+export const NEW_NODE_FADE_IN_FRAMES = 50;
+
 // zoom
 export const MAX_ZOOM = 5;
 export const MIN_ZOOM = 0.01;
@@ -96,17 +98,21 @@ export const pushForce = (borderDist: number) => {
     if (borderDist < 0) {
         return -borderDist;
     }
-    const computed = 5 / Math.sqrt(borderDist);
+    const computed = 10 / Math.sqrt(borderDist);
     return Math.min(MAX_PUSH_FORCE, computed);
 };
 
-export const pullForce = (borderDist: number) => {
+export const pullForce = (borderDist: number, size: number) => {
 
-    if (borderDist <= 0) {
-        return borderDist; // todo when borderDist is negative the nodes tend to "oscilate"
+    if (borderDist < 0) {
+        return -MAX_PULL_FORCE;
     }
 
-    const computed = 0.01 * (borderDist - IDEAL_LINKED_DISTANCE);
+    const distance = size < 5
+        ? IDEAL_LINKED_DISTANCE
+        : IDEAL_LINKED_DISTANCE * Math.sqrt(size) / 2;
+
+    const computed = 0.02 * (borderDist - distance);
     const limited = computed > MAX_PULL_FORCE
         ? MAX_PULL_FORCE
         : computed < -MAX_PULL_FORCE
@@ -122,10 +128,10 @@ export const pullForce = (borderDist: number) => {
 
 
 export const gravityForce = (centerDistance: number) => {
-    const GRAVITY_FORCE = 0.00005;
+    const GRAVITY_FORCE = 0.1;
 
     if (centerDistance > GRAVITY_FREE_RADIUS) {
-        return GRAVITY_FORCE * (centerDistance - GRAVITY_FREE_RADIUS);
+        return GRAVITY_FORCE * Math.log(centerDistance - GRAVITY_FREE_RADIUS + 1);
     }
     else {
         return 0;
@@ -133,12 +139,17 @@ export const gravityForce = (centerDistance: number) => {
 }
 
 // Makes bigger thoughts less active and thus reduces jitter after loading them
-export const backlinksNumberForceDivisor = (bl: number) => bl < 2 ? 1 : bl / 3;
-
-export const linksNumberForceDivisor = (source: RenderedThought, target: RenderedThought) => {
-    const maxReferences = Math.max(source.links.length, target.links.length);
-    const maxBacklinks = Math.max(source.backlinks.length, target.backlinks.length);
-
-    return maxBacklinks / 3 + Math.pow(maxReferences, 1.1);
+export const backlinksNumberForceDivisor = (bl: number) => {
+    if (bl < 3) {
+        return 1;
+    }
+    return 1 + bl;
 }
+
+// export const linksNumberForceDivisor = (source: RenderedThought, target: RenderedThought) => {
+//     const maxReferences = Math.max(source.links.length, target.links.length);
+//     const maxBacklinks = Math.max(source.backlinks.length, target.backlinks.length);
+
+//     return maxBacklinks / 3 + Math.pow(maxReferences, 1.1);
+// }
 

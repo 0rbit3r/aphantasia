@@ -16,9 +16,10 @@ function Home() {
         <div className="content-container home-container">
             <div className="online-users-counter">Online: {onlineUsers}</div>
             {/* <h2 className="quip">{Localization.Quips[Math.floor(Math.random() * Localization.Quips.length)]}</h2> */}
+            {message &&
             <p className="center">
                 {message}
-            </p>
+            </p>}
             <div className="hero">
                 <ThoughtLogViewer source="latest"></ThoughtLogViewer>
                 <ThoughtLogViewer source="hot"></ThoughtLogViewer>

@@ -1,8 +1,8 @@
 import { API_URL, send, sendAndExpectBody } from "./ApiClient";
 import { apiResponse as ApiResponse, apiResponseWithBody as ApiResponseWithBody } from "./dto/ApiResponse";
-import { userSettings as UserSettings } from "./dto/UserSettingsDto";
+import { userSettingsDto as UserSettings } from "./dto/UserSettingsDto";
 
-export async function getUserSettings(): Promise<ApiResponseWithBody<UserSettings>> {
+export async function fetchUserSettings(): Promise<ApiResponseWithBody<UserSettings>> {
     const response = await sendAndExpectBody<UserSettings>(`${API_URL}/user-settings`, {
         method: 'GET',
         headers: {

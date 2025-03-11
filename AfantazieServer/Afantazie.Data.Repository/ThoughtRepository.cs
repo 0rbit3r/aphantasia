@@ -6,11 +6,6 @@ using Afantazie.Data.Model;
 using Afantazie.Data.Model.Entity;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Afantazie.Data.Repository
 {
@@ -236,6 +231,21 @@ namespace Afantazie.Data.Repository
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
                     .Where(t => t.DateCreated > date.ToUniversalTime())
+                    .ToListAsync();
+
+                return thoughtsList.Adapt<List<Thought>>();
+            }
+        }
+
+        public async Task<Result<List<Thought>>> GetUsersThoughts(int user)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thoughtsList = await db.Thoughts
+                    .Include(t => t.Author)
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Where(t => t.AuthorId == user)
                     .ToListAsync();
 
                 return thoughtsList.Adapt<List<Thought>>();

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../Contexts/AuthContext';
 import { Localization } from '../locales/localization';
+import { useUserSettingsStore } from '../pages/graph/state_and_parameters/UserSettingsStore';
 
 function Navbar() {
 
@@ -11,14 +12,7 @@ function Navbar() {
     const { isAuthenticated } = useAuth();
 
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     if (window.innerWidth > 500) {
-    //         setExpanded(true);
-    //     }
-    // }, []);
-
-    // const location = useLocation();
+    const userSettings = useUserSettingsStore(state => state.userSettings);
 
     const handleExpansion = () => {
         if (menuExpanded) {
@@ -44,7 +38,7 @@ function Navbar() {
         <>
             <div className='top-row'>
 
-                <div className='aphantasia-title' onClick={() => navigate("home")}>{Localization.Title}</div>
+                <div className='aphantasia-title' onClick={() => navigate("home")} style={{color: userSettings?.color}}>{Localization.Title}</div>
 
                 {/* <div className='aphantasia-title-logged-out' onClick={() => navigate("/")}>{Localization.Title}</div> */}
 

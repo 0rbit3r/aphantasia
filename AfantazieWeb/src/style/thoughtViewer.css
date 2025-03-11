@@ -71,7 +71,11 @@
         flex: 0 0 none;
         .thought-viewer-author {
             padding: 4px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
         }
+
     
         .thought-viewer-date {
             color: var(--white-color-dark);

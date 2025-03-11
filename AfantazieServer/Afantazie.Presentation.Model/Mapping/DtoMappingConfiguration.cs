@@ -2,6 +2,7 @@
 using Afantazie.Core.Model;
 using Afantazie.Presentation.Model.Dto.Thought;
 using Afantazie.Presentation.Model.Dto.ThoughtFiltering;
+using Afantazie.Presentation.Model.Dto;
 
 namespace Afantazie.Presentation.Model.Mapping
 {
@@ -53,7 +54,14 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
                 .Map(dest => dest.DateCreated, src => src.DateCreated.ToString("yyyy-MM-dd"))
-                .Map(dest => dest.Size, src => src.Size); ;
+                .Map(dest => dest.Size, src => src.Size);
+
+            TypeAdapterConfig<Profile, ProfileDto>.NewConfig()
+                .Map(dest => dest.Username, src => src.Username)
+                .Map(dest => dest.Color, src => src.Color)
+                .Map(dest => dest.TotalCount, src => src.TotalCount)
+                .Map(dest => dest.JoinedDate, src => src.JoinedDate)
+                .Map(dest => dest.Thoughts, src => src.Thoughts.Adapt<IList<ThoughtNodeDto>>());
         }
     }
 }

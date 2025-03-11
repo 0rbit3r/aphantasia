@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Afantazie.Core.Localization\Afantazie.Core.Localization.csproj" />
     <ProjectReference Include="..\Afantazie.Presentation.Model\Afantazie.Presentation.Model.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.Authentication\Afantazie.Service.Interface.Authentication.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.Profiles\Afantazie.Service.Interface.Profiles.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.SiteActivity\Afantazie.Service.Interface.SiteActivity.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.Thoughts\Afantazie.Service.Interface.Thoughts.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.UserSettings\Afantazie.Service.Interface.UserSettings.csproj" />

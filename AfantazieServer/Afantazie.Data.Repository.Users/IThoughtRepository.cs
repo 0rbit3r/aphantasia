@@ -28,5 +28,7 @@ namespace Afantazie.Data.Interface.Repository
         Task<Result<List<Thought>>> TakeLatest(int amount);
 
         Task<Result<int>> BumpThoughtAsync(int targetId);
+
+        Task<Result<List<Thought>>>GetUsersThoughts(int user);
     }
 }

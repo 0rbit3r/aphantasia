@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fullThoughtDto} from "../api/dto/ThoughtDto";
+import { fullThoughtDto } from "../api/dto/ThoughtDto";
 import { RenderedThought } from "../pages/graph/model/renderedThought";
 import { useNavigate } from "react-router-dom";
 import { LocationState } from "../interfaces/LocationState";
@@ -9,6 +9,7 @@ interface ThoughtViewerProps {
     thought: fullThoughtDto,
     landscapeMode: boolean,
     setHighlightedThoughtId: (id: number) => void,
+    clickedOnUser: (username: string) => void,
     closePreview: () => void,
     neighborhoodThoughts: RenderedThought[]
 }
@@ -60,12 +61,13 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                 <p className={extendedHeight ? "thought-viewer-content-extended" : "thought-viewer-content"}>
                     {(neigborhoodThoughtsLoaded &&
                         renderContentWithReferences(props.thought.content))}
-                    <MediaContent id={props.thought.id}>
-                    </MediaContent>
                 </p>
+                <MediaContent id={props.thought.id}>
+                </MediaContent>
                 <div className="thought-viewer-botom-row">
-                    <div className="thought-viewer-author" style={{ color: props.thought.color }}>
-                        {props.thought.author}</div>
+                    <button className="thought-viewer-author" style={{ color: props.thought.color }}
+                        onClick={() => props.clickedOnUser(props.thought.author)}>
+                        {props.thought.author}</button>
                     <div className="thought-viewer-date">{props.thought.dateCreated}</div>
                 </div>
                 {extendedHeight && props.thought !== null && props.neighborhoodThoughts.map(t => t.links.includes(props.thought.id)).length > 0 &&
