@@ -20,6 +20,8 @@ namespace Afantazie.Presentation.Model.Dto.Thought
 
         public string Color { get; set; } = "";
 
+        public byte Shape { get; set; } = 0;
+
         public List<int> Links { get; set; } = new List<int>();
 
         public List<int> Backlinks { get; set; } = new List<int>();

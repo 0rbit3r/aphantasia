@@ -4,10 +4,13 @@ import { RenderedThought } from "../pages/graph/model/renderedThought";
 import { useNavigate } from "react-router-dom";
 import { LocationState } from "../interfaces/LocationState";
 import { MediaContent } from "./MediaContent";
+import { getThoughtsInTimeWindow, getThoughtsOnScreen } from "../pages/graph/simulation/thoughtsProvider";
+import { useGraphControlsStore } from "../pages/graph/state_and_parameters/GraphControlsStore";
+import { useGraphStore } from "../pages/graph/state_and_parameters/GraphStore";
+import tinycolor from "tinycolor2";
 
 interface ThoughtViewerProps {
     thought: fullThoughtDto,
-    landscapeMode: boolean,
     setHighlightedThoughtId: (id: number) => void,
     clickedOnUser: (username: string) => void,
     closePreview: () => void,
@@ -22,45 +25,131 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
 
     const [extendedHeight, setExtendedHeight] = useState(false);
     const [neigborhoodThoughtsLoaded, setNeigborhoodThoughtsLoaded] = useState<boolean>(false);
+    const setNeighborhoodEnabled = useGraphControlsStore((state) => state.setNeighborhoodEnabled);
 
-    // renders thought content including colorful clickable references
-    const renderContentWithReferences = (text: string) => {
-        const parts = text.split(/\[([0-9]*?)\]\((.*?)\)/g);
-        const result = [];
-        for (let i = 0; i < parts.length; i += 3) {
-            const id = parseInt(parts[i + 1]);
-            result.push(parts[i]);
-            result.push(<span
-                className='in-text-thought-ref'
-                style={{ color: props.neighborhoodThoughts.find(t => t.id == id)?.color }}
-                key={'link' + i}
-                onClick={() => props.setHighlightedThoughtId(id)}>
-                {parts[i + 2]}
-            </span>);
-        }
-        return result;
-    }
+    const setLockedOnHighlighted = useGraphStore((state) => state.setLockedOnHighlighted);
+
 
     useEffect(() => {
         if (props.neighborhoodThoughts.length > 0) {
             setNeigborhoodThoughtsLoaded(true);
         }
     }, [props.neighborhoodThoughts]);
+    
+    const handleLinkClick = (id: number) => {
 
-    useEffect(() => {
-        console.log('extendedHeight', extendedHeight);
-    }, [extendedHeight]);
+        if (!getThoughtsOnScreen().find(t => t.id == id)) {
+            setNeighborhoodEnabled(true);
+        }
+        props.setHighlightedThoughtId(id);
+    }
+
+    const handleMiddleMouseLinkClick = (e: React.MouseEvent, id: number) => {
+        console.log('click', e.button);
+        if (e.button === 1) {
+            e.preventDefault();
+            window.open('/graph/' + id, '_blank');
+        }
+    }
+
+    const handleReplyClick = (id: number) => {
+        if (!getThoughtsOnScreen().find(t => t.id == id)) {
+            setNeighborhoodEnabled(true);
+        }
+        props.setHighlightedThoughtId(id);
+    }
+
+    const handleTitleClick = () => {
+        //todo - if thought is not visible - bring it into view (timeshift?)
+        if (!getThoughtsOnScreen().find(t => t.id == props.thought.id)) {
+            if (getThoughtsInTimeWindow().find(t => t.id == props.thought.id)) {
+                setNeighborhoodEnabled(false);
+            }
+            else { // toto they can be out? maybe? In that case either time shift or fetch
+                setNeighborhoodEnabled(true);
+            }
+        }
+        setLockedOnHighlighted(true);
+    }
+
+    const renderContentWithAllLinks = (text: string) => {
+        // thought links first
+        const parts = text.split(/\[([0-9]*?)\]\[(.*?)\]/g);
+        // console.log("all : " , parts);
+        const result = [];
+        for (let i = 0; i < parts.length; i += 3) {
+            const id = parseInt(parts[i + 1]);
+            
+            const weblinksBefore = renderContentWithWebLinks(parts[i]);
+            result.push(weblinksBefore);
+            
+            const thoughtTitle = parts[i + 2];
+            result.push(<span
+                className='in-text-thought-ref'
+                style={{ color: props.neighborhoodThoughts.find(t => t.id == id)?.color }}
+                key={'link' + i}
+                onClick={_ => handleLinkClick(id)}
+                onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+    
+                >
+                {thoughtTitle}
+            </span>);
+        }
+        return result;
+    }
+
+    const renderContentWithWebLinks = (text: string) => {
+        if (!text) {
+            return '';
+        }
+        const urlRegex = /(https?:\/\/[^\s/$.?#].[^\s]*)/gi;
+        const parts = text.split(urlRegex);
+        const result = [];
+        for (let i = 0; i < parts.length; i += 2) {
+            result.push(renderContentFormatted(parts[i]));
+            result.push(<a key={'link' + i} href={parts[i + 1]} target='_blank' style={{color: "#777"}}>{parts[i + 1]}</a>);
+        }
+        return result;
+
+    }
+
+    const renderContentFormatted = (text: string) => {
+        if (!text) {
+            return '';
+        }
+        const urlRegex = /\*\*([\s\S]+?)\*\*/m;
+        const parts = text.split(urlRegex);
+        const result = [];
+        for (let i = 0; i < parts.length; i += 2) {
+            result.push(renderContentWitthItalics(parts[i]));
+            result.push(<strong key={'bold' + i} style={{color: tinycolor(props.thought.color).lighten(15).toString()}}>{parts[i + 1]}</strong>);
+        }
+        return result;
+    }
+
+    const renderContentWitthItalics = (text: string) => {
+        if (!text) {
+            return '';
+        }
+        const parts = text.split(/__([\s\S]+?)__/m);
+        const result = [];
+        for (let i = 0; i < parts.length; i += 2) {
+            result.push(parts[i]);
+            result.push(<em key={'italic' + i} style={{color: tinycolor(props.thought.color).toString()}}>{parts[i + 1]}</em>);
+        }
+        return result;
+    } 
 
     return (
         <>
             <div className="thought-viewer-container" style={{ borderColor: props.thought.color }}>
                 <div className="thought-viewer-top-row" >
-                    <div className="thought-viewer-title" style={{ color: props.thought.color }}>{props.thought.title}</div>
+                    <div className="thought-viewer-title" style={{ color: props.thought.color }} onClick={handleTitleClick}>{props.thought.title}</div>
                     <div className="thought-viewer-id">{props.thought.id}</div>
                 </div>
                 <p className={extendedHeight ? "thought-viewer-content-extended" : "thought-viewer-content"}>
                     {(neigborhoodThoughtsLoaded &&
-                        renderContentWithReferences(props.thought.content))}
+                        renderContentWithAllLinks(props.thought.content))}
                 </p>
                 <MediaContent id={props.thought.id}>
                 </MediaContent>
@@ -75,7 +164,10 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                         <div className='responses-container'>
                             {props.neighborhoodThoughts.map(t => t.links.includes(props.thought.id) &&
                                 <span key={`back-link-${t.id}`} className='search-result-item' style={{ borderColor: t.color }}
-                                    onClick={_ => props.setHighlightedThoughtId(t.id)}>{t.title}</span>
+                                    onClick={_ => handleReplyClick(t.id)}
+                                    onMouseDown={e => handleMiddleMouseLinkClick(e, t.id)}>
+                                        
+                                        {t.title}</span>
                             )}
                         </div>
                     </>}

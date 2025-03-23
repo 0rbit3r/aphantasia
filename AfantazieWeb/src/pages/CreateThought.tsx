@@ -5,6 +5,7 @@ import { fetchThoughtTitles, postNewThought, fetchThought } from '../api/graphCl
 import { LocationState } from '../interfaces/LocationState';
 import { Localization } from '../locales/localization';
 import { LocalizedCreateThoughtHint } from '../locales/LocalizedCreateThoughtHint';
+import { ThoughtViewer } from '../components/ThoughtViewer';
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
 
@@ -15,12 +16,22 @@ interface ThoughtReference {
     color: string;
 }
 
+const SHAPES = [
+    { id: 0, svg: '●' },
+    { id: 1, svg: '■' },
+    { id: 2, svg: '▲' },
+    { id: 3, svg: '▼' },
+    { id: 4, svg: '◆' },
+    { id: 5, svg: '🞭' }
+];
+
+
 function CreateThought() {
     const REFERENCES_LIMIT = 5;
     const CONTENT_LENGTH_LIMIT = 1000;
     const TITLE_LENGTH_LIMIT = 50;
 
-    const [formData, setFormData] = useState({ title: '', content: '' });
+    const [formData, setFormData] = useState({ title: '', content: '', shape: 0 });
     const navigate = useNavigate();
     const [validationMessage, setValidationMessage] = useState<string | null>(null);
     const [searchOverlayVisible, setSearchOverlayVisible] = useState(false);
@@ -52,13 +63,14 @@ function CreateThought() {
         if (thoughtTitles.length > 0 && location.state && (location.state as LocationState).thoughtId) {
             const id = (location.state as LocationState).thoughtId;
             const thought = thoughtTitles.find(t => t.id === id);
-            setFormData({ ...formData, content: `${Localization.RepliesTo} [${id}](${thought?.title});\n` });
+            setFormData({ ...formData, content: `${Localization.RepliesTo} [${id}][${thought?.title}];\n` });
         }
     }, [location, thoughtTitles]);
 
-    const thoughtRegex = (id: number) => new RegExp(`\\[${id}\\]\\(.+?\\)`, '');
-    const thoughtRegexGlobal = (id: number) => new RegExp(`\\[${id}\\]\\(.+?\\)`, 'g');
-    const thoughtRegexUniversal = /\[([0-9]+)\]\((.+?)\)/gm;
+    const thoughtRegex = (id: number) => new RegExp(`\\[${id}\\]\\[.+?\\]`, '');
+    const thoughtRegexGlobal = (id: number) => new RegExp(`\\[${id}\\]\\[.+?\\]`, 'g');
+    // todo - Why the hell do I need to define the regex twice?
+    const thoughtRegexUniversal = /\[([0-9]+)\]\[(.+?)\]/gm;
 
     // Handle input changes for the title field
     const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +82,11 @@ function CreateThought() {
         const inputContent = e.target.value;
         // Update form content
         setFormData({ ...formData, content: inputContent });
+    };
+
+    const handleShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        console.log(e.target.value);
+        setFormData({ ...formData, shape: Number.parseInt(e.target.value) ?? 0 });
     };
 
     // Update valid thought references on content change
@@ -85,7 +102,7 @@ function CreateThought() {
                 validThoughts.push({
                     id: searchedThought.id,
                     title: searchedThought.title,
-                    refText: match.match(/\[([0-9]*)\]\((.+)\)/)![2],
+                    refText: match.match(/\[([0-9]*)\]\[(.+)\]/)![2],
                     color: searchedThought.color
                 });
             }
@@ -137,7 +154,7 @@ function CreateThought() {
                 if (!title)
                     return oldFormData; // If title is not found, exit early
 
-                const newText = `[${id}](${title})`;
+                const newText = `[${id}][${title}]`;
 
                 // Get the current cursor position
                 const start = textarea.selectionStart;
@@ -183,7 +200,7 @@ function CreateThought() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setCreateButtonEnabled(false);
-        const response = await postNewThought({ title: formData.title, content: formData.content, links: validThoughtReferences.map(t => t.id) });
+        const response = await postNewThought({ title: formData.title, content: formData.content, shape: formData.shape });
 
         if (response.error) {
             setCreateButtonEnabled(true);
@@ -244,17 +261,29 @@ function CreateThought() {
             </div>}
 
             {previewOverlayVisible && previewedThought &&
+                // <div className='referenced-thought-overlay'>
+                //     <div className='text-scroll-container'>
+                //         <div className='text-flex-container'>
+                //             <h2>{previewedThought.title}</h2>
+                //             <h3>{previewedThought.author} - {previewedThought.dateCreated}</h3>
+                //             <p className='thought-content'>{previewedThought.content}</p>
+                //             {/* //todo: single previewer to use in graph page and here (and elsewhere?)*/}
+                //         </div>
+                //     </div>
+                //     <button className='button-secondary' onClick={() => setPreviewOverlayVisible(false)}>{Localization.Close}</button>
+                // </div>
                 <div className='referenced-thought-overlay'>
                     <div className='text-scroll-container'>
-                        <div className='text-flex-container'>
-                            <h2>{previewedThought.title}</h2>
-                            <h3>{previewedThought.author} - {previewedThought.dateCreated}</h3>
-                            <p className='thought-content'>{previewedThought.content}</p>
-                            {/* //todo: single previewer to use in graph page and here (and elsewhere?)*/}
-                        </div>
+                        <ThoughtViewer
+                            thought={previewedThought}
+                            closePreview={() => setPreviewOverlayVisible(false)}
+                            clickedOnUser={() => { }}
+                            neighborhoodThoughts={[]}
+                            setHighlightedThoughtId={() => { }}
+                        ></ThoughtViewer>
                     </div>
-                    <button className='button-secondary' onClick={() => setPreviewOverlayVisible(false)}>{Localization.Close}</button>
-                </div>}
+                </div>
+            }
             {tutorialOverlayVisible && <div className='tutorial-overlay'>
                 <div className='scroll-view'>
                     <LocalizedCreateThoughtHint />
@@ -268,14 +297,21 @@ function CreateThought() {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div>
-                        <input
-                            className='title-input'
-                            placeholder={Localization.NewThoughtTitle}
-                            type="text"
-                            name="title"
-                            value={formData.title}
-                            onChange={handleTitleChange}
-                        />
+                        <div className='title-and-shape'>
+                            <input
+                                className='title-input'
+                                placeholder={Localization.NewThoughtTitle}
+                                type="text"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleTitleChange}
+                            />
+                            <select className='shape-select' value={formData.shape} onChange={handleShapeChange}>
+                                {SHAPES.map(shape => (
+                                    <option key={shape.id} value={shape.id}>{shape.svg}</option>
+                                ))}
+                            </select>
+                        </div>
                         <p className='character-limit character-limit-title'>{formData.title.length} / {TITLE_LENGTH_LIMIT}</p>
                     </div>
                     <textarea

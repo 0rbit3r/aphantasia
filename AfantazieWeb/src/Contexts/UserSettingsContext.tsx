@@ -1,10 +1,18 @@
 import { useEffect } from "react";
-import { useUserSettingsStore } from "../pages/graph/state_and_parameters/UserSettingsStore";
 import { useAuth } from "./AuthContext";
+import { useGraphStore } from "../pages/graph/state_and_parameters/GraphStore";
+import { fetchUserSettings } from "../api/UserSettingsApiClient";
 
 export const UserSettingsProvider = ({ children }: { children: React.ReactNode }) => {
-    const fetchAndSetUserSettings = useUserSettingsStore((state) => state.fetchAndSetUserSettings);
     const authentication = useAuth();
+    const setUserSettings = useGraphStore(state => state.setUserSettings);
+
+    const fetchAndSetUserSettings = async () => {
+        const response = await fetchUserSettings();
+        if (response.ok) {
+            setUserSettings(response.data!);
+        }
+    }
 
     useEffect(() => {
         fetchAndSetUserSettings();

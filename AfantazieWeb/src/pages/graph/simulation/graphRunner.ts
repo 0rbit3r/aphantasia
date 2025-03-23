@@ -63,7 +63,7 @@ export default function runGraph(app: Application) {
         // handle TimeShift  control input from user
         const timeShiftControl = graphState.timeShiftControl;
         const timeShift = graphState.timeShift;
-        const maxThoughtsOnScreen = graphState.maxThoughtsOnScreen;
+        const maxThoughtsOnScreen = graphState.userSettings.maxThoughts;
         
         if ((timeShiftControl > 0 && timeShift < graphState.temporalRenderedThoughts.length)
             || (timeShiftControl < 0 && timeShift > -maxThoughtsOnScreen)) { //todo check the one

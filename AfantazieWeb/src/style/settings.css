@@ -1,5 +1,5 @@
 .settings-container {
-    background-color: var(--black-color-light);
+    background-color: black;
 
     .color-picker-overlay {
         position: fixed;
@@ -9,7 +9,6 @@
         bottom: 0vh;
         background-color: #000000;
         /* border: 2px solid var(--accent-color-2); */
-        border-radius: 5px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -22,7 +21,6 @@
 
     .color-picker-popup {
         padding: 5px;
-        border-radius: 8px;
         display: flex;
         flex-wrap: wrap;
     }
@@ -49,7 +47,6 @@
         background-color: var(--black-color);
         color: white;
         border: 0;
-        border-radius: 5px;
         font-size: 1em;
         margin: 10px;
     }
@@ -62,7 +59,6 @@
         background-color: var(--black-color);
         color: white;
         border: 0;
-        border-radius: 5px;
         font-size: 1em;
         margin: 10px;
     }
@@ -89,7 +85,6 @@
         border: 2px solid var(--primary-color);
         padding: 3px;
         text-align: center;
-        border-radius: 12px;
       }
       
 }

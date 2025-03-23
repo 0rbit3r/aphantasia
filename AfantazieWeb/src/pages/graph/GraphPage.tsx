@@ -5,18 +5,18 @@ import { useParams } from 'react-router-dom';
 import { useGraphStore } from './state_and_parameters/GraphStore';
 import GraphContainer from './GraphContainer';
 import { fetchTemporalThoughts, fetchThought } from '../../api/graphClient';
-import { clearNeighborhoodThoughts, mapDtosToRenderedThoughts, updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
+import { mapDtosToRenderedThoughts, updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
 import { ThoughtViewer } from '../../components/ThoughtViewer';
 import GraphControls from '../../components/GraphControls';
 import { fetchUserProfile } from '../../api/userProfileApi';
 import { useGraphControlsStore } from './state_and_parameters/GraphControlsStore';
+import { MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT } from './state_and_parameters/graphParameters';
 
 const COLOR_BACKGROUND = 0x000000;
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
 
 const initialStageSize = { width: window.innerWidth, height: window.innerHeight - 40 };
-const landscapeMode = initialStageSize.width > initialStageSize.height;
 
 
 const GraphPage: React.FC = () => {
@@ -31,6 +31,7 @@ const GraphPage: React.FC = () => {
     const neighborhoodThoughts = useGraphStore((state => state.neighborhoodThoughts));
     const setNeighborhoodThoughts = useGraphStore((state => state.setNeighborhoodThoughts));
     const setBeginningThoughtId = useGraphStore((state) => state.setBeginningThoughtId);
+    const setNeighborhoodEnabled = useGraphControlsStore((state) => state.setNeighborhoodEnabled);
 
     // const [replies, setReplies] = useState<thoughtNodeDto[]>([]);
 
@@ -41,7 +42,6 @@ const GraphPage: React.FC = () => {
     // controls
     const [zoomingHeld, setZoomingHeld] = useState(0);
     const setZoomingControl = useGraphStore((state) => state.setZoomingControl);
-    const neighborhoodEnabled = useGraphControlsStore((state) => state.neighborhoodEnabled);
 
     const highlightedThought = useGraphStore((state) => state.highlightedThought);
     const setHighlightedThoughtId = useGraphStore((state) => state.setHighlightedThoughtById);
@@ -54,7 +54,7 @@ const GraphPage: React.FC = () => {
     const setTimeShift = useGraphStore((state) => state.setTimeShift);
     const setEndingThoughtId = useGraphStore((state) => state.setEndingThoughtId);
 
-
+    const userSettings = useGraphStore(state => state.userSettings);
 
     // const setMaxThoughtsOnScreen = useGraphStore((state) => state.setMaxThoughtsOnScreen);
 
@@ -145,9 +145,26 @@ const GraphPage: React.FC = () => {
                 // setProfileUser(response.data!);
                 const temporalThoughts = mapDtosToRenderedThoughts(response.data!.thoughts);
                 setTemporalThoughts(temporalThoughts);
-                clearNeighborhoodThoughts();
-                setTimeShift(0);
+                // clearNeighborhoodThoughts();
+                setNeighborhoodEnabled(false);
                 setBeginningThoughtId(temporalThoughts[0].id);
+
+                const indexOfHighlighted = temporalThoughts.findIndex(t => t.id === highlightedThought?.id);
+                const maxThoughtsOnScreen = userSettings?.maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT;
+                const unboundedTimeshift = temporalThoughts.length - 1 - indexOfHighlighted - Math.floor(maxThoughtsOnScreen / 2);
+
+                const boudnedTimeShift = Math.max(0,
+                    Math.min(temporalThoughts.length - maxThoughtsOnScreen, unboundedTimeshift));
+
+                // console.log("thoughts in profile: ", temporalThoughts.length);
+                // console.log("maxThoughtsOnScreen: ", maxThoughtsOnScreen);
+                // console.log("indexOfHighlighted: ", indexOfHighlighted);
+                // console.log("unbounded time shift: ", unboundedTimeshift);
+                // console.log("boundedTimeShift: ", boudnedTimeShift)
+
+                // console.log("on-screen thoughts: ", getThoughtsOnScreen().length);
+
+                setTimeShift(boudnedTimeShift);
             }
         });
     }
@@ -157,14 +174,13 @@ const GraphPage: React.FC = () => {
             {((overlayVisible && fullHighlightedThought !== null) &&
                 <div className='overlay'>
 
-                        <ThoughtViewer
-                            thought={fullHighlightedThought}
-                            landscapeMode={landscapeMode}
-                            setHighlightedThoughtId={setHighlightedThoughtId}
-                            closePreview={unsetHighlightedThought}
-                            clickedOnUser={username => handleUserProfileClick(username)}
-                            neighborhoodThoughts={neighborhoodThoughts}>
-                        </ThoughtViewer>
+                    <ThoughtViewer
+                        thought={fullHighlightedThought}
+                        setHighlightedThoughtId={setHighlightedThoughtId}
+                        closePreview={unsetHighlightedThought}
+                        clickedOnUser={username => handleUserProfileClick(username)}
+                        neighborhoodThoughts={neighborhoodThoughts}>
+                    </ThoughtViewer>
                 </div>
             )}
 
@@ -176,7 +192,7 @@ const GraphPage: React.FC = () => {
                     </Stage>
 
                     <GraphControls>
-                        
+
                     </GraphControls>
 
                     {/* {(newestDate

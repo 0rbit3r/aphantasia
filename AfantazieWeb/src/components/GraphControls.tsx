@@ -7,17 +7,21 @@ import { clearNeighborhoodThoughts, getThoughtsInTimeWindow } from "../pages/gra
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
 
-interface GraphControlsProps {
+// interface GraphControlsProps {
 
-}
+// }
 
 const GraphControls = () => {
 
     // graph settings controls
     const setAnimatedEdgesEnabled = useGraphControlsStore(state => state.setAnimatedEdgesEnabled);
     const setGravityEnabled = useGraphControlsStore(state => state.setGravityEnabled);
-    const setNeighborhoodEnabled = useGraphControlsStore(state => state.setNeighborhoodEnabled);
     const neighborhoodEnabled = useGraphControlsStore(state => state.neighborhoodEnabled);
+    const setNeighborhoodEnabled = useGraphControlsStore(state => state.setNeighborhoodEnabled);
+    const setEnhancedArrowheadsEnabled = useGraphControlsStore(state => state.setEnhancedArrowheadsEnabled);
+
+    // const titleOnHoverEnabled = useGraphControlsStore(state => state.titleOnHoverEnabled);
+    const setTitleOnHoverEnabled = useGraphControlsStore(state => state.setTitleOnHoverEnabled);
 
     // UI control states
     const [settingsWindowVisible, setSettingsWindowVisible] = useState(false);
@@ -109,6 +113,16 @@ const GraphControls = () => {
                 <label>
                     <input className="settings-window-checkbox" type="checkbox" onChange={e => gravityCheckboxChanged(e)}></input>
                     Gravity
+                </label>
+                <br />
+                <label>
+                    <input className="settings-window-checkbox" type="checkbox" onChange={e => setTitleOnHoverEnabled(e.target.checked)}></input>
+                    Title on hover
+                </label>
+                <br/>
+                <label>
+                    <input className="settings-window-checkbox" type="checkbox" onChange={e => setEnhancedArrowheadsEnabled(e.target.checked)}></input>
+                    Enhanced arrowheads
                 </label>
             </div>
             <div className={`temporal-section ${!temporalControlsVisible ? "settings-window-collapsed" : ""}`}>

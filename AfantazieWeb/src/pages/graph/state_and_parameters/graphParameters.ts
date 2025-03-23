@@ -21,7 +21,7 @@ export const BASE_RADIUS = 50;
 // Size = BASE_RADIUS * RADIUS_MULTIPLIER ^ backlinks 
 export const REFERENCE_RADIUS_MULTIPLIER = 1.2;
 
-export const MAX_RADIUS = 700;
+export const MAX_RADIUS = 1500;
 
 // Radius of the initial positions circle
 export const INITIAL_POSITIONS_RADIUS = 3000;
@@ -29,25 +29,25 @@ export const INITIAL_POSITIONS_RADIUS = 3000;
 // forces simulation
 export const IDEAL_LINKED_DISTANCE = 350;
 // N > 1 make the connected nodes' push force weaker than the pull force and vice versa
-export const EDGE_COMPRESSIBILITY_FACTOR = 0.75;
+export const EDGE_COMPRESSIBILITY_FACTOR = 0.7;
 
 export const MAX_PULL_FORCE = 100;
 
-export const PUSH_THRESH = 2000;
+export const PUSH_THRESH = 3000;
 export const MAX_PUSH_FORCE = 100;
 
-export const GRAVITY_FREE_RADIUS = 1600;
+export const GRAVITY_FREE_RADIUS = 3000;
 
-// When thoughts "appear" on screen they should not immediatelly start influenxcing other thoughts.
+// When thoughts "appear" on screen they should not immediatelly start influencing other thoughts.
 // This parameter is the length of the "ease-in" period for influencing other thoughts
 export const INFLUENCE_FADE_IN = 250;
-export const FRAMES_WITH_NO_INFLUENCE = 70;
+export const FRAMES_WITH_NO_INFLUENCE = 40;
 
 // Slows the simulation but makes it more stable
-export const MAX_MOMENTUM_DAMPENING = 1.7; //1.55
+export const MAX_MOMENTUM_DAMPENING = 1.8; //1.55
 
 // These parameters are the ease-in starting value for the momentum dampening rate
-export const MOMENTUM_DAMPENING_START_AT = 1.45;
+export const MOMENTUM_DAMPENING_START_AT = 1.5;
 export const MOMENTUM_DAMPENING_EASE_IN_FRAMES = 400;
 
 // A movement cap of nodes to prevent them from moving too fast
@@ -73,8 +73,8 @@ export const UNHIGHLIGHTED_EDGE_WIDTH = 8;
 export const UNHIGHLIGHTED_EDGE_ALPHA = 0.7;
 
 // nodes appearing appearance
-export const NEW_NODE_INVISIBLE_FOR = 50;
-export const NEW_NODE_FADE_IN_FRAMES = 50;
+export const NEW_NODE_INVISIBLE_FOR = 35;
+export const NEW_NODE_FADE_IN_FRAMES = 70;
 
 // zoom
 export const MAX_ZOOM = 5;
@@ -87,7 +87,7 @@ export const ZOOM_STEP_MULTIPLICATOR_WHEEL = 1.04;
 export const ZOOM_STEP_MULTIPLICATOR_BUTTONS = 1.02;
 
 // Graph exploration - BFS depth
-export const NEIGHBORHOOD_DEPTH = 3;
+export const NEIGHBORHOOD_DEPTH = 2;
 
 // FDL force functions
 export const pushForce = (borderDist: number) => {
@@ -105,14 +105,13 @@ export const pushForce = (borderDist: number) => {
 export const pullForce = (borderDist: number, size: number) => {
 
     if (borderDist < 0) {
+        // console.log('negative borderDist ', borderDist);
         return -MAX_PULL_FORCE;
     }
 
-    const distance = size < 5
-        ? IDEAL_LINKED_DISTANCE
-        : IDEAL_LINKED_DISTANCE * Math.sqrt(size) / 2;
+    const idealDistanceForSize = IDEAL_LINKED_DISTANCE * Math.max(size / 5, 1);
 
-    const computed = 0.02 * (borderDist - distance);
+    const computed = 0.02 * (borderDist - idealDistanceForSize);
     const limited = computed > MAX_PULL_FORCE
         ? MAX_PULL_FORCE
         : computed < -MAX_PULL_FORCE
@@ -128,7 +127,7 @@ export const pullForce = (borderDist: number, size: number) => {
 
 
 export const gravityForce = (centerDistance: number) => {
-    const GRAVITY_FORCE = 0.1;
+    const GRAVITY_FORCE = 0.15;
 
     if (centerDistance > GRAVITY_FREE_RADIUS) {
         return GRAVITY_FORCE * Math.log(centerDistance - GRAVITY_FREE_RADIUS + 1);

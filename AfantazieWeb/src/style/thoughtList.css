@@ -1,7 +1,6 @@
 .list-container{
     padding: 10px;
     margin-bottom: 30px;
-    border-radius: 15px;
     border: 2px solid var(--secondary-color-darker);
     background: linear-gradient(120deg, var(--black-color-light) 0%, var(--black-color) 100%);
     /* max-height: 200px; */
@@ -12,7 +11,6 @@
         background: linear-gradient(240deg, var(--black-color-light) 0%, var(--black-color) 100%);
         background-color: var(--black-color);
         opacity: 0.9;
-        border-radius: 5px;
         margin: 10px;
         padding: 10px;
 

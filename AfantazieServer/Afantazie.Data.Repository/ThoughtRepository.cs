@@ -62,7 +62,11 @@ namespace Afantazie.Data.Repository
         }
 
         public async Task<Result<int>> InsertThoughtAsync(
-            string title, string content, int authorId, IEnumerable<int> references)
+            string title,
+            string content,
+            int authorId,
+            byte shape,
+            IEnumerable<int> references)
         {
             using (var db = _contextProvider.GetDataContext())
             {
@@ -71,6 +75,7 @@ namespace Afantazie.Data.Repository
                         Title = title,
                         Content = content,
                         AuthorId = authorId,
+                        Shape = shape,
                         DateCreated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     };
 

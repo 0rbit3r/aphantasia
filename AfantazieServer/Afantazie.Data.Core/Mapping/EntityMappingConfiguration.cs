@@ -29,6 +29,7 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Author, src => src.Author.Adapt<UserEntity>())
                 .Map(dest => dest.Content, src => src.Content)
+                .Map(dest => dest.Shape, src => (byte)src.Shape)
                 .Map(dest => dest.DateCreated,
                     src => DateTime.SpecifyKind(src.DateCreated, DateTimeKind.Utc))
                 .Ignore(dest => dest.Links)

@@ -16,10 +16,14 @@ export const addDraggableViewport = (app: Application, zSortedContainer: Contain
     dragContainer.cursor = 'grab';
     dragContainer.on('pointerdown', () => {
         viewport.dragged = true;
-        useGraphStore.getState().freeLockOnHighlighted();
+        useGraphStore.getState().setLockedOnHighlighted(false);
     });
 
     dragContainer.on('pointerup', () => {
+        viewport.dragged = false;
+    });
+
+    dragContainer.on('pointerupoutside', () => {
         viewport.dragged = false;
     });
 

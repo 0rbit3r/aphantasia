@@ -1,7 +1,6 @@
 .auth-form {
     background-color: var(--black-color-light);
     padding: 8px;
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
     max-width: 600px;
@@ -33,7 +32,6 @@
             background-color: var(--black-color);
             color: white;
             border: 0;
-            border-radius: 5px;
             font-size: 1em;
         }
 

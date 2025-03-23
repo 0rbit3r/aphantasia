@@ -3,7 +3,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchTotalThoughtsCount } from '../api/graphClient';
 import { fetchUserSettings, postUserSettings } from '../api/UserSettingsApiClient';
 import { Localization } from '../locales/localization';
-import { useUserSettingsStore } from './graph/state_and_parameters/UserSettingsStore';
+import { useGraphStore } from './graph/state_and_parameters/GraphStore';
 
 const colors = [
 "#85E085","#FFDD99","#BB8FCE","#FFB6C1","#ADD8E6","#D5DBDB","#7DCEA0","#F39C12","#DC7633","#8E44AD","#52BE80","#E59866","#D35400","#EB984E","#85C1C2",
@@ -39,7 +39,7 @@ function UserAndSettings() {
     const [thoughtsCount, setThoughtsCount] = useState<number>(0);
     const [savedPositionsNumber, setSavedPositionsNumber] = useState<number>(0);
 
-    const fetchAndSetUserSettings = useUserSettingsStore(state => state.fetchAndSetUserSettings);
+    const setUserSettings = useGraphStore(state => state.setUserSettings);
 
     useEffect(() => {
         const getSettings = async () => {
@@ -93,7 +93,7 @@ function UserAndSettings() {
         var result = await postUserSettings({ color: selectedColor, username: username, maxThoughts: parseInt(maxThoughtsInput) });
         if (result.ok) {
             setSuccessMessage(Localization.SettingsSaved);
-            fetchAndSetUserSettings();
+            setUserSettings({ color: selectedColor, username: username, maxThoughts: parseInt(maxThoughtsInput) });
         }
         else {
             setColorValidationMessage(result.error!);
@@ -142,7 +142,7 @@ function UserAndSettings() {
     }
 
     return (
-        <div className="content-container settings-container" style={{ padding: '20px', borderRadius: '8px', border: '1px solid #ccc' }}>
+        <div className="content-container settings-container" style={{ padding: '20px', border: '1px solid #ccc' }}>
             <h1>{Localization.UserSettings}</h1>
             <button className='button-primary' disabled={ColorValidationMessage !== null} onClick={saveSettings}>{Localization.SaveSettingsButton}</button> <br />
             {ColorValidationMessage && <pre className='red-text'>{ColorValidationMessage}</pre>}

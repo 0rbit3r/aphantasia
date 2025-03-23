@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Afantazie.Service.Thoughts
@@ -19,42 +20,64 @@ namespace Afantazie.Service.Thoughts
         ILogger<ThoughtService> _logger
         ) : IThoughtService
     {
-        public async Task<Result<int>> CreateThoughtAsync(int creatorId, string title, string content, List<int> thoughtIdReferences)
+        public async Task<Result<int>> CreateThoughtAsync(
+            int creatorId, string title, string content, ThoughtShape shape)
         {
             _logger.LogInformation("Creating new thought: {title}", title);
-            var result = await _repo.InsertThoughtAsync(
-                title, content, creatorId, thoughtIdReferences);
 
-            if(!result.IsSuccess)
+            var thoughtIdReferencesResult = await GetReferencesAsync(content);
+            if (!thoughtIdReferencesResult.IsSuccess)
+            {
+                return thoughtIdReferencesResult.Error!;
+            }
+            var thoughtIdReferences = thoughtIdReferencesResult.Payload!;
+
+            var result = await _repo.InsertThoughtAsync(
+                title, content, creatorId, (byte)shape, thoughtIdReferences);
+
+            if (!result.IsSuccess)
             {
                 return result.Error!;
             }
 
-            // bump all referenced thoughts
+            // validate references
+            var errors = new StringBuilder();
+            var referencedThoughts = new List<Thought>();
             foreach (var targetId in thoughtIdReferences)
             {
-                
                 var referencedThought = await _repo.GetThoughtById(targetId);
                 if (!referencedThought.IsSuccess)
                 {
                     _logger.LogWarning("Referenced thought with id {id} not found.", targetId);
-                    continue;
+                    errors.Append($"- Thought with ID {targetId} not found.\n"); 
+                    //todo - Resources!
                 }
-                if (referencedThought.Payload!.Author.Id == creatorId)
+                referencedThoughts.Add(referencedThought.Payload!);
+            }
+
+            if (errors.Length > 0)
+            {
+                return Error.Validation(errors.ToString().TrimEnd('\n'));
+            }
+
+            // bump all referenced thoughts
+            foreach (var targetThought in referencedThoughts)
+            {
+                if (targetThought.Author.Id == creatorId)
                 {
                     continue;
                 }
-                
-                var replies = await GetRepliesAsync(targetId);
+
+                var replies = await GetRepliesAsync(targetThought.Id);
                 if (replies.IsSuccess && replies.Payload!.Where(t => t.Author.Id == creatorId).Count() > 1)
                 {
                     continue;
                 }
 
-                var bumpResult = await _repo.BumpThoughtAsync(targetId);
+                var bumpResult = await _repo.BumpThoughtAsync(targetThought.Id);
                 if (!bumpResult.IsSuccess)
                 {
-                    _logger.LogWarning("Error while bumping {id}, {message}", targetId,  bumpResult.Error);
+                    _logger.LogWarning("Error while bumping {id}, {message}", targetThought.Id, bumpResult.Error);
                 }
             }
 
@@ -128,13 +151,13 @@ namespace Afantazie.Service.Thoughts
             return replies;
         }
 
-        public async Task<Result<List<Thought>>> GetNeighborhoodAsync(int id, int depth)
+        public async Task<Result<List<List<Thought>>>> GetNeighborhoodAsync(int id, int depth)
         {
             var foundThoughts = new List<Thought>();
             var foundThoughtsDepths = new Dictionary<int, int>();
-            
+
             var initialThought = await _repo.GetThoughtById(id);
-            if(!initialThought.IsSuccess)
+            if (!initialThought.IsSuccess)
             {
                 return initialThought.Error!;
             }
@@ -142,8 +165,8 @@ namespace Afantazie.Service.Thoughts
             foundThoughts.Add(initialThought.Payload!);
             foundThoughtsDepths.Add(id, 0);
 
-            int visited = 0; 
-            while(foundThoughts.Count > visited)
+            int visited = 0;
+            while (foundThoughts.Count > visited)
             {
                 var currentThought = foundThoughts[visited];
                 var currentDepth = foundThoughtsDepths[currentThought.Id];
@@ -152,27 +175,27 @@ namespace Afantazie.Service.Thoughts
                     visited++;
                     continue;
                 }
-                foreach(var link in currentThought.Links)
+                foreach (var link in currentThought.Links)
                 {
                     if (foundThoughts.Any(t => t.Id == link.TargetId))
                     {
                         continue;
                     }
                     var linkedThought = await _repo.GetThoughtById(link.TargetId);
-                    if(linkedThought.IsSuccess)
+                    if (linkedThought.IsSuccess)
                     {
                         foundThoughts.Add(linkedThought.Payload!);
                         foundThoughtsDepths.Add(linkedThought.Payload!.Id, currentDepth + 1);
                     }
                 }
-                foreach(var backlink in currentThought.Backlinks)
+                foreach (var backlink in currentThought.Backlinks)
                 {
                     if (foundThoughts.Any(t => t.Id == backlink.SourceId))
                     {
                         continue;
                     }
                     var backlinkedThought = await _repo.GetThoughtById(backlink.SourceId);
-                    if(backlinkedThought.IsSuccess)
+                    if (backlinkedThought.IsSuccess)
                     {
                         foundThoughts.Add(backlinkedThought.Payload!);
                         foundThoughtsDepths.Add(backlinkedThought.Payload!.Id, currentDepth + 1);
@@ -182,7 +205,36 @@ namespace Afantazie.Service.Thoughts
                 visited++;
             }
 
-            return foundThoughts;
+            var result = new List<List<Thought>>();
+
+            for (int i = 0; i <= depth; i++)
+            {
+                result.Add(foundThoughts.Where(t => foundThoughtsDepths[t.Id] == i).ToList());
+            }
+
+            return result;
+        }
+
+        private async Task<Result<List<int>>> GetReferencesAsync(string content)
+        {
+            var references = new List<int>();
+            var regex = new Regex(@"\[([0-9]+)\]\[.*\]", RegexOptions.None, TimeSpan.FromSeconds(5));
+
+            var matches = regex.Matches(content);
+            if (matches.Count == 0)
+            {
+                return new List<int>();
+            }
+            foreach (Match match in matches)
+            {
+                var capturedId = match.Groups[1].Value;
+                if (!int.TryParse(capturedId, out int thoughtId))
+                    return Error.Validation("Invalid thought id format.");
+
+                references.Add(thoughtId);
+            }
+
+            return references;
         }
     }
 }

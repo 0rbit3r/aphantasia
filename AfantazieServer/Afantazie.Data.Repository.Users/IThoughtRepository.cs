@@ -15,7 +15,7 @@ namespace Afantazie.Data.Interface.Repository
 
         Task<Result<IEnumerable<Thought>>> GetThoughtsByOwner(int ownerId);
 
-        Task<Result<int>> InsertThoughtAsync(string title, string content, int authorId, IEnumerable<int> references);
+        Task<Result<int>> InsertThoughtAsync(string title, string content, int authorId, byte shape, IEnumerable<int> references);
 
         Task<Result<int>> GetTotalThoughtsCountAsync();
 

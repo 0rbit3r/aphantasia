@@ -1,9 +1,12 @@
+import { ThoughtShape } from "../../pages/graph/model/thoughtShape";
+
 export interface fullThoughtDto{
     id: number,
     author: string,
     title: string,
     content: string,
     color: string,
+    shape: ThoughtShape,
     dateCreated: string,
     links: number[],
     backlinks:number[],
@@ -13,7 +16,7 @@ export interface fullThoughtDto{
 export interface createThoughtDto {
     title: string,
     content: string,
-    links: number[]
+    shape: ThoughtShape
 }
 
 export interface thoughtColoredTitleDto {
@@ -29,6 +32,7 @@ export interface thoughtNodeDto {
     author: string,
     dateCreated: string,
     color: string,
+    shape: ThoughtShape,
     links: number[],
     backlinks: number[]
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { thoughtNodeDto } from "../api/dto/ThoughtDto";
 import { fetchNotifications } from "../api/graphClient";
 import { Localization } from "../locales/localization";
+import { ThoughtShape } from "./graph/model/thoughtShape";
 
 export const NotificationsPage = () => {
     const [notifications, setNotifications] = useState<thoughtNodeDto[]>([]);
@@ -15,7 +16,8 @@ export const NotificationsPage = () => {
                 setNotifications(response.data!);
             }
             if (response.data?.length === 0) {
-                setNotifications([{ color: "#aaaaaa", title: Localization.NoNotifications, author: "", dateCreated: "", id: 0, size: 1, backlinks: [], links: [] }]);
+                setNotifications([{ color: "#aaaaaa", title: Localization.NoNotifications, author: "", dateCreated: "",
+                    id: 0, size: 1, shape: ThoughtShape.Circle, backlinks: [], links: [] }]);
                 //todo add a special element for empty reply thoughts?
             }
         };

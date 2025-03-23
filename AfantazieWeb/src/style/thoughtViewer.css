@@ -22,6 +22,7 @@
 
         .thought-viewer-title {
             padding-bottom: 10px;
+            cursor: pointer;
         }
     }
 
@@ -95,6 +96,9 @@
     margin-top: 8px;
     display: flex;
     justify-content: end;
+
+    /* background-color: red; */
+    margin-left: calc(100% - 150px);
 
     align-items: end;
 

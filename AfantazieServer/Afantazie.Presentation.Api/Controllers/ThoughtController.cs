@@ -110,7 +110,7 @@ namespace Afantazie.Presentation.Api.Controllers
         [Authorize]
         public async Task<ActionResult<int>> CreateThought([FromBody] CreateThoughtDto thoughtDto)
         {
-            thoughtDto.Content = thoughtDto.Content.Replace("\u200B", "").Trim();
+            thoughtDto.Content = thoughtDto.Content.Replace("\u200B", "").TrimEnd();
             thoughtDto.Title = thoughtDto.Title.Replace("\u200B", "").Trim();
 
             var errors = new StringBuilder();
@@ -122,17 +122,20 @@ namespace Afantazie.Presentation.Api.Controllers
             {
                 errors.AppendLine(_localization.InvalidTitleLength);
             }
+            if (thoughtDto.Title.Contains("]") || thoughtDto.Title.Contains("["))
+            {
+                errors.AppendLine(_localization.SquareBracketsNotAllowed);
+            }
             if (errors.Length > 0)
             {
                 return BadRequest(new { Error = errors.ToString() });
-
             }
 
             if (UserId is null)
                 return Unauthorized();
 
             var response = await _thoughtService.CreateThoughtAsync(
-                UserId.Value, thoughtDto.Title, thoughtDto.Content, thoughtDto.Links);
+                UserId.Value, thoughtDto.Title, thoughtDto.Content, thoughtDto.Shape);
 
             if (!response.IsSuccess)
             {
@@ -169,7 +172,7 @@ namespace Afantazie.Presentation.Api.Controllers
         }
 
         [HttpGet("{id}/neighborhood")]
-        public async Task<ActionResult<List<ThoughtNodeDto>>> GetNeighborhood(int id, [FromQuery]int depth)
+        public async Task<ActionResult<List<List<ThoughtNodeDto>>>> GetNeighborhood(int id, [FromQuery]int depth)
         {
             var response = await _thoughtService.GetNeighborhoodAsync(id, depth);
 
@@ -178,7 +181,7 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(response.Error!);
             }
 
-            return response.Payload!.Adapt<List<ThoughtNodeDto>>();
+            return response.Payload!.Adapt<List<List<ThoughtNodeDto>>>();
         }
     }
 }

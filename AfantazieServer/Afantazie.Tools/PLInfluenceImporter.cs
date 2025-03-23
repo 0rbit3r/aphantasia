@@ -111,6 +111,7 @@ namespace Afantazie.Tools
                     thought.Title,
                     thought.Content,
                     thought.AuthorId + 1,
+                    0,
                     thoughtRefs
                     );
                 using (var db = services.GetRequiredService<DataContextProvider>().GetDataContext())

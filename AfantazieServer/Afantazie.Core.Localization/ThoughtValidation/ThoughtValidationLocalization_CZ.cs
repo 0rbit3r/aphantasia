@@ -11,5 +11,7 @@ namespace Afantazie.Core.Localization.ThoughtValidation
         public string InvalidContentLength => "- Obsah myšlenky musí mít mezi 5 a 1000 znaky";
 
         public string InvalidTitleLength => "- Název myšlenky musí mít mezi 1 a 50 znaky";
+
+        public string SquareBracketsNotAllowed => "- Název myšlenky nesmí obsahovat hranaté závorky";
     }
 }

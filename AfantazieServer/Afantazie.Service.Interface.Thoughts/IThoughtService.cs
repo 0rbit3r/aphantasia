@@ -5,7 +5,7 @@ namespace Afantazie.Service.Interface.Thoughts
 {
     public interface IThoughtService
     {
-        Task<Result<int>> CreateThoughtAsync(int creatorId, string title, string content, List<int> thoughtIdReferences);
+        Task<Result<int>> CreateThoughtAsync(int creatorId, string title, string content, ThoughtShape shape);
 
         /// <summary>
         /// Gets last thoughts and limits them based on user - selected maximum thoughts.
@@ -26,6 +26,6 @@ namespace Afantazie.Service.Interface.Thoughts
         /// <param name="id"></param>
         /// <param name="depth"></param>
         /// <returns></returns>
-        Task<Result<List<Thought>>> GetNeighborhoodAsync(int id, int depth);
+        Task<Result<List<List<Thought>>>> GetNeighborhoodAsync(int id, int depth);
     }
 }

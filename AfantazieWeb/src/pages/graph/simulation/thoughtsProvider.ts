@@ -1,37 +1,45 @@
 import { thoughtNodeDto } from "../../../api/dto/ThoughtDto";
 import { fetchNeighborhoodThoughts, fetchTemporalThoughts } from "../../../api/graphClient";
-import { fetchUserSettings } from "../../../api/UserSettingsApiClient";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
 import { BASE_RADIUS, INITIAL_POSITIONS_RADIUS, MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, REFERENCE_RADIUS_MULTIPLIER, SIM_HEIGHT, SIM_WIDTH } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { ThoughtPositionCache } from "../model/thoughtPositionCache";
 import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
-import { useUserSettingsStore } from "../state_and_parameters/UserSettingsStore";
 
 // selects and returns thoughts to render and animate or consider highlighting in graph walk
 export function getThoughtsOnScreen() {
   const state = useGraphStore.getState();
   const controlsState = useGraphControlsStore.getState();
 
+  const thoughtsInTimeWindow = getThoughtsInTimeWindow();
+
   // no neighborhood -> return temporal thoughts
-  if (state.neighborhoodThoughts.length === 0 || controlsState.neighborhoodEnabled === false) {
-    return getThoughtsInTimeWindow();
+  if (controlsState.neighborhoodEnabled === false) {
+    return thoughtsInTimeWindow;
   }
 
   // neighborhood -> return both temporal and neighborhood thoughts
-  // todo - size of neighborhod - what if it is more then maxthoughts?
+  if (state.neighborhoodThoughts.length + thoughtsInTimeWindow.length > state.userSettings.maxThoughts) {
+    return [
+      ...state.neighborhoodThoughts,
+      ...thoughtsInTimeWindow
+        .filter(t => state.neighborhoodThoughts.find(nt => nt.id === t.id) === undefined)
+        .slice(0, state.userSettings.maxThoughts - state.neighborhoodThoughts.length)
+    ].sort((a, b) => a.id - b.id);
+  }
   return [
     ...state.neighborhoodThoughts,
-    ...getThoughtsInTimeWindow()
+    ...thoughtsInTimeWindow
+      .filter(t => state.neighborhoodThoughts.find(nt => nt.id === t.id) === undefined)
   ].sort((a, b) => a.id - b.id); //this is disgusting but later we could implement or use a "merge" as both arrays should already be sorted
 }
 
 export function getThoughtsInTimeWindow() {
   const state = useGraphStore.getState();
-  const { timeShift, temporalRenderedThoughts, maxThoughtsOnScreen } = state;
+  const { timeShift, temporalRenderedThoughts, userSettings } = state;
 
   return temporalRenderedThoughts.slice(
-    Math.max(temporalRenderedThoughts.length - maxThoughtsOnScreen - timeShift, 0),
+    Math.max(temporalRenderedThoughts.length - userSettings.maxThoughts - timeShift, 0),
     Math.min(temporalRenderedThoughts.length - timeShift, temporalRenderedThoughts.length)
   );
 }
@@ -45,7 +53,7 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
   const graphState = useGraphStore.getState();
 
   const fetchAndSetStateAsync = async () => {
-    const maxThoughts = useUserSettingsStore.getState().userSettings?.maxThoughts;
+    const maxThoughts = graphState.userSettings?.maxThoughts;
 
     const response = await fetchTemporalThoughts({
       amount: maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT,
@@ -75,7 +83,7 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
     color: t.color, radius: BASE_RADIUS, author: t.author,
     links: t.links, backlinks: t.backlinks,
     position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
-    held: false, highlighted: false, timeOnScreen: 0, size: t.size
+    held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, shape: 0
   }));
 
   //set position either by cache or by initial positions circle
@@ -121,11 +129,10 @@ export const updateTemporalThoughts = () => {
 
     const fetchAndSetStateAsync = async () => {
       // fetch the thoughts from BE
-      const response = await fetchTemporalThoughts({ amount: graphState.maxThoughtsOnScreen * 2, afterThoughtId: currentTemporalThoughts[currentTemporalThoughts.length - 1].id });
+      const response = await fetchTemporalThoughts({ amount: graphState.userSettings.maxThoughts * 2, afterThoughtId: currentTemporalThoughts[currentTemporalThoughts.length - 1].id });
 
       if (response.ok && response.data!.length > 0) {
         const convertedToRenderedThoughts = mapDtosToRenderedThoughts(response.data!);
-
         // to appear and apply forces sooner than neighborhood exploartion
         convertedToRenderedThoughts.forEach(t => t.timeOnScreen = NEW_NODE_INVISIBLE_FOR);
 
@@ -151,14 +158,14 @@ export const updateTemporalThoughts = () => {
   // OR we need the before... (this condition has to be tested second - the graph can have loaded only the first few thoughts)
   else if (graphState.fetchingTemporalThoughts === false
     && currentTemporalThoughts[0].id !== graphState.beginningThoughtId
-    && graphState.timeShift + graphState.maxThoughtsOnScreen > currentTemporalThoughts.length) {
+    && graphState.timeShift + graphState.userSettings.maxThoughts > currentTemporalThoughts.length) {
 
     graphState.setFetchingTemporalThoughts(true);
     // console.log("time window bound exceded into the past -> Updating temporal thoughts");
 
     const fetchAndSetStateAsync = async () => {
 
-      const response = await fetchTemporalThoughts({ amount: graphState.maxThoughtsOnScreen * 2, beforeThoughtId: currentTemporalThoughts[0].id });
+      const response = await fetchTemporalThoughts({ amount: graphState.userSettings.maxThoughts * 2, beforeThoughtId: currentTemporalThoughts[0].id });
       // console.log('new thoughts', response);
       if (response.ok) {
         graphState.setFetchingTemporalThoughts(false);
@@ -197,7 +204,23 @@ export const updateNeighborhoodThoughts = (thoughtId: number) => {
     // const newNeighborhoodThoughts: RenderedThought[] = [];
 
     if (response.ok) {
-      const fetchedThoughts = mapDtosToRenderedThoughts(response.data!);
+      // console.log(response.data![0]);
+      var l = 0;
+      const fetchedThoughts = response.data!.flatMap(layer => {
+        // first layer is the thought itself
+        const layerRenderedThoughts = mapDtosToRenderedThoughts(layer);
+        if (graphControlsState.neighborhoodEnabled === false) {
+          return layerRenderedThoughts;
+        }
+        // set the times on screen so that layers fade in one after another
+        layerRenderedThoughts.forEach(t => {
+          if (t.timeOnScreen === 0) {
+            t.timeOnScreen = -NEW_NODE_INVISIBLE_FOR * (Math.max(l - 1, 0));
+          }
+        });
+        l++;
+        return layerRenderedThoughts;
+      });
       graphState.setNeighborhoodThoughts(fetchedThoughts.sort((a, b) => a.id - b.id));
 
       if (graphControlsState.neighborhoodEnabled) {
@@ -250,7 +273,19 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
       dateCreated: t.dateCreated,
       links: t.links, backlinks: t.backlinks,
       position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
-      held: false, highlighted: false, timeOnScreen: 0, size: t.size
+      held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false,
+      shape: //t.shape
+        Math.random() > 0.5
+          ? Math.random() > 0.5
+            ? 0
+            : 1
+          : Math.random() > 0.5
+            ? Math.random() > 0.5
+              ? 2
+              : 3
+            : Math.random() > 0.5
+              ? 4
+              : 5
     }
   });
 

@@ -19,11 +19,14 @@ namespace Afantazie.Data.Model.Entity
 
         public required int AuthorId { get; set; }
 
-        public UserEntity Author { get; set; } = null!; // todo rename to author...
+        public UserEntity Author { get; set; } = null!;
 
         public int SizeMultiplier { get; set; } = 0;
 
+        [MaxLength(3000)]
         public required string Content { get; set; }
+
+        public byte Shape { get; set; } = 0;
 
         // Outgoing links (links from this Thought to others)
         public virtual ICollection<ThoughtReferenceEntity> Links { get; set; }

@@ -11,5 +11,7 @@ namespace Afantazie.Core.Localization.ThoughtValidation
         string InvalidContentLength { get; }
 
         string InvalidTitleLength { get; }
+
+        string SquareBracketsNotAllowed { get; }
     }
 }

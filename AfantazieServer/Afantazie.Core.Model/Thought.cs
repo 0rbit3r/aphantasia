@@ -24,5 +24,17 @@ namespace Afantazie.Core.Model
 
         public ICollection<ThoughtReference> Backlinks { get; set; } = new List<ThoughtReference>();
         public int Size { get; set; }
+
+        public ThoughtShape Shape { get; set; }
+    }
+
+    public enum ThoughtShape
+    {
+        Circle = 0,
+        Square = 1,
+        Triangle = 2,
+        ReversedTriangle = 3,
+        Diamond = 4,
+        Cross = 5,
     }
 }

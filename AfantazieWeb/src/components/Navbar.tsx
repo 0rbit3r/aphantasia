@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../Contexts/AuthContext';
 import { Localization } from '../locales/localization';
-import { useUserSettingsStore } from '../pages/graph/state_and_parameters/UserSettingsStore';
+import { useGraphStore } from '../pages/graph/state_and_parameters/GraphStore';
 
 function Navbar() {
 
@@ -12,7 +12,7 @@ function Navbar() {
     const { isAuthenticated } = useAuth();
 
     const navigate = useNavigate();
-    const userSettings = useUserSettingsStore(state => state.userSettings);
+    const userSettings = useGraphStore(state => state.userSettings);
 
     const handleExpansion = () => {
         if (menuExpanded) {
@@ -38,7 +38,8 @@ function Navbar() {
         <>
             <div className='top-row'>
 
-                <div className='aphantasia-title' onClick={() => navigate("home")} style={{color: userSettings?.color}}>{Localization.Title}</div>
+                <a className='aphantasia-title' onClick={() => navigate("home")} style={{color: userSettings?.color}}
+                onMouseDown={e => {if (e.button === 1){window.open('https://aphantasia.io/home')}}}>{Localization.Title}</a>
 
                 {/* <div className='aphantasia-title-logged-out' onClick={() => navigate("/")}>{Localization.Title}</div> */}
 

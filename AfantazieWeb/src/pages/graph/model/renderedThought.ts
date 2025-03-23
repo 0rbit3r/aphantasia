@@ -1,5 +1,6 @@
 import { Graphics, Text } from "pixi.js";
 import { XAndY } from "./xAndY";
+import { ThoughtShape } from "./thoughtShape";
 
 export interface RenderedThought {
   id: number,
@@ -10,12 +11,14 @@ export interface RenderedThought {
   radius: number,
   size: number,
   color: string,
+  shape: ThoughtShape,
 
   graphics?: Graphics,
   text?: Text,
 
-  highlighted: boolean
-  held: boolean
+  highlighted: boolean,
+  held: boolean,
+  hovered: boolean,
 
   links: number[],
   backlinks: number[],

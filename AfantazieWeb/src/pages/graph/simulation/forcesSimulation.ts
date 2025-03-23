@@ -29,7 +29,11 @@ const get_center_distance = (thought1: RenderedThought, thought2: RenderedThough
     const y1 = thought1.position.y;
     const x2 = thought2.position.x;
     const y2 = thought2.position.y;
-    return Math.sqrt(Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2));
+
+    const dist = Math.sqrt(Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2));
+
+    // prevents division by zero (?)
+    return dist === 0 ? 0.01 : dist;
 }
 
 export const simulate_one_frame = () => {
@@ -90,7 +94,6 @@ export const simulate_one_frame = () => {
         thought.forces.x /= frameAdjustedDampeningRate;
         thought.forces.y /= frameAdjustedDampeningRate;
     });
-
 }
 
 export const pull_or_push_connected_to_ideal_distance = (sourceThought: RenderedThought, targetThought: RenderedThought) => {
@@ -200,6 +203,11 @@ export const gravity_pull: (thought: RenderedThought) => void = (thought: Render
 }
 
 const handleOutOfBounds = (thought: RenderedThought) => {
+    if (!thought.position.x || !thought.position.y) {
+        console.log("thought out of bounds: ", thought.id);
+        thought.position.x = SIM_WIDTH / 2;
+        thought.position.y = SIM_HEIGHT / 2;
+    }
     if (thought.position.x < thought.radius * 2.5) {
         thought.position.x = thought.radius * 2.5;
     }
@@ -211,10 +219,5 @@ const handleOutOfBounds = (thought: RenderedThought) => {
     }
     if (thought.position.y > SIM_HEIGHT - thought.radius * 2.5) {
         thought.position.y = SIM_HEIGHT - thought.radius * 2.5;
-    }
-    if (!thought.position.x || !thought.position.y) {
-        console.log("thought out of bounds: ", thought.id);
-        thought.position.x = SIM_WIDTH / 2;
-        thought.position.y = SIM_HEIGHT / 2;
     }
 }

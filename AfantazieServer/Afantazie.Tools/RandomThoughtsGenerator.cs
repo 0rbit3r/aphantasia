@@ -45,7 +45,7 @@ namespace Afantazie.Tools
                 {
                     references.Add(new Random().Next(1, i));
                 }
-                await thoughtRepo.InsertThoughtAsync(i.ToString(), i.ToString(), userId, references);
+                await thoughtRepo.InsertThoughtAsync(i.ToString(), i.ToString(), userId, 0, references);
             }
 
             Console.WriteLine("Done.");
