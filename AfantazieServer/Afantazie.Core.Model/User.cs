@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Afantazie.Core.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,7 @@ namespace Afantazie.Core.Model
         public required string Email { get; set; }
 
         public string Color { get; set; } = "#ffffff";
+
+        public string Bio { get; set; } = AfantazieConstants.DefaultBio;
     }
 }

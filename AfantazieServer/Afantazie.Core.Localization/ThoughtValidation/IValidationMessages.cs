@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Core.Localization.ThoughtValidation
 {
-    public interface IThoughtValidationLocalization
+    public interface IValidationMessages
     {
         string InvalidContentLength { get; }
 
         string InvalidTitleLength { get; }
 
         string SquareBracketsNotAllowed { get; }
+
+        string BioTooLong { get; }
     }
 }

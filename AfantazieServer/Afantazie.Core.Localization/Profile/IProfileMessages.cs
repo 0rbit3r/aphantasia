@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Afantazie.Core.Constants
+namespace Afantazie.Core.Localization.Profile
 {
-    public static class Constants
+    public interface IProfileMessages
     {
-        public static int DefaultMaximumThoughts = 100;
+        string NotYetJoined { get; }
     }
 }

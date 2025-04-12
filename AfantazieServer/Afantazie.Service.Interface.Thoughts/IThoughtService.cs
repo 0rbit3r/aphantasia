@@ -5,6 +5,10 @@ namespace Afantazie.Service.Interface.Thoughts
 {
     public interface IThoughtService
     {
+        /// <summary>
+        /// Parses new thought, inserts it, creates notifications, handles hashtags...
+        /// </summary>
+        /// <returns></returns>
         Task<Result<int>> CreateThoughtAsync(int creatorId, string title, string content, ThoughtShape shape);
 
         /// <summary>
@@ -26,6 +30,6 @@ namespace Afantazie.Service.Interface.Thoughts
         /// <param name="id"></param>
         /// <param name="depth"></param>
         /// <returns></returns>
-        Task<Result<List<List<Thought>>>> GetNeighborhoodAsync(int id, int depth);
+        Task<Result<List<List<Thought>>>> GetNeighborhoodAsync(int id, int depth, int limit);
     }
 }

@@ -17,7 +17,7 @@ export const FRAMES_WITH_OVERLAP = 0;
 export const THOUGHTS_CACHE_FRAME = 1000;
 
 // size and positions of nodes
-export const BASE_RADIUS = 50;
+export const BASE_RADIUS = 60;
 // Size = BASE_RADIUS * RADIUS_MULTIPLIER ^ backlinks 
 export const REFERENCE_RADIUS_MULTIPLIER = 1.2;
 
@@ -33,10 +33,15 @@ export const EDGE_COMPRESSIBILITY_FACTOR = 0.7;
 
 export const MAX_PULL_FORCE = 100;
 
-export const PUSH_THRESH = 3000;
+export const VIRTUAL_EDGE_PULL_FORCE_MULTIPLIER = 0.2;
+export const VIRTUAL_EDGE_LINKED_DIST_MULTIPLIER = 1;
+export const IDEAL_DIST_SIZE_MULTIPLIER = 0.20;
+
+export const PUSH_THRESH = 7000;
+export const BORDERLESS_MODE_PUSH_THRESH_MULTIPLICATOR = 5;
 export const MAX_PUSH_FORCE = 100;
 
-export const GRAVITY_FREE_RADIUS = 3000;
+export const GRAVITY_FREE_RADIUS = 300;
 
 // When thoughts "appear" on screen they should not immediatelly start influencing other thoughts.
 // This parameter is the length of the "ease-in" period for influencing other thoughts
@@ -44,14 +49,14 @@ export const INFLUENCE_FADE_IN = 250;
 export const FRAMES_WITH_NO_INFLUENCE = 40;
 
 // Slows the simulation but makes it more stable
-export const MAX_MOMENTUM_DAMPENING = 1.8; //1.55
+export const MAX_MOMENTUM_DAMPENING = 1.7; //1.55
 
 // These parameters are the ease-in starting value for the momentum dampening rate
 export const MOMENTUM_DAMPENING_START_AT = 1.5;
 export const MOMENTUM_DAMPENING_EASE_IN_FRAMES = 400;
 
 // A movement cap of nodes to prevent them from moving too fast
-export const MAX_MOVEMENT_SPEED = 50;
+export const MAX_MOVEMENT_SPEED = 200;
 
 // Mass allows asymmetric forces based on radius
 export const NODE_MASS_ON = true;
@@ -59,9 +64,6 @@ export const MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 1.1;
 export const MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 0.9;
 export const MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 10;
 export const MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 0.9;
-
-//edges appearance
-export const ANIMATED_EDGES = true;
 
 export const BASE_EDGE_WIDTH = 9;
 export const BASE_EDGE_ALPHA = 0.8;
@@ -102,16 +104,16 @@ export const pushForce = (borderDist: number) => {
     return Math.min(MAX_PUSH_FORCE, computed);
 };
 
-export const pullForce = (borderDist: number, size: number) => {
+export const pullForce = (borderDist: number, idealDistance: number) => {
 
     if (borderDist < 0) {
         // console.log('negative borderDist ', borderDist);
         return -MAX_PULL_FORCE;
     }
 
-    const idealDistanceForSize = IDEAL_LINKED_DISTANCE * Math.max(size / 5, 1);
+    
 
-    const computed = 0.02 * (borderDist - idealDistanceForSize);
+    const computed = 0.02 * (borderDist - idealDistance);
     const limited = computed > MAX_PULL_FORCE
         ? MAX_PULL_FORCE
         : computed < -MAX_PULL_FORCE

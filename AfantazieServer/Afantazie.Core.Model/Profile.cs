@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Afantazie.Core.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,8 @@ namespace Afantazie.Core.Model
         public string Username { get; set; } = "";
 
         public string Color { get; set; } = "";
+
+        public string Bio { get; set; } = AfantazieConstants.DefaultBio;
 
         public int TotalCount { get; set; }
 

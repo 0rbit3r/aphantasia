@@ -14,7 +14,12 @@ public class AfantazieDataContext : DbContext
 
     public DbSet<ThoughtEntity> Thoughts { get; set; }
 
+    public DbSet<HashtagEntity> Hashtags { get; set; }
+
     public DbSet<ThoughtReferenceEntity> ThoughtReferences { get; set; }
+
+    public DbSet<ThoughtHashtagEntity> ThoughtHashtags { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -41,5 +46,10 @@ public class AfantazieDataContext : DbContext
         // Optional: Specify the join table name, if you prefer
         modelBuilder.Entity<ThoughtReferenceEntity>()
             .ToTable("ThoughtReferences");
+
+        modelBuilder.Entity<ThoughtEntity>()
+            .HasMany(t => t.Hashtags)
+            .WithMany(h => h.Thoughts)
+            .UsingEntity<ThoughtHashtagEntity>();
     }
 }

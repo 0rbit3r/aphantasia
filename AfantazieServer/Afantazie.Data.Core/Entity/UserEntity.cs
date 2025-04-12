@@ -22,6 +22,7 @@ namespace Afantazie.Data.Model.Entity
 
         public required string Color { get; set; }
 
-        public int MaxThoughts { get; set; }
+        [MaxLength(300)]
+        public string Bio { get; set; } = "";
     }
 }

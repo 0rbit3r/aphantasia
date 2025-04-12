@@ -13,11 +13,11 @@ namespace Afantazie.Data.Model.Entity
         public int Id { get; set; }
 
         [Required]
-        public string Text { get; set; } = "";
+        public string Tag { get; set; } = "";
 
         [Required]
         public string Color { get; set; } = "#FFFFFF";
 
-        public List<ThoughtHashtagEntity> ThoughtHashtags { get; set; } = new List<ThoughtHashtagEntity>();
+        public ICollection<ThoughtEntity> Thoughts = new List<ThoughtEntity>();
     }
 }

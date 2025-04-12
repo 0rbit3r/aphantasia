@@ -22,6 +22,7 @@ export interface RenderedThought {
 
   links: number[],
   backlinks: number[],
+  virtualLinks: number[],
 
   position: XAndY,
   momentum: XAndY,

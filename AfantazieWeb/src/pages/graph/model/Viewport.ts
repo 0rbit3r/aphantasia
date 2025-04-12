@@ -1,3 +1,4 @@
+import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
 import { INITIAL_ZOOM, MAX_ZOOM, MIN_ZOOM, SIM_HEIGHT, SIM_WIDTH, ZOOM_STEP_MULTIPLICATOR_BUTTONS, ZOOM_STEP_MULTIPLICATOR_WHEEL } from "../state_and_parameters/graphParameters";
 import { XAndY } from "./xAndY";
 
@@ -34,14 +35,17 @@ export class Viewport {
     public moveBy = (delta: XAndY) => {
         this.position.x -= delta.x;
         this.position.y -= delta.y;
-        if (this.position.x + this.width / 2 / this.zoom > SIM_WIDTH)
-            this.position.x = SIM_WIDTH - this.width / 2 / this.zoom;
-        if (this.position.y + this.height / 2 / this.zoom > SIM_HEIGHT)
-            this.position.y = SIM_HEIGHT - this.height / 2 / this.zoom;
-        if (this.position.x + this.width / 2 / this.zoom < 0)
-            this.position.x = - this.width / 2 / this.zoom;
-        if (this.position.y + this.height / 2 / this.zoom < 0)
-            this.position.y = -+ this.height / 2 / this.zoom;
+        if (!useGraphControlsStore.getState().noBorders){
+
+            if (this.position.x + this.width / 2 / this.zoom > SIM_WIDTH)
+                this.position.x = SIM_WIDTH - this.width / 2 / this.zoom;
+            if (this.position.y + this.height / 2 / this.zoom > SIM_HEIGHT)
+                this.position.y = SIM_HEIGHT - this.height / 2 / this.zoom;
+            if (this.position.x + this.width / 2 / this.zoom < 0)
+                this.position.x = - this.width / 2 / this.zoom;
+            if (this.position.y + this.height / 2 / this.zoom < 0)
+                this.position.y = -+ this.height / 2 / this.zoom;
+        }
     }
 
     //Used for zooming by buttons

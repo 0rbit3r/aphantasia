@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { thoughtColoredTitleDto, fullThoughtDto } from '../api/dto/ThoughtDto';
-import { fetchThoughtTitles, postNewThought, fetchThought } from '../api/graphClient';
+import { thoughtColoredTitleDto, fullThoughtDto, thoughtNodeDto } from '../api/dto/ThoughtDto';
+import { fetchThoughtTitles, postNewThought, fetchThought, fetchNeighborhoodThoughts } from '../api/graphClient';
 import { LocationState } from '../interfaces/LocationState';
 import { Localization } from '../locales/localization';
 import { LocalizedCreateThoughtHint } from '../locales/LocalizedCreateThoughtHint';
@@ -27,8 +27,8 @@ const SHAPES = [
 
 
 function CreateThought() {
-    const REFERENCES_LIMIT = 5;
-    const CONTENT_LENGTH_LIMIT = 1000;
+    const REFERENCES_LIMIT = 3;
+    const CONTENT_LENGTH_LIMIT = 3000;
     const TITLE_LENGTH_LIMIT = 50;
 
     const [formData, setFormData] = useState({ title: '', content: '', shape: 0 });
@@ -42,8 +42,10 @@ function CreateThought() {
     const [validThoughtReferences, setValidThoughtReferences] = useState<ThoughtReference[]>([]);
     const [notFoundThoughtIds, setNotFoundThoughtIds] = useState<number[]>([]);
     const [previewOverlayVisible, setPreviewOverlayVisible] = useState(false);
-    const [previewedThought, setPreviewedThought] = useState<fullThoughtDto | null>(null);
     const [createButtonEnabled, setCreateButtonEnabled] = useState(false);
+
+    const [previewedThought, setPreviewedThought] = useState<fullThoughtDto | null>(null);
+    const [previewedThoughtNeighborhood, setPreviewedThoughtNeighborhood] = useState<thoughtNodeDto[]>([]);
 
     const [tutorialOverlayVisible, setTutorialOverlayVisible] = useState(false);
 
@@ -85,7 +87,6 @@ function CreateThought() {
     };
 
     const handleShapeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(e.target.value);
         setFormData({ ...formData, shape: Number.parseInt(e.target.value) ?? 0 });
     };
 
@@ -229,12 +230,19 @@ function CreateThought() {
     }
 
     function handlePreviewClick(id: number): void {
+        setPreviewOverlayVisible(true);
         const fetchAndSetAsync = async () => {
-            const response = await fetchThought(id);
-            if (response.ok) {
-                setPreviewedThought(response.data!);
-                setPreviewOverlayVisible(true);
+            const thoughtResponse = await fetchThought(id);
+            if (thoughtResponse.ok) {
+                setPreviewedThought(thoughtResponse.data!);
             }
+
+            const neighborhoodResponse = await fetchNeighborhoodThoughts(id, 1, 10);
+             //5 instead of 10 should be theoretically enought, but, just to be sure ^^^
+            if (neighborhoodResponse.ok) {
+                setPreviewedThoughtNeighborhood(neighborhoodResponse.data![1]); //take the first layer only
+            }
+
         };
         fetchAndSetAsync();
     }
@@ -277,8 +285,9 @@ function CreateThought() {
                         <ThoughtViewer
                             thought={previewedThought}
                             closePreview={() => setPreviewOverlayVisible(false)}
-                            clickedOnUser={() => { }}
-                            neighborhoodThoughts={[]}
+                            clickedOnUser={() => {}}
+                            links={previewedThoughtNeighborhood.filter(t => t.backlinks.includes(previewedThought.id))}
+                            backlinks={previewedThoughtNeighborhood.filter(t => t.links.includes(previewedThought.id))}
                             setHighlightedThoughtId={() => { }}
                         ></ThoughtViewer>
                     </div>

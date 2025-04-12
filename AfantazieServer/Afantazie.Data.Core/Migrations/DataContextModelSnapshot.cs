@@ -21,6 +21,27 @@ namespace Afantazie.Data.Model.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.HashtagEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Hashtags");
+                });
+
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -34,10 +55,14 @@ namespace Afantazie.Data.Model.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte>("Shape")
+                        .HasColumnType("smallint");
 
                     b.Property<int>("SizeMultiplier")
                         .HasColumnType("integer");
@@ -53,6 +78,21 @@ namespace Afantazie.Data.Model.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Thoughts");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
+                {
+                    b.Property<int>("ThoughtId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("HashtagId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ThoughtId", "HashtagId");
+
+                    b.HasIndex("HashtagId");
+
+                    b.ToTable("ThoughtHashtags");
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>
@@ -85,6 +125,11 @@ namespace Afantazie.Data.Model.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -125,6 +170,25 @@ namespace Afantazie.Data.Model.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
+                {
+                    b.HasOne("Afantazie.Data.Model.Entity.HashtagEntity", "Hashtag")
+                        .WithMany()
+                        .HasForeignKey("HashtagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
+                        .WithMany()
+                        .HasForeignKey("ThoughtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hashtag");
+
+                    b.Navigation("Thought");
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>

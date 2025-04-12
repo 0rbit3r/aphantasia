@@ -13,7 +13,7 @@ export async function fetchTemporalThoughts(filter: thoughtsTemporalFilterDto): 
         }, {} as Record<string, string>)
     ).toString();
 
-    const response = await sendAndExpectBody<fullThoughtDto[]>(`${API_URL}/thoughts?${queryParams}`, {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/thoughts?${queryParams}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -98,8 +98,8 @@ export async function fetchNotifications(amount: number): Promise<ApiResponseWit
     return response;
 }
 
-export async function fetchNeighborhoodThoughts(id: number, depth: number): Promise<ApiResponseWithBody<thoughtNodeDto[][]>> {
-    const response = await sendAndExpectBody<thoughtNodeDto[][]>(`${API_URL}/thoughts/${id}/neighborhood?depth=${depth}`, {
+export async function fetchNeighborhoodThoughts(id: number, depth: number, limit: number): Promise<ApiResponseWithBody<thoughtNodeDto[][]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[][]>(`${API_URL}/thoughts/${id}/neighborhood?depth=${depth}&limit=${limit}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

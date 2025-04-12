@@ -18,12 +18,12 @@ namespace Afantazie.Presentation.Api.Controllers
     public class ThoughtController: ApiControllerBase
     {
         private readonly IThoughtService _thoughtService;
-        private readonly IThoughtValidationLocalization _localization;
+        private readonly IValidationMessages _localization;
 
         public ThoughtController(
             IThoughtService service,
             IAuthValidationMessages errors,
-            IThoughtValidationLocalization locaization)
+            IValidationMessages locaization)
             : base(errors)
         {
             _thoughtService = service;
@@ -172,9 +172,9 @@ namespace Afantazie.Presentation.Api.Controllers
         }
 
         [HttpGet("{id}/neighborhood")]
-        public async Task<ActionResult<List<List<ThoughtNodeDto>>>> GetNeighborhood(int id, [FromQuery]int depth)
+        public async Task<ActionResult<List<List<ThoughtNodeDto>>>> GetNeighborhood(int id, [FromQuery]int depth, [FromQuery]int limit)
         {
-            var response = await _thoughtService.GetNeighborhoodAsync(id, depth);
+            var response = await _thoughtService.GetNeighborhoodAsync(id, depth, limit);
 
             if (!response.IsSuccess)
             {

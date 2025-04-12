@@ -5,5 +5,6 @@ export interface userProfileDto {
     color: string,
     totalCount: number,
     joinedDate: string,
-    thoughts: thoughtNodeDto[]
+    thoughts: thoughtNodeDto[],
+    bio: string,
 }

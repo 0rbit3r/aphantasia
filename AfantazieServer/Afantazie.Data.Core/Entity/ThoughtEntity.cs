@@ -29,11 +29,14 @@ namespace Afantazie.Data.Model.Entity
         public byte Shape { get; set; } = 0;
 
         // Outgoing links (links from this Thought to others)
-        public virtual ICollection<ThoughtReferenceEntity> Links { get; set; }
+        public ICollection<ThoughtReferenceEntity> Links { get; set; }
             = new List<ThoughtReferenceEntity>();
 
         // Incoming links (links from others to this Thought)
-        public virtual ICollection<ThoughtReferenceEntity> Backlinks { get; set; }
+        public ICollection<ThoughtReferenceEntity> Backlinks { get; set; }
             = new List<ThoughtReferenceEntity>();
+
+        public ICollection<HashtagEntity> Hashtags { get; set; }
+            = new List<HashtagEntity>();
     }
 }

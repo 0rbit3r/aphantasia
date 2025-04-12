@@ -5,12 +5,12 @@ import { useParams } from 'react-router-dom';
 import { useGraphStore } from './state_and_parameters/GraphStore';
 import GraphContainer from './GraphContainer';
 import { fetchTemporalThoughts, fetchThought } from '../../api/graphClient';
-import { mapDtosToRenderedThoughts, updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
+import { updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
 import { ThoughtViewer } from '../../components/ThoughtViewer';
 import GraphControls from '../../components/GraphControls';
-import { fetchUserProfile } from '../../api/userProfileApi';
 import { useGraphControlsStore } from './state_and_parameters/GraphControlsStore';
-import { MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT } from './state_and_parameters/graphParameters';
+import { ExplorationMode, SetHighlightedThoughtById, SwitchToExplorationMode } from './simulation/modesManager';
+import { ProfileViewer } from '../../components/ProfileViewer';
 
 const COLOR_BACKGROUND = 0x000000;
 
@@ -30,13 +30,11 @@ const GraphPage: React.FC = () => {
     const setTemporalThoughts = useGraphStore((state) => state.setTemporalRenderedThoughts);
     const neighborhoodThoughts = useGraphStore((state => state.neighborhoodThoughts));
     const setNeighborhoodThoughts = useGraphStore((state => state.setNeighborhoodThoughts));
-    const setBeginningThoughtId = useGraphStore((state) => state.setBeginningThoughtId);
-    const setNeighborhoodEnabled = useGraphControlsStore((state) => state.setNeighborhoodEnabled);
 
     // const [replies, setReplies] = useState<thoughtNodeDto[]>([]);
 
     // screen state
-    const [overlayVisible, setOverlayVisible] = useState(false);
+    const [thoughtViewerVisible, setOverlayVisible] = useState(false);
     // const viewport = useGraphStore((state) => state.viewport);
 
     // controls
@@ -44,17 +42,22 @@ const GraphPage: React.FC = () => {
     const setZoomingControl = useGraphStore((state) => state.setZoomingControl);
 
     const highlightedThought = useGraphStore((state) => state.highlightedThought);
-    const setHighlightedThoughtId = useGraphStore((state) => state.setHighlightedThoughtById);
     const unsetHighlightedThought = useGraphStore((state) => state.unsetHighlightedThought);
 
     const [fullHighlightedThought, setfullHighlightedThought] = useState<fullThoughtDto | null>(null);
+
+    const explorationMode = useGraphControlsStore((state) => state.explorationMode);
+
+    // todo - add profile dto to graph Store and use it as param for profile viewer
+    const profile = useGraphStore((state) => state.viewedProfile);
+
+
+
 
     // const timeShiftControl = useGraphStore((state) => state.timeShiftControl);
     // const setTimeShiftControl = useGraphStore((state) => state.setTimeShiftControl);
     const setTimeShift = useGraphStore((state) => state.setTimeShift);
     const setEndingThoughtId = useGraphStore((state) => state.setEndingThoughtId);
-
-    const userSettings = useGraphStore(state => state.userSettings);
 
     // const setMaxThoughtsOnScreen = useGraphStore((state) => state.setMaxThoughtsOnScreen);
 
@@ -87,7 +90,6 @@ const GraphPage: React.FC = () => {
                 // setNewestDate(Localization.RightNow);
 
                 //todo - create handler for live preview (called from url and by button)
-
                 return;
             }
             const id = parseInt(urlThoughtId);
@@ -138,51 +140,47 @@ const GraphPage: React.FC = () => {
     }, [zoomingHeld]);
 
     const handleUserProfileClick = (username: string) => {
+        if (profile?.username === username){
+            console.log("Already viewing this profile")
+            unsetHighlightedThought();
+            return;
+        }
+
         window.history.pushState(null, '', `/user/${username}`);
 
-        fetchUserProfile(username).then(response => {
-            if (response.ok) {
-                // setProfileUser(response.data!);
-                const temporalThoughts = mapDtosToRenderedThoughts(response.data!.thoughts);
-                setTemporalThoughts(temporalThoughts);
-                // clearNeighborhoodThoughts();
-                setNeighborhoodEnabled(false);
-                setBeginningThoughtId(temporalThoughts[0].id);
-
-                const indexOfHighlighted = temporalThoughts.findIndex(t => t.id === highlightedThought?.id);
-                const maxThoughtsOnScreen = userSettings?.maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT;
-                const unboundedTimeshift = temporalThoughts.length - 1 - indexOfHighlighted - Math.floor(maxThoughtsOnScreen / 2);
-
-                const boudnedTimeShift = Math.max(0,
-                    Math.min(temporalThoughts.length - maxThoughtsOnScreen, unboundedTimeshift));
-
-                // console.log("thoughts in profile: ", temporalThoughts.length);
-                // console.log("maxThoughtsOnScreen: ", maxThoughtsOnScreen);
-                // console.log("indexOfHighlighted: ", indexOfHighlighted);
-                // console.log("unbounded time shift: ", unboundedTimeshift);
-                // console.log("boundedTimeShift: ", boudnedTimeShift)
-
-                // console.log("on-screen thoughts: ", getThoughtsOnScreen().length);
-
-                setTimeShift(boudnedTimeShift);
-            }
-        });
+        SwitchToExplorationMode(ExplorationMode.PROFILE, username);
     }
 
     return (
         <>
-            {((overlayVisible && fullHighlightedThought !== null) &&
+            {((thoughtViewerVisible && fullHighlightedThought !== null) &&
                 <div className='overlay'>
-
                     <ThoughtViewer
                         thought={fullHighlightedThought}
-                        setHighlightedThoughtId={setHighlightedThoughtId}
+                        setHighlightedThoughtId={SetHighlightedThoughtById}
                         closePreview={unsetHighlightedThought}
                         clickedOnUser={username => handleUserProfileClick(username)}
-                        neighborhoodThoughts={neighborhoodThoughts}>
+                        links={neighborhoodThoughts.filter(t => t.backlinks.includes(fullHighlightedThought.id)).map(t => (
+                            {id: t.id, color: t.color, title: t.title}
+                            ))}
+                        backlinks={neighborhoodThoughts.filter(t => t.links.includes(fullHighlightedThought.id)).map(t => (
+                            {id: t.id, color: t.color, title: t.title}
+                            ))}
+                            >
                     </ThoughtViewer>
                 </div>
             )}
+
+            {explorationMode == ExplorationMode.PROFILE && profile !== null && !thoughtViewerVisible &&
+                <div className='overlay'>
+                    <ProfileViewer
+                        profile={profile}
+                        closeProfileViewer={function (): void {
+                            SwitchToExplorationMode(ExplorationMode.FREE, "");
+                        }}>
+                    </ProfileViewer>
+                </div>
+            }
 
             {/* The visibility: collapse (instead of hidden) here is to not start the graph in the initial position each time its opened again */}
             <div className='graph-bottom-part'>

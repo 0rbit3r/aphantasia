@@ -25,6 +25,8 @@ namespace Afantazie.Presentation.Model.Dto.Thought
         public List<int> Links { get; set; } = new List<int>();
 
         public List<int> Backlinks { get; set; } = new List<int>();
+
+        public List<HashtagDto> Hashtags { get; set; } = new List<HashtagDto>();
         public object Size { get; internal set; }
     }
 }

@@ -23,6 +23,9 @@ namespace Afantazie.Core.Model
         public ICollection<ThoughtReference> Links { get; set; } = new List<ThoughtReference>();
 
         public ICollection<ThoughtReference> Backlinks { get; set; } = new List<ThoughtReference>();
+
+        public ICollection<Hashtag> Hashtags { get; set; } = new List<Hashtag>();
+
         public int Size { get; set; }
 
         public ThoughtShape Shape { get; set; }

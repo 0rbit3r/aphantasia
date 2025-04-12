@@ -19,6 +19,7 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
+                .Map(dest => dest.Hashtags, src => src.Hashtags.Select(h => h.Adapt<HashtagDto>()).ToList())
                 .Map(dest => dest.Size, src => src.Size);
 
             TypeAdapterConfig<Thought, ThoughtColoredTitleDto>.NewConfig()
@@ -61,7 +62,13 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Color, src => src.Color)
                 .Map(dest => dest.TotalCount, src => src.TotalCount)
                 .Map(dest => dest.JoinedDate, src => src.JoinedDate)
-                .Map(dest => dest.Thoughts, src => src.Thoughts.Adapt<IList<ThoughtNodeDto>>());
+                .Map(dest => dest.Thoughts, src => src.Thoughts.Adapt<IList<ThoughtNodeDto>>())
+                .Map(dest => dest.Bio, src => src.Bio);
+
+            TypeAdapterConfig<Hashtag, HashtagDto>.NewConfig()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.Tag, src => src.Tag)
+                .Map(dest => dest.Color, src => src.Color);
         }
     }
 }

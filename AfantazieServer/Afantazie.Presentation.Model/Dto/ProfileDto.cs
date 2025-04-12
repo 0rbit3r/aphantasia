@@ -1,4 +1,5 @@
-﻿using Afantazie.Presentation.Model.Dto.Thought;
+﻿using Afantazie.Core.Constants;
+using Afantazie.Presentation.Model.Dto.Thought;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,7 @@ namespace Afantazie.Presentation.Model.Dto
         public int TotalCount { get; set; }
 
         public string JoinedDate { get; set; } = "";
+
+        public string Bio { get; set; } = AfantazieConstants.DefaultBio;
     }
 }

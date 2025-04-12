@@ -1,4 +1,5 @@
-﻿using Afantazie.Core.Model;
+﻿using Afantazie.Core.Localization.Profile;
+using Afantazie.Core.Model;
 using Afantazie.Core.Model.Results;
 using Afantazie.Data.Interface.Repository;
 using Afantazie.Service.Interface.Profiles;
@@ -9,6 +10,7 @@ namespace Afantazie.Service.Profiles
     public class UserProfileService(
         IThoughtRepository _thoughtRepo,
         IUserRepository _userRepo,
+        IProfileMessages _profileMessages,
         ILogger<UserProfileService> _logger
         ): IUserProfileService
     {
@@ -59,8 +61,9 @@ namespace Afantazie.Service.Profiles
                 Username = user.Username,
                 Color = user.Color,
                 Thoughts = thoughts,
-                JoinedDate = thoughts.First().Color,
-                TotalCount = thoughts.Count
+                JoinedDate = thoughts.FirstOrDefault(t => t.Author.Id == user.Id)?.DateCreated.ToString("yyy-MM-dd") ?? _profileMessages.NotYetJoined, 
+                TotalCount = thoughts.Where(t => t.Author.Id == user.Id).Count(),
+                Bio = user.Bio,
             };
 
             return profile;

@@ -21,6 +21,7 @@ namespace Afantazie.Data.Repository
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
                     .Include(t => t.Author)
+                    .Include(t => t.Hashtags) //could proove as performance issue
                     .Where(t => t.Id == id)
                     .SingleOrDefaultAsync();
 

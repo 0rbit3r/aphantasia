@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { Viewport } from '../model/Viewport';
 import { RenderedThought } from '../model/renderedThought';
-import { MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT } from './graphParameters';
 import { userSettingsDto } from '../../../api/dto/UserSettingsDto';
+import { userProfileDto } from '../../../api/dto/userProfileDto';
 
 interface GraphStore {
 
@@ -30,7 +30,6 @@ interface GraphStore {
     fadeOutThoughts: RenderedThought[];
     setFadeOutThoughts: (thoughts: RenderedThought[]) => void;
 
-
     viewport: Viewport;
     setViewport: (viewport: Viewport) => void;
     lockedOnHighlighted: boolean;
@@ -40,8 +39,6 @@ interface GraphStore {
     setZoomingControl: (value: number) => void;
 
     highlightedThought: RenderedThought | null;
-    // this is used for graph walk  and initial highlight on page load - the function expects the thought with the id be present in either neighborhood thoughts or temporal thoughts
-    setHighlightedThoughtById: (id: number) => void;
     setHighlightedThought: (thought: RenderedThought) => void;
     unsetHighlightedThought: () => void;
 
@@ -56,6 +53,10 @@ interface GraphStore {
 
     userSettings: userSettingsDto;
     setUserSettings: (settings: userSettingsDto) => void;
+
+    viewedProfile: userProfileDto | null;	
+    setViewedProfile: (profile: userProfileDto) => void;
+    clearViewedProfile: () => void;   
 }
 export const useGraphStore = create<GraphStore>((set, get) => ({
     temporalRenderedThoughts: [],
@@ -86,35 +87,6 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
     setZoomingControl: (value: number) => set({ zoomingControl: value }),
 
     highlightedThought: null,
-    setHighlightedThoughtById: (id) => {
-        const currentlyhighlighted = get().highlightedThought;
-        if (currentlyhighlighted !== null)
-            currentlyhighlighted.highlighted = false;
-        if (id === 0) {
-            set({ highlightedThought: null });
-            return;
-        }
-
-
-        const newlyHighlightedThought = get().neighborhoodThoughts.find((thought) => thought.id === id)
-            ?? get().temporalRenderedThoughts.find((thought) => thought.id === id);
-
-        set({ highlightedThought: newlyHighlightedThought || null });
-        if (newlyHighlightedThought !== null && newlyHighlightedThought !== undefined) {
-            newlyHighlightedThought.highlighted = true;
-            set({ lockedOnHighlighted: true });
-
-            //handle time shift on highlight
-            const allRenderedThoughts = get().temporalRenderedThoughts;
-            const newUnboundedTimeShift = allRenderedThoughts.length - 1 - allRenderedThoughts.indexOf(newlyHighlightedThought) - Math.floor(get().userSettings.maxThoughts / 2);
-            const newTimeshift = newUnboundedTimeShift < 0
-                ? 0
-                : newUnboundedTimeShift > get().temporalRenderedThoughts.length - get().userSettings.maxThoughts
-                    ? get().temporalRenderedThoughts.length - get().userSettings.maxThoughts
-                    : newUnboundedTimeShift;
-            set({ timeShift: newTimeshift });
-        }
-    },
     setHighlightedThought: (thought: RenderedThought) => {
         const currentlyhighlighted = get().highlightedThought;
         if (currentlyhighlighted !== null)
@@ -150,7 +122,11 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
     timeShift: 0,
     setTimeShift: (timeShift) => set({ timeShift }),
 
-    userSettings: { color: "#ffffff", maxThoughts: MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, username: "not logged in" },
+    userSettings: { color: "#ffffff", username: "not logged in", bio: "" },
     //todo - localization?
     setUserSettings: (settings) => set({ userSettings: settings }),
+
+    viewedProfile: null,
+    setViewedProfile: (profile) => set({ viewedProfile: profile }),
+    clearViewedProfile: () => set({ viewedProfile: null})
 }));

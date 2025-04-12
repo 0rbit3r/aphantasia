@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Afantazie.Core.Constants\Afantazie.Core.Constants.csproj" />
     <ProjectReference Include="..\Afantazie.Core.Model\Afantazie.Core.Model.csproj" />
   </ItemGroup>
 

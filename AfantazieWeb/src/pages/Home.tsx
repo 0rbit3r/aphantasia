@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom"
-import ThoughtLogViewer from "../components/LogViewer";
+import ThoughtListViewer from "../components/ThoughtListViewer";
 import { useOnlineUsers } from "../Contexts/RealtimeStatsContext";
 import { LocationState } from "../interfaces/LocationState";
 import { Localization } from "../locales/localization";
@@ -8,7 +8,6 @@ import { Localization } from "../locales/localization";
 function Home() {
 
     const onlineUsers = useOnlineUsers();
-
     const location = useLocation();
     const message = (location.state as LocationState)?.message;
 
@@ -21,9 +20,9 @@ function Home() {
                 {message}
             </p>}
             <div className="hero">
-                <ThoughtLogViewer source="latest"></ThoughtLogViewer>
-                <ThoughtLogViewer source="hot"></ThoughtLogViewer>
-                <ThoughtLogViewer source="notifications"></ThoughtLogViewer>
+                <ThoughtListViewer source="latest"></ThoughtListViewer>
+                <ThoughtListViewer source="hot"></ThoughtListViewer>
+                <ThoughtListViewer source="notifications"></ThoughtListViewer>
                 {/* <div className"hero-text">
                 </div> */}
             </div>

@@ -14,6 +14,7 @@ namespace Afantazie.Service.Thoughts
         {
             services.AddScoped<IThoughtService, ThoughtService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IHashtagService, HashtagService>();
         }
     }
 }

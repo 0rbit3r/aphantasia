@@ -17,7 +17,7 @@ export const NotificationsPage = () => {
             }
             if (response.data?.length === 0) {
                 setNotifications([{ color: "#aaaaaa", title: Localization.NoNotifications, author: "", dateCreated: "",
-                    id: 0, size: 1, shape: ThoughtShape.Circle, backlinks: [], links: [] }]);
+                    id: 0, size: 1, shape: ThoughtShape.Circle, backlinks: [], links: [], virtualLinks: [], virtualBacklinks:[] }]);
                 //todo add a special element for empty reply thoughts?
             }
         };
@@ -28,7 +28,12 @@ export const NotificationsPage = () => {
         <div className="content-container notifications-content-container">
             <div className="log-container">
                 {notifications.map((thought, index) => (
-                    <div key={index} className="log" style={{ borderColor: thought.color }} onClick={_ => navigate('/graph/' + thought.id)}>
+                    <div key={index} className="log" style={{ borderColor: thought.color }}
+                    onClick={_ => navigate('/graph/' + thought.id)}
+                    onMouseDown={e => {
+                        if (e.button === 1) {
+                            window.open('/graph/' + thought.id);
+                        }}}>
                         <div className="log-thought-title">{thought.title}</div>
                         <div className="log-bottom-row">
                             <div className="log-author" style={{ color: thought.color }}>{thought.author}</div>

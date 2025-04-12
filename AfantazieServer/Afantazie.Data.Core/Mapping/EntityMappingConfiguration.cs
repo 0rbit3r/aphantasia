@@ -51,6 +51,11 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.Email, src => src.Email)
                 .Map(dest => dest.Username, src => src.Username)
                 .Map(dest => dest.Color, src => src.Color);
+
+            TypeAdapterConfig<HashtagEntity, Hashtag>.NewConfig()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.Tag, src => src.Tag)
+                .Map(dest => dest.Color, src => src.Color);
         }
     }
 }

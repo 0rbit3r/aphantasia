@@ -34,7 +34,9 @@ export interface thoughtNodeDto {
     color: string,
     shape: ThoughtShape,
     links: number[],
-    backlinks: number[]
+    backlinks: number[],
+    virtualLinks: number[],
+    virtualBacklinks: number[],
 }
 
 export interface thoughtsTemporalFilterDto

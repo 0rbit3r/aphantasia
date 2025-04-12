@@ -14,7 +14,7 @@ interface ThoughtLogViewerProps {
 const ROWS_PER_LOG = 5;
 
 // A component that displays thoughts as a history of posts.
-const ThoughtLogViewer = (props: ThoughtLogViewerProps) => {
+const ThoughtListViewer = (props: ThoughtLogViewerProps) => {
 
     const [logs, setLogs] = useState<thoughtNodeDto[]>([]);
     const navigate = useNavigate();
@@ -59,7 +59,9 @@ const ThoughtLogViewer = (props: ThoughtLogViewerProps) => {
                 )}
             </div>
             {logs.map((thought, index) => (
-                <div key={index} className="log" style={{ borderColor: thought.color }} onClick={_ => navigate('/graph/' + thought.id)}>
+                <div key={index} className="log" style={{ borderColor: thought.color }}
+                    onClick={_ => navigate('/graph/' + thought.id)}
+                    onMouseDown={e => { if (e.button === 1) { window.open('/graph/' + thought.id) } }}>
                     <div className="log-thought-title">{thought.title}</div>
                     <div className="log-bottom-row">
                         <div className="log-author" style={{ color: thought.color }}>{thought.author}</div>
@@ -77,4 +79,4 @@ const ThoughtLogViewer = (props: ThoughtLogViewerProps) => {
     )
 };
 
-export default ThoughtLogViewer;
+export default ThoughtListViewer;

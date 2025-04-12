@@ -35,9 +35,9 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(profileResult.Error!);
             }
 
-            return profileResult.Payload.Adapt<ProfileDto>();
+            var profile = profileResult.Payload.Adapt<ProfileDto>();
 
-
+            return profile;
         }
     }
 }

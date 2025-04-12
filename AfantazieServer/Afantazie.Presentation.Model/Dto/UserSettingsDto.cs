@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Afantazie.Core.Constants;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,6 @@ namespace Afantazie.Presentation.Model.Dto
 
         public required string Color { get; set; }
 
-        public int MaxThoughts { get; set; }
+        public string Bio { get; set; } = AfantazieConstants.DefaultBio;
     }
 }

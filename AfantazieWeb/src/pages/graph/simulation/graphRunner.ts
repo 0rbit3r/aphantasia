@@ -5,6 +5,7 @@ import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME } from 
 import { useGraphStore } from '../state_and_parameters/GraphStore';
 import { ThoughtPositionCache } from '../model/thoughtPositionCache';
 import { updateTemporalThoughts } from './thoughtsProvider';
+import { useGraphControlsStore } from '../state_and_parameters/GraphControlsStore';
 
 export default function runGraph(app: Application) {
 
@@ -23,6 +24,7 @@ export default function runGraph(app: Application) {
     // main application loop
     app.ticker.add((_) => {
         const graphState = useGraphStore.getState();
+        const controlsState = useGraphControlsStore.getState();
 
         // cache thoughts
         if (graphState.frame === THOUGHTS_CACHE_FRAME) {
@@ -38,22 +40,22 @@ export default function runGraph(app: Application) {
                 ...graphState.temporalRenderedThoughts,
                 ...graphState.neighborhoodThoughts
             ];
-            
+
             // Use a Set to filter out duplicate thoughts by their id
             const uniqueThoughts = Array.from(
                 new Map(
                     combinedThoughts.map(t => [t.id, t])
                 ).values()
             );
-            
+
             const thoughtsCache: ThoughtPositionCache[] = uniqueThoughts.map(t => ({
                 id: t.id,
                 position: t.position,
             }));
-            
+
             localStorage.setItem('thoughts-cache', JSON.stringify(thoughtsCache));
         }
-        
+
         // handle zoom input from user
         const zoomingControl = graphState.zoomingControl;
         if (zoomingControl !== 0) {
@@ -63,14 +65,14 @@ export default function runGraph(app: Application) {
         // handle TimeShift  control input from user
         const timeShiftControl = graphState.timeShiftControl;
         const timeShift = graphState.timeShift;
-        const maxThoughtsOnScreen = graphState.userSettings.maxThoughts;
-        
+        const maxThoughtsOnScreen = controlsState.thoughtsOnScreenLimit;
+
         if ((timeShiftControl > 0 && timeShift < graphState.temporalRenderedThoughts.length)
             || (timeShiftControl < 0 && timeShift > -maxThoughtsOnScreen)) { //todo check the one
             graphState.setTimeShift(timeShift + timeShiftControl);
             graphState.setFrame(1);
         }
-        
+
         // Update temporal thoughts
         updateTemporalThoughts();
 
@@ -86,6 +88,12 @@ export default function runGraph(app: Application) {
                 if (Math.abs(dx) > 0.01 && Math.abs(dy) > 0.01) {
                     graphState.viewport.moveBy({ x: dx / 10, y: dy / 10 });
                 }
+                // const idealZoom = INITIAL_ZOOM - ((INITIAL_ZOOM) / (highlightedThought.radius / MAX_RADIUS));
+                // const dz = idealZoom - viewport.zoom;
+                // console.log(dz);
+                // if (Math.abs(dz) > 0.1) {
+                //     graphState.viewport.zoomByButtonDelta(Math.sign(dz));
+                // }
             }
         }
 
