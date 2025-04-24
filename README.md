@@ -53,6 +53,7 @@ The roadmap for the development is not clear-cut but will likely include:
 - [ ] Follow users / concepts / thoughts + Custom subscriptions-like graph feed
 - [ ] Email verification
 - [ ] Server-side layout
+- [ ] Pinned replies (this one is a maybe)
 
 ### Code and architecture
 - [ ] Refactor Frontend architecture and solidify its rules
