@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Data.Model.Entity
 {
-    [PrimaryKey(nameof(ThoughtId), nameof(HashtagId))]
-    public class ThoughtHashtagEntity
+    [PrimaryKey(nameof(ThoughtId), nameof(ConceptId))]
+    public class ThoughtConceptEntity
     {
         public int ThoughtId { get; set; }
 
         public ThoughtEntity Thought { get; set; } = null!;
 
-        public int HashtagId { get; set; }
+        public int ConceptId { get; set; }
 
-        public HashtagEntity Hashtag { get; set; } = null!;
+        public ConceptEntity Concept { get; set; } = null!;
     }
 }

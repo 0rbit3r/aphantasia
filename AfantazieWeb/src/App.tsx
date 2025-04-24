@@ -47,10 +47,10 @@ function App() {
                     <Route path="/register" element={<Registration />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/graph" element={<GraphPage />} />
-                    <Route path="/graph/:urlThoughtId" element={<GraphPage />} />
+                    <Route path="/graph/:urlParameter" element={<GraphPage />} />
                     <Route path="/create-thought" element={<ProtectedRoute redirectPath='/login'><CreateThought /></ProtectedRoute>} />
                     <Route path='/list' element={<ThoughtsList />} />
-                    <Route path='/zvoneček' element={<ProtectedRoute redirectPath='/login'>< NotificationsPage /></ProtectedRoute>} />
+                    <Route path='/notifications' element={<ProtectedRoute redirectPath='/login'>< NotificationsPage /></ProtectedRoute>} />
                     <Route path="*" element={<NotFoundPage></NotFoundPage>} />
                   </Routes>
                 </ScrollToTop>

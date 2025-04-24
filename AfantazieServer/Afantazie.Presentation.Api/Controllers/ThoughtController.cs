@@ -46,7 +46,7 @@ namespace Afantazie.Presentation.Api.Controllers
 
         [HttpGet]
         public async Task<ActionResult<List<ThoughtNodeDto>>> GetTemporalThoughtsNodes(
-            [FromQuery] ThoughtsTemporalFilterDto filter)
+            [FromQuery] ThoughtsTemporalFilterDto filter, [FromQuery] string? concept)
         {
             #region validations
             if (filter.Amount < 1)
@@ -68,7 +68,7 @@ namespace Afantazie.Presentation.Api.Controllers
             #endregion
 
             var response = await _thoughtService.GetTemporalThoughtsAsync(
-                filter.Adapt<ThoughtsTemporalFilter>());
+                filter.Adapt<ThoughtsTemporalFilter>(), concept);
 
             if (!response.IsSuccess)
             {
@@ -142,7 +142,37 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(response.Error!);
             }
 
+
+
             return response.Payload!;
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteThought(int id)
+        {
+            if (UserId is null)
+                return Unauthorized();
+
+            var thoughtResult = await _thoughtService.GetThoughtByIdAsync(id);
+
+            if (!thoughtResult.IsSuccess)
+            {
+                return ResponseFromError(thoughtResult.Error!);
+            }
+            if (thoughtResult.Payload!.Author.Id != UserId)
+            {
+                return Unauthorized();
+            }
+
+            var deleteResult = await _thoughtService.DeleteThoughtAsync(id);
+
+            if (!deleteResult.IsSuccess)
+            {
+                return ResponseFromError(deleteResult.Error!);
+            }
+
+            return Ok();
         }
 
         [HttpGet("total-count")]

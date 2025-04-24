@@ -24,10 +24,14 @@ namespace Afantazie.Tools
             AfantazieDataContext dataContext = dataContextProvider.GetDataContext();
 
             int FROM = 1;
-            int TO = 1446;
+            int TO = 713;
 
             for (int i = FROM; i <= TO; i++)
             {
+                if (i % 100 == 0)
+                {
+                    Console.WriteLine($"Processing {i}");
+                }
                 await dataContext.Thoughts
                     .Include(t => t.Links)
                     .LoadAsync();
@@ -46,6 +50,7 @@ namespace Afantazie.Tools
                 dataContext.Thoughts.Update(thought);
                 var result = dataContext.SaveChanges();
             }
+            Console.WriteLine("Done");
             return Result.Success();
         }
     }

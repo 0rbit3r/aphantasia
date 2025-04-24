@@ -14,6 +14,6 @@ namespace Afantazie.Service.Interface.SiteActivity
 
         Task<Result<List<Thought>>> GetHotActivity(int amount);
 
-        Task<Result<List<Thought>>> GetNotificationsLog(int userId, int amount);
+        Task<Result<List<Thought>>> GetBiggest(int amount);
     }
 }

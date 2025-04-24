@@ -23,3 +23,25 @@ export async function fetchHotLog(amount: number): Promise<apiResponseWithBody<t
 
     return response;
 }
+
+export async function fetchBiggestLog(amount: number): Promise<apiResponseWithBody<thoughtNodeDto[]>> {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/log/big?amount=${amount}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    return response;
+}
+
+export const fetchPinnedLog = async (amount: number): Promise<apiResponseWithBody<thoughtNodeDto[]>> => {
+    const response = await sendAndExpectBody<thoughtNodeDto[]>(`${API_URL}/log/pinned?amount=${amount}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    return response;
+}

@@ -42,47 +42,50 @@ const get_center_distance = (thought1: RenderedThought, thought2: RenderedThough
     return dist === 0 ? 0.01 : dist;
 }
 
-export const simulate_one_frame = () => {
+export const simulate_one_frame_of_FDL = () => {
     const onScreenThoughts = getThoughtsOnScreen();
     const graphControlsState = useGraphControlsStore.getState();
 
-    for (let i = 0; i < onScreenThoughts.length; i++) {
-        const sourceThought = onScreenThoughts[i];
-        handleOutOfBounds(sourceThought);
-        if (!graphControlsState.noBorders) {
-            handleOutOfBorders(sourceThought);
-        }
+    if (!graphControlsState.disableSimulation) {
+        for (let i = 0; i < onScreenThoughts.length; i++) {
+            const sourceThought = onScreenThoughts[i];
+            handleOutOfBounds(sourceThought);
+            if (!graphControlsState.noBorders) {
+                handleOutOfBorders(sourceThought);
+            }
+            for (let j = 0; j < i; j++) {
+                const targetThought = onScreenThoughts[j];
+                if (sourceThought.id > targetThought.id) { //This relies on the fact that thoughts can only reference older ones... and sorted array...
+                    const borderDistance = get_border_distance(sourceThought, targetThought);
 
-        if (graphControlsState.disableSimulation) {
-            continue;
-        }
-        for (let j = 0; j < i; j++) {
-            const targetThought = onScreenThoughts[j];
-            if (sourceThought.id > targetThought.id) { //This relies on the fact that thoughts can only reference older ones... and sorted array...
-                const borderDistance = get_border_distance(sourceThought, targetThought);
-
-                if (sourceThought.links.includes(targetThought.id)) {
-                    pull_or_push_connected_to_ideal_distance(
-                        {sourceThought, targetThought,
-                            upFlow: graphControlsState.upFlowEnabled,
-                            isVirtualEdge: false,
-                            idealLength: graphControlsState.edgeLengthMultiplier * IDEAL_LINKED_DISTANCE});
-                } else if (sourceThought.virtualLinks.includes(targetThought.id) && graphControlsState.explorationMode === ExplorationMode.PROFILE) {
-                    pull_or_push_connected_to_ideal_distance(
-                        {sourceThought, targetThought,
-                            upFlow: graphControlsState.upFlowEnabled,
-                            isVirtualEdge: true,
-                            idealLength: graphControlsState.edgeLengthMultiplier * IDEAL_LINKED_DISTANCE});
-                }
-                else if (borderDistance < PUSH_THRESH) {
-                    push_unconnected(sourceThought, targetThought);
+                    if (sourceThought.links.includes(targetThought.id)) {
+                        pull_or_push_connected_to_ideal_distance(
+                            {
+                                sourceThought, targetThought,
+                                upFlow: graphControlsState.upFlowEnabled,
+                                isVirtualEdge: false,
+                                idealLength: graphControlsState.edgeLengthMultiplier * IDEAL_LINKED_DISTANCE
+                            });
+                    } else if (sourceThought.virtualLinks.includes(targetThought.id) && graphControlsState.explorationMode === ExplorationMode.PROFILE) {
+                        pull_or_push_connected_to_ideal_distance(
+                            {
+                                sourceThought, targetThought,
+                                upFlow: graphControlsState.upFlowEnabled,
+                                isVirtualEdge: true,
+                                idealLength: graphControlsState.edgeLengthMultiplier * IDEAL_LINKED_DISTANCE
+                            });
+                    }
+                    else if (borderDistance < PUSH_THRESH) {
+                        push_unconnected(sourceThought, targetThought);
+                    }
                 }
             }
-        }
-        if (graphControlsState.gravityEnabled) {
-            gravity_pull(sourceThought);
+            if (graphControlsState.gravityEnabled) {
+                gravity_pull(sourceThought);
+            }
         }
     }
+
 
     const frame = useGraphStore.getState().frame;
     onScreenThoughts.forEach(thought => {
@@ -119,7 +122,7 @@ export const simulate_one_frame = () => {
     });
 }
 
-export interface EdgeForceOptions{
+export interface EdgeForceOptions {
     sourceThought: RenderedThought;
     targetThought: RenderedThought;
     upFlow?: boolean;
@@ -128,7 +131,7 @@ export interface EdgeForceOptions{
 }
 
 export const pull_or_push_connected_to_ideal_distance = (opts: EdgeForceOptions) => {
-    if (!opts.idealLength){
+    if (!opts.idealLength) {
         opts.idealLength = IDEAL_LINKED_DISTANCE;
     }
 
@@ -142,7 +145,7 @@ export const pull_or_push_connected_to_ideal_distance = (opts: EdgeForceOptions)
     // }
 
     const idealDistanceAdjustedByFactors = opts.idealLength
-        * Math.max(opts.targetThought.size * IDEAL_DIST_SIZE_MULTIPLIER, 1) 
+        * Math.max(opts.targetThought.size * IDEAL_DIST_SIZE_MULTIPLIER, 1)
         * (opts.isVirtualEdge ? VIRTUAL_EDGE_LINKED_DIST_MULTIPLIER : 1);
 
     const force = pullForce(borderDistance, idealDistanceAdjustedByFactors) / backlinksNumberForceDivisor(opts.targetThought.backlinks.length)
@@ -259,16 +262,16 @@ const handleOutOfBounds = (thought: RenderedThought) => {
 }
 
 const handleOutOfBorders = (thought: RenderedThought) => {
-    if (thought.position.x < thought.radius * 2.5) {
-        thought.position.x = thought.radius * 2.5;
+    if (thought.position.x < thought.radius) {
+        thought.position.x = thought.radius;
     }
-    if (thought.position.x > SIM_WIDTH - thought.radius * 2.5) {
-        thought.position.x = SIM_WIDTH - thought.radius * 2.5;
+    if (thought.position.x > SIM_WIDTH - thought.radius) {
+        thought.position.x = SIM_WIDTH - thought.radius;
     }
-    if (thought.position.y < thought.radius * 2.5) {
-        thought.position.y = thought.radius * 2.5;
+    if (thought.position.y < thought.radius) {
+        thought.position.y = thought.radius ;
     }
-    if (thought.position.y > SIM_HEIGHT - thought.radius * 2.5) {
-        thought.position.y = SIM_HEIGHT - thought.radius * 2.5;
+    if (thought.position.y > SIM_HEIGHT - thought.radius) {
+        thought.position.y = SIM_HEIGHT - thought.radius;
     }
 }

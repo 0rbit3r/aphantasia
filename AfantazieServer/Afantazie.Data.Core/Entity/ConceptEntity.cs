@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Data.Model.Entity
 {
-    public class HashtagEntity
+    public class ConceptEntity
     {
         [Key]
         public int Id { get; set; }
@@ -16,7 +16,9 @@ namespace Afantazie.Data.Model.Entity
         public string Tag { get; set; } = "";
 
         [Required]
-        public string Color { get; set; } = "#FFFFFF";
+        public string Color { get; set; } = "#e0e0e0";
+
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
         public ICollection<ThoughtEntity> Thoughts = new List<ThoughtEntity>();
     }

@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../Contexts/AuthContext';
 import { Localization } from '../locales/localization';
 import { useGraphStore } from '../pages/graph/state_and_parameters/GraphStore';
+import { fetchHasUnread } from '../api/notificationsApiClient';
 
 function Navbar() {
 
@@ -11,12 +12,16 @@ function Navbar() {
 
     const { isAuthenticated } = useAuth();
 
+
     const navigate = useNavigate();
     const userSettings = useGraphStore(state => state.userSettings);
+    const hasUnread = useGraphStore(state => state.hasUnreadNotifications);
+    const setHasUnread = useGraphStore(state => state.setHasUnreadNotifications);
+    const userColor = useGraphStore(state => state.userSettings.color);
 
     const handleExpansion = () => {
         if (menuExpanded) {
-            console.log('closing menu');
+            // console.log('closing menu');
             setTimeout(() => {
                 setMenuVisible(!menuVisible);
             }, 300);
@@ -33,6 +38,22 @@ function Navbar() {
             handleExpansion();
         }
     };
+
+    const fetchAndSetHasUnreadFlag = async () => {
+        await fetchHasUnread().then((response) => {
+            if (response.status === 200) {
+                setHasUnread(response.data!);
+            }
+        });
+    };
+    
+    useEffect(() => {
+        fetchAndSetHasUnreadFlag();
+    }, []);
+
+    useEffect(() => {
+        fetchAndSetHasUnreadFlag();
+    }, [isAuthenticated]);
 
     return (
         <>
@@ -60,9 +81,9 @@ function Navbar() {
                             3.58579ZM13.1933 11.0302L13.5489 8.87995L17.4289 5L19.2205 
                             6.7916L15.34 10.6721L13.1933 11.0302Z" fill="currentColor"></path> </g></svg>
                             </NavLink>
-                            <NavLink to="/zvoneček" onClick={handleClick} className='top-row-button'>
+                            <NavLink to="/notifications" onClick={handleClick} className='top-row-button'>
                                 <svg className="w-[48px] h-[48px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5
+                                    <path stroke={hasUnread ? userColor : "#ffffff"} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5.365V3m0 2.365a5.338 5.338 0 0 1 5.133 5.368v1.8c0 2.386 1.867 2.982 1.867 4.175 0 .593 0 1.292-.538 1.292H5.538C5
                              18 5 17.301 5 16.708c0-1.193 1.867-1.789 1.867-4.175v-1.8A5.338 5.338 0 0 1 12 5.365ZM8.733 18c.094.852.306 1.54.944 2.112a3.48 3.48 0 0 0 4.646 0c.638-.572 1.236-1.26 1.33-2.112h-6.92Z" />
                                 </svg>
                             </NavLink>

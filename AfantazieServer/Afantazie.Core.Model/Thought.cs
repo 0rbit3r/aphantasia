@@ -24,11 +24,13 @@ namespace Afantazie.Core.Model
 
         public ICollection<ThoughtReference> Backlinks { get; set; } = new List<ThoughtReference>();
 
-        public ICollection<Hashtag> Hashtags { get; set; } = new List<Hashtag>();
+        public ICollection<Concept> Concepts { get; set; } = new List<Concept>();
 
         public int Size { get; set; }
 
         public ThoughtShape Shape { get; set; }
+
+        public bool IsPinned { get; set; } = false;
     }
 
     public enum ThoughtShape

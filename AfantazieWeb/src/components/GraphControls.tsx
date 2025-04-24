@@ -2,10 +2,10 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { EdgeType, useGraphControlsStore } from "../pages/graph/state_and_parameters/GraphControlsStore";
 import { useGraphStore } from "../pages/graph/state_and_parameters/GraphStore";
 import { Localization } from "../locales/localization";
-import { clearNeighborhoodThoughts, getThoughtsInTimeWindow } from "../pages/graph/simulation/thoughtsProvider";
+import { clearNeighborhoodThoughts, getThoughtsInTimeWindow, initializeTemporalThoughts } from "../pages/graph/simulation/thoughtsProvider";
 import { GraphControlsCache } from "../pages/graph/model/GraphControlsCache";
-import { ExplorationMode, SwitchToExplorationMode } from "../pages/graph/simulation/modesManager";
-import { MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT as DEFAULT_MAX_THOUGHTS_ON_SCREEN, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../pages/graph/state_and_parameters/graphParameters";
+import { ExplorationMode, MM_InitializeGraphMode, MM_SwitchToExplorationMode } from "../pages/graph/simulation/modesManager";
+import { BASE_RADIUS, DEFAULT_MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT as DEFAULT_MAX_THOUGHTS_ON_SCREEN, REFERENCE_RADIUS_MULTIPLIER} from "../pages/graph/state_and_parameters/graphParameters";
 
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
@@ -37,7 +37,12 @@ const GraphControls = () => {
     const setVisibilityThresholdMultiplier = useGraphControlsStore(state => state.setTitleVisibilityThresholdMultiplier);
     const edgeLengthMultiplier = useGraphControlsStore(state => state.edgeLengthMultiplier);
     const setEdgeLengthMultiplier = useGraphControlsStore(state => state.setEdgeLengthMultiplier);
+    const maxRadius = useGraphControlsStore(state => state.maxRadius);
+    const setMaxRadius = useGraphControlsStore(state => state.setMaxRadius);
+    const disableFollowHighlightedThought = useGraphControlsStore(state => state.disableFollowHighlightedThought);
+    const setDisableFollowHighlightedThought = useGraphControlsStore(state => state.setDisableFollowHighlightedThought);
 
+    const setTemporalThoughts = useGraphStore(state => state.setTemporalRenderedThoughts);
 
     const explorationMode = useGraphControlsStore(state => state.explorationMode);
 
@@ -63,8 +68,9 @@ const GraphControls = () => {
         setFpsEnabled(false);
         setDisableSimulation(false);
         setThoughtsOnScreenLimit(DEFAULT_MAX_THOUGHTS_ON_SCREEN);
-        setVisibilityThresholdMultiplier(1);
+        setVisibilityThresholdMultiplier(1.0);
         setEdgeLengthMultiplier(1.0);
+        handleSetMaxRadius(DEFAULT_MAX_RADIUS);
     }
 
     const handleMainButtonPress = (button: string) => {
@@ -79,30 +85,27 @@ const GraphControls = () => {
             }
         }
         else if (button === 'temporal') {
-            if (explorationMode == ExplorationMode.TEMPORAL) {
-
-                if (temporalControlsVisible) {
-                    setRewindMode('pause');
-                    setTemporalControlsVisible(false);
-                }
-                else {
-                    setTemporalControlsVisible(true);
-                    setSettingsWindowVisible(false);
-                }
+            if (temporalControlsVisible) {
+                setRewindMode('pause');
+                setTemporalControlsVisible(false);
             }
             else {
-                SwitchToExplorationMode(ExplorationMode.TEMPORAL, '');
+                setTemporalControlsVisible(true);
+                setSettingsWindowVisible(false);
+                if (explorationMode === ExplorationMode.NEIGHBORHOOD) {
+                    setRewindMode('pause');
+                    MM_SwitchToExplorationMode(ExplorationMode.TEMPORAL, '');
+                }
             }
-
         }
         else if (button === 'neighborhood') {
             if (explorationMode !== ExplorationMode.NEIGHBORHOOD) {
                 setRewindMode('pause');
                 setTemporalControlsVisible(false);
-                SwitchToExplorationMode(ExplorationMode.NEIGHBORHOOD, '');
+                MM_SwitchToExplorationMode(ExplorationMode.NEIGHBORHOOD, '');
             }
             else {
-                SwitchToExplorationMode(ExplorationMode.FREE, '');
+                MM_SwitchToExplorationMode(ExplorationMode.TEMPORAL, '');
             }
         }
     }
@@ -120,8 +123,17 @@ const GraphControls = () => {
             setTimeShiftControl(0);
         }
         else if (rewindMode === 'live') {
+            // setFetchingTemporalThoughts(true);
+            // // this did not work -> in thoughtsprovider.handleTemporalThoughtsTimeShifting the fetching is set to false which triggers
+            // timewindow sliding handling and I dont know why... -> TODO
+            setTemporalThoughts([]); //this needs to be here
+
+            MM_InitializeGraphMode(ExplorationMode.TEMPORAL);
+            initializeTemporalThoughts(null);
+
             setTimeShiftControl(0);
             setTimeShift(-1);
+            window.history.pushState(null, '', '/graph/now');
         }
     }, [rewindMode]);
 
@@ -131,26 +143,34 @@ const GraphControls = () => {
 
         // console.log("cachedSettings: ", cachedSettings);
         if (cachedSettings) {
-            setEdgeType(cachedSettings.edgeType);
-            setGravityEnabled(cachedSettings.gravityEnabled);
-            setTitleOnHoverEnabled(cachedSettings.titleOnHoverEnabled);
-            setUpFlowEnabled(cachedSettings.upFlowEnabled);
-            setNoBorders(cachedSettings.noBorders);
-            setFpsEnabled(cachedSettings.showFpsEnabled);
-            setDisableSimulation(cachedSettings.disableSimulation);
-            setThoughtsOnScreenLimit(cachedSettings.ThoughtsOnScreenLimit);
-            setVisibilityThresholdMultiplier(cachedSettings.titleVisibilityThresholdMultiplier);
-            setEdgeLengthMultiplier(cachedSettings.edgeLengthMultiplier);
+            if (cachedSettings.edgeType !== undefined)
+                setEdgeType(cachedSettings.edgeType);
+            if (cachedSettings.gravityEnabled !== undefined)
+                setGravityEnabled(cachedSettings.gravityEnabled);
+            if (cachedSettings.titleOnHoverEnabled !== undefined)
+                setTitleOnHoverEnabled(cachedSettings.titleOnHoverEnabled);
+            if (cachedSettings.upFlowEnabled !== undefined)
+                setUpFlowEnabled(cachedSettings.upFlowEnabled);
+            if (cachedSettings.noBorders !== undefined)
+                setNoBorders(cachedSettings.noBorders);
+            if (cachedSettings.showFpsEnabled !== undefined)
+                setFpsEnabled(cachedSettings.showFpsEnabled);
+            if (cachedSettings.disableSimulation !== undefined)
+                setDisableSimulation(cachedSettings.disableSimulation);
+            if (cachedSettings.ThoughtsOnScreenLimit !== undefined)
+                setThoughtsOnScreenLimit(cachedSettings.ThoughtsOnScreenLimit);
+            if (cachedSettings.titleVisibilityThresholdMultiplier !== undefined)
+                setVisibilityThresholdMultiplier(cachedSettings.titleVisibilityThresholdMultiplier);
+            if (cachedSettings.edgeLengthMultiplier !== undefined)
+                setEdgeLengthMultiplier(cachedSettings.edgeLengthMultiplier);
+            if (cachedSettings.maxRadius !== undefined)
+                setMaxRadius(cachedSettings.maxRadius);
         }
     }, []);
 
     useEffect(() => {
-        if (explorationMode !== ExplorationMode.TEMPORAL) {
-            setRewindMode('pause');
-            setTimeShift(0);
-            setTimeShiftControl(0);
-            setTemporalControlsVisible(false);
-        }
+        setRewindMode('pause');
+        setTimeShiftControl(0);
     }, [explorationMode]);
 
     // update saved settings
@@ -166,50 +186,68 @@ const GraphControls = () => {
             ThoughtsOnScreenLimit: thoughtsOnScreenLimit,
             titleVisibilityThresholdMultiplier: titleVisibilityThresholdMultiplier,
             edgeLengthMultiplier: edgeLengthMultiplier,
+            maxRadius: maxRadius,
         };
         localStorage.setItem('settings-cache', JSON.stringify(settings));
     }, [edgeType, gravityEnabled, upFlowEnabled,
         noBordersEnabled, titleOnHoverEnabled,
         showFpsEnabled, disableSimulation, thoughtsOnScreenLimit,
-        titleVisibilityThresholdMultiplier, edgeLengthMultiplier]);
+        titleVisibilityThresholdMultiplier, edgeLengthMultiplier,
+        maxRadius]);
 
-            // reset simulation frame
+    // reset simulation frame
     useEffect(() => {
         setFrame(0);
-    }, [, gravityEnabled, upFlowEnabled, noBordersEnabled, temporalControlsVisible,
+    }, [gravityEnabled, upFlowEnabled, noBordersEnabled, temporalControlsVisible,
         disableSimulation, thoughtsOnScreenLimit, edgeLengthMultiplier]);
 
+    // update date label on change of timeShift or exploration mode etc.
     useEffect(() => {
         const thoughtsInTimeWindow = getThoughtsInTimeWindow();
-        // console.log("visibleThoughts: ", thoughtsInTimeWindow)
+        // console.log("time shift changed to: ", timeShift);
 
         if (thoughtsInTimeWindow && thoughtsInTimeWindow.length > 0 && thoughtsInTimeWindow[thoughtsInTimeWindow.length - 1].dateCreated) {
-            // console.log("allRenderedThoughts: ", temporalThoughts)
-            if (timeShift > 0) {
+
+            // todo - this is not hit when date is clicked -> find a way to update the date when explor. mode is changed
+
+            if (timeShift >= 0) {
                 setNewestDate(thoughtsInTimeWindow[thoughtsInTimeWindow.length - 1].dateCreated || "...");
             }
-            else {
-                setNewestDate(Localization.RightNow);
+            else{
+            setNewestDate(Localization.RightNow);
             }
         }
-    }, [timeShift]);
+        else if (timeShift < 0) {
+            setNewestDate(Localization.RightNow);
+        }
+        
+    }, [timeShift, explorationMode, temporalControlsVisible]);
 
     function gravityCheckboxChanged(e: ChangeEvent<HTMLInputElement>): void {
         setGravityEnabled(e.target.checked);
     }
 
+    const handleSetMaxRadius = (value: number) => {
+        setMaxRadius(value);
+        setFrame(0);
+        const graphState = useGraphStore.getState();
+        graphState.neighborhoodThoughts.forEach(
+            t => t.radius = Math.min(
+                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+                value));
+        graphState.temporalRenderedThoughts.forEach(
+            t => t.radius = Math.min(
+                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+                value));
+    };
+
     return (
         <div className="graph-controls">
             <div className={`settings-window ${!settingsWindowVisible ? "settings-window-collapsed" : ""}`}>
                 <div className="settings-window-top-bar">
-                    <button className="settings-window-reset-default-button" onClick={()  => handleResetDefaults()}>
-                        
-                        
-                        Reset defaults
-                        
-                        
-                        
-                        </button>
+                    <button className="settings-window-reset-default-button" onClick={() => handleResetDefaults()}>
+                        {Localization.ResetDefaults}
+                    </button>
                     <button className="settings-window-close-button" onClick={() => setSettingsWindowVisible(false)}>X</button>
                 </div>
                 <label>
@@ -218,6 +256,7 @@ const GraphControls = () => {
                         <option value={20}>20</option>
                         <option value={50}>50</option>
                         <option value={100}>100</option>
+                        <option value={150}>150</option>
                         <option value={200}>200</option>
                         <option value={350}>350</option>
                         <option value={500}>500</option>
@@ -244,8 +283,14 @@ const GraphControls = () => {
                 <br />
                 <label>{Localization.EdgesLengthLabel}</label>
                 <br />
-                <input className="settings-window-range" type="range" min={0.4} max={2} step={0.1} value={edgeLengthMultiplier}
+                <input className="settings-window-range" type="range" min={0.6} max={4} step={0.2} value={edgeLengthMultiplier}
                     onChange={e => setEdgeLengthMultiplier(parseFloat(e.target.value))}></input>
+                <br />
+                <label>{Localization.NodeSizeLabel}</label>
+                <br />
+                <input className="settings-window-range" type="range" min={1000} max={8000} step={500} value={maxRadius}
+                    onChange={e => handleSetMaxRadius(parseInt(e.target.value))}
+                ></input>
                 <br />
                 <label>
                     <input className="settings-window-checkbox" type="checkbox" onChange={e => gravityCheckboxChanged(e)} checked={gravityEnabled}></input>
@@ -276,6 +321,12 @@ const GraphControls = () => {
                     <input className="settings-window-checkbox" type="checkbox" onChange={e => setDisableSimulation(e.target.checked)} checked={disableSimulation}></input>
                     {Localization.DisableSimulationLabel}
                 </label>
+                <br />
+                <label>
+                    <input className="settings-window-checkbox" type="checkbox" onChange={e => setDisableFollowHighlightedThought(e.target.checked)}
+                    checked={disableFollowHighlightedThought}></input>
+                    {Localization.DisableFollowHighlighted}
+                    </label>
             </div>
 
             <div className={`temporal-section ${!temporalControlsVisible ? "settings-window-collapsed" : ""}`}>
@@ -319,9 +370,9 @@ const GraphControls = () => {
                 </div>
             </div>
             <div className="graph-controls-buttons-row">
-                <button className={`graph-controls-button ${explorationMode === ExplorationMode.TEMPORAL ? 'graph-controls-button-active' : ''}`}
+                <button className={`graph-controls-button ${temporalControlsVisible ? 'graph-controls-button-active' : ''}`}
                     onClick={() => handleMainButtonPress('temporal')}>
-                    {explorationMode === ExplorationMode.TEMPORAL
+                    {temporalControlsVisible
                         ? <img src={PUBLIC_FOLDER + "/icons/rewind_black.svg"}></img>
                         : <img src={PUBLIC_FOLDER + "/icons/rewind_white.svg"}></img>
                     }
@@ -335,7 +386,7 @@ const GraphControls = () => {
                     }
                 </button>
                 <button className='graph-controls-button'>
-                    <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img>
+                    {/* <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img> */}
                 </button>
                 <button className={`graph-controls-button ${settingsWindowVisible ? 'graph-controls-button-active' : ''}`}
                     onClick={() => handleMainButtonPress('settings')}>

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Afantazie.Data.Model.Migrations
 {
     [DbContext(typeof(AfantazieDataContext))]
-    [Migration("20250330224500_ConfiguredThoughtHashtag")]
-    partial class ConfiguredThoughtHashtag
+    [Migration("20250418074145_Concepts")]
+    partial class Concepts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Afantazie.Data.Model.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.HashtagEntity", b =>
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ConceptEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,24 @@ namespace Afantazie.Data.Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hashtags");
+                    b.HasIndex("Tag");
+
+                    b.ToTable("Concepts");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtConceptEntity", b =>
+                {
+                    b.Property<int>("ThoughtId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConceptId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ThoughtId", "ConceptId");
+
+                    b.HasIndex("ConceptId");
+
+                    b.ToTable("ThoughtConcepts", (string)null);
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtEntity", b =>
@@ -81,21 +98,6 @@ namespace Afantazie.Data.Model.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Thoughts");
-                });
-
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
-                {
-                    b.Property<int>("ThoughtId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HashtagId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ThoughtId", "HashtagId");
-
-                    b.HasIndex("HashtagId");
-
-                    b.ToTable("ThoughtHashtags");
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>
@@ -142,9 +144,6 @@ namespace Afantazie.Data.Model.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MaxThoughts")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
@@ -164,6 +163,25 @@ namespace Afantazie.Data.Model.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtConceptEntity", b =>
+                {
+                    b.HasOne("Afantazie.Data.Model.Entity.ConceptEntity", "Concept")
+                        .WithMany()
+                        .HasForeignKey("ConceptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
+                        .WithMany()
+                        .HasForeignKey("ThoughtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Concept");
+
+                    b.Navigation("Thought");
+                });
+
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtEntity", b =>
                 {
                     b.HasOne("Afantazie.Data.Model.Entity.UserEntity", "Author")
@@ -175,37 +193,18 @@ namespace Afantazie.Data.Model.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
-                {
-                    b.HasOne("Afantazie.Data.Model.Entity.HashtagEntity", "Hashtag")
-                        .WithMany()
-                        .HasForeignKey("HashtagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
-                        .WithMany()
-                        .HasForeignKey("ThoughtId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hashtag");
-
-                    b.Navigation("Thought");
-                });
-
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>
                 {
                     b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "SourceThought")
                         .WithMany("Links")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "TargetThought")
                         .WithMany("Backlinks")
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SourceThought");

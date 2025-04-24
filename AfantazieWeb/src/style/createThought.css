@@ -307,6 +307,7 @@
 
     .scroll-view {
         max-width: 600px;
+        padding: 10px;
         margin: auto;
         overflow: auto;
 

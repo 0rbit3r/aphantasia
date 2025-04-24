@@ -4,13 +4,14 @@ import { fullThoughtDto } from '../../api/dto/ThoughtDto';
 import { useParams } from 'react-router-dom';
 import { useGraphStore } from './state_and_parameters/GraphStore';
 import GraphContainer from './GraphContainer';
-import { fetchTemporalThoughts, fetchThought } from '../../api/graphClient';
-import { updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
+import { fetchTemporalThoughts, fetchThought } from '../../api/graphApiClient';
+import { clearNeighborhoodThoughts, initializeTemporalThoughts, updateNeighborhoodThoughts } from './simulation/thoughtsProvider';
 import { ThoughtViewer } from '../../components/ThoughtViewer';
 import GraphControls from '../../components/GraphControls';
 import { useGraphControlsStore } from './state_and_parameters/GraphControlsStore';
-import { ExplorationMode, SetHighlightedThoughtById, SwitchToExplorationMode } from './simulation/modesManager';
+import { ExplorationMode, MM_SetHighlightedThoughtById, MM_SwitchToExplorationMode } from './simulation/modesManager';
 import { ProfileViewer } from '../../components/ProfileViewer';
+import { ConceptViewer } from '../../components/ConceptViewer';
 
 const COLOR_BACKGROUND = 0x000000;
 
@@ -22,8 +23,8 @@ const initialStageSize = { width: window.innerWidth, height: window.innerHeight 
 const GraphPage: React.FC = () => {
     // navigation
     // const navigate = useNavigate();
-    const [initialHighlightedThoughtId, setInitialHighlightedThoughtId] = useState<number | null | undefined>(undefined);
-    const { urlThoughtId } = useParams();
+    const [initialUrlQueryParametr, setUrlQueryParameter] = useState<string | null | undefined>(undefined); //undefined = not yet initialized, null = no parameter (ie. latest)
+    const { urlParameter } = useParams();
 
     // data
     const temporalThoughts = useGraphStore((state) => state.temporalRenderedThoughts);
@@ -34,7 +35,7 @@ const GraphPage: React.FC = () => {
     // const [replies, setReplies] = useState<thoughtNodeDto[]>([]);
 
     // screen state
-    const [thoughtViewerVisible, setOverlayVisible] = useState(false);
+    const [thoughtViewerVisible, setThoughtViewerVisible] = useState(false);
     // const viewport = useGraphStore((state) => state.viewport);
 
     // controls
@@ -47,12 +48,10 @@ const GraphPage: React.FC = () => {
     const [fullHighlightedThought, setfullHighlightedThought] = useState<fullThoughtDto | null>(null);
 
     const explorationMode = useGraphControlsStore((state) => state.explorationMode);
+    const viewedConcept = useGraphStore((state) => state.viewedConcept);
 
     // todo - add profile dto to graph Store and use it as param for profile viewer
     const profile = useGraphStore((state) => state.viewedProfile);
-
-
-
 
     // const timeShiftControl = useGraphStore((state) => state.timeShiftControl);
     // const setTimeShiftControl = useGraphStore((state) => state.setTimeShiftControl);
@@ -82,23 +81,11 @@ const GraphPage: React.FC = () => {
 
 
         // set initial highlighted thought
-        if (urlThoughtId) {
-            // console.log("urlThoughtId: ", urlThoughtId)
-            if (urlThoughtId === 'now') {
-                setInitialHighlightedThoughtId(null);
-                setTimeShift(-1);
-                // setNewestDate(Localization.RightNow);
-
-                //todo - create handler for live preview (called from url and by button)
-                return;
-            }
-            const id = parseInt(urlThoughtId);
-            if (!isNaN(id)) {
-                setInitialHighlightedThoughtId(id);
-            }
+        if (urlParameter) {
+            setUrlQueryParameter(urlParameter);
         }
         else {
-            setInitialHighlightedThoughtId(null);
+            setUrlQueryParameter(null);
         }
     }, []);
 
@@ -119,16 +106,18 @@ const GraphPage: React.FC = () => {
     useEffect(() => {
 
         if (highlightedThought === null) {
-            window.history.pushState(null, '', '/graph');
+            // if (explorationMode === ExplorationMode.TEMPORAL) {
+            //     window.history.pushState(null, '', '/graph');
+            // }
             // setStageSize(_ => ({ width: window.innerWidth, height: window.innerHeight - 60 }));
-            setOverlayVisible(false);
+            setThoughtViewerVisible(false);
             return;
         }
         if (temporalThoughts.length === 0)
             return;
         window.history.pushState(null, '', `/graph/${highlightedThought.id}`);
 
-        setOverlayVisible(true);
+        setThoughtViewerVisible(true);
         if (scrollContainer.current) {
             scrollContainer.current.scrollTop = 0;
         }
@@ -140,15 +129,22 @@ const GraphPage: React.FC = () => {
     }, [zoomingHeld]);
 
     const handleUserProfileClick = (username: string) => {
-        if (profile?.username === username){
-            console.log("Already viewing this profile")
+        if (profile?.username === username) {
+            // console.log("Already viewing this profile")
             unsetHighlightedThought();
             return;
         }
 
-        window.history.pushState(null, '', `/user/${username}`);
+        window.history.pushState(null, '', `/graph/~${username.replace(' ', '_')}`);
 
-        SwitchToExplorationMode(ExplorationMode.PROFILE, username);
+        MM_SwitchToExplorationMode(ExplorationMode.PROFILE, username);
+    }
+
+    const handleDateClick = () => {
+        if (fullHighlightedThought === null) { console.log("dateclicked, but no highlighted thought"); return; }
+        initializeTemporalThoughts(fullHighlightedThought.id);
+        clearNeighborhoodThoughts();
+        MM_SwitchToExplorationMode(ExplorationMode.TEMPORAL, fullHighlightedThought.id.toString());
     }
 
     return (
@@ -157,28 +153,41 @@ const GraphPage: React.FC = () => {
                 <div className='overlay'>
                     <ThoughtViewer
                         thought={fullHighlightedThought}
-                        setHighlightedThoughtId={SetHighlightedThoughtById}
+                        previewMode={false}
+                        setHighlightedThoughtId={MM_SetHighlightedThoughtById}
                         closePreview={unsetHighlightedThought}
                         clickedOnUser={username => handleUserProfileClick(username)}
+                        clickedOnDate={handleDateClick}
                         links={neighborhoodThoughts.filter(t => t.backlinks.includes(fullHighlightedThought.id)).map(t => (
-                            {id: t.id, color: t.color, title: t.title}
-                            ))}
+                            { id: t.id, color: t.color, title: t.title }
+                        ))}
                         backlinks={neighborhoodThoughts.filter(t => t.links.includes(fullHighlightedThought.id)).map(t => (
-                            {id: t.id, color: t.color, title: t.title}
-                            ))}
-                            >
+                            { id: t.id, color: t.color, title: t.title }
+                        ))}
+                    >
                     </ThoughtViewer>
                 </div>
             )}
 
-            {explorationMode == ExplorationMode.PROFILE && profile !== null && !thoughtViewerVisible &&
+            {explorationMode === ExplorationMode.PROFILE && profile !== null && !thoughtViewerVisible &&
                 <div className='overlay'>
                     <ProfileViewer
                         profile={profile}
                         closeProfileViewer={function (): void {
-                            SwitchToExplorationMode(ExplorationMode.FREE, "");
+                            MM_SwitchToExplorationMode(ExplorationMode.FREE, "");
                         }}>
                     </ProfileViewer>
+                </div>
+            }
+
+            {explorationMode === ExplorationMode.CONCEPT && viewedConcept !== null && !thoughtViewerVisible &&
+                <div className='overlay'>
+                    <ConceptViewer
+                        concept={viewedConcept}
+                        closeConceptViewer={function (): void {
+                            MM_SwitchToExplorationMode(ExplorationMode.FREE, "");}}>
+                        
+                    </ConceptViewer>
                 </div>
             }
 
@@ -186,7 +195,7 @@ const GraphPage: React.FC = () => {
             <div className='graph-bottom-part'>
                 <div className='stage-container'>
                     <Stage className='graph-stage' width={initialStageSize.width} height={initialStageSize.height} options={{ backgroundColor: COLOR_BACKGROUND, antialias: true }}>
-                        <GraphContainer initialHighlightedThoughtId={initialHighlightedThoughtId}></GraphContainer>
+                        <GraphContainer pageUrlQueryParameter={initialUrlQueryParametr}></GraphContainer>
                     </Stage>
 
                     <GraphControls>

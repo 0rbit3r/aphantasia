@@ -21,7 +21,7 @@ namespace Afantazie.Presentation.Api.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<ThoughtNodeDto>>> GetNotifications([FromQuery] int amount)
+        public async Task<ActionResult<List<NotificationDto>>> GetNotifications([FromQuery] int amount)
         {
             if (UserId == null)
             {
@@ -34,16 +34,77 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(result.Error!);
             }
 
-            return result.Payload!.Select(t => new ThoughtNodeDto
+            return result.Payload!.Select(n => new NotificationDto //todo - mapping
             {
-                Color = t.Author.Color,
-                Title = t.Title,
-                Id = t.Id,
-                DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - t.DateCreated),
-                Author = t.Author.Username,
-                Size = t.Size,
+                Id = n.Id,
+                Color = n.Color,
+                DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - n.DateCreated),
+                ThoughtAuthor = n.Thought?.Author.Username,
+                isRead = n.IsRead,
+                ThoughtId = n.Thought?.Id,
+                ThoughtTitle = n.Thought?.Title,
+                Type = (byte)n.Type,
             })
             .ToList();
+        }
+
+        [HttpGet("has-unread")]
+        [Authorize]
+        public async Task<ActionResult<bool>> GetUnreadNotificationsPresent()
+        {
+            if (UserId == null)
+            {
+                return Unauthorized();
+            }
+            var result = await _service.GetNotificationsForUser(UserId.Value, 100);
+            //todo - This is botched - bubble this request down into the DB
+            //also rethink the role and usage of "amount" entirely
+
+            if (!result.IsSuccess)
+            {
+                return ResponseFromError(result.Error!);
+            }
+
+            if(result.Payload!.Any(n => !n.IsRead))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        [HttpPost("{id}/mark-as-read")]
+        [Authorize]
+        public async Task<ActionResult> MarkNotificationsRead(int id)
+        {
+            if (UserId == null)
+            {
+                return Unauthorized();
+            }
+            var result = await _service.MarkNotificationRead(id);
+            if (!result.IsSuccess)
+            {
+                return ResponseFromError(result.Error!);
+            }
+            return Ok();
+        }
+
+        [HttpPost("mark-all-read")]
+        [Authorize]
+        public async Task<ActionResult> MarkAllNotificationsRead()
+        {
+            if (UserId == null)
+            {
+                return Unauthorized();
+            }
+            var result = await _service.MarkAllNotificationsRead(UserId.Value);
+
+            if (!result.IsSuccess)
+            {
+                return ResponseFromError(result.Error!);
+            }
+
+            return Ok();
         }
     }
 }

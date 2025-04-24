@@ -21,7 +21,7 @@ namespace Afantazie.Data.Model.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.HashtagEntity", b =>
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ConceptEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,13 +33,65 @@ namespace Afantazie.Data.Model.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Tag")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Hashtags");
+                    b.HasIndex("Tag");
+
+                    b.ToTable("Concepts");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.NotificationEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("ThoughtId")
+                        .HasColumnType("integer");
+
+                    b.Property<byte>("Type")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThoughtId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtConceptEntity", b =>
+                {
+                    b.Property<int>("ThoughtId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConceptId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ThoughtId", "ConceptId");
+
+                    b.HasIndex("ConceptId");
+
+                    b.ToTable("ThoughtConcepts", (string)null);
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtEntity", b =>
@@ -61,6 +113,9 @@ namespace Afantazie.Data.Model.Migrations
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Pinned")
+                        .HasColumnType("boolean");
+
                     b.Property<byte>("Shape")
                         .HasColumnType("smallint");
 
@@ -78,21 +133,6 @@ namespace Afantazie.Data.Model.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Thoughts");
-                });
-
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
-                {
-                    b.Property<int>("ThoughtId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("HashtagId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ThoughtId", "HashtagId");
-
-                    b.HasIndex("HashtagId");
-
-                    b.ToTable("ThoughtHashtags");
                 });
 
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>
@@ -139,9 +179,6 @@ namespace Afantazie.Data.Model.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("MaxThoughts")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
@@ -161,6 +198,43 @@ namespace Afantazie.Data.Model.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.NotificationEntity", b =>
+                {
+                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
+                        .WithMany("Notifications")
+                        .HasForeignKey("ThoughtId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Afantazie.Data.Model.Entity.UserEntity", "User")
+                        .WithMany("Notifications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Thought");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtConceptEntity", b =>
+                {
+                    b.HasOne("Afantazie.Data.Model.Entity.ConceptEntity", "Concept")
+                        .WithMany()
+                        .HasForeignKey("ConceptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
+                        .WithMany()
+                        .HasForeignKey("ThoughtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Concept");
+
+                    b.Navigation("Thought");
+                });
+
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtEntity", b =>
                 {
                     b.HasOne("Afantazie.Data.Model.Entity.UserEntity", "Author")
@@ -172,37 +246,18 @@ namespace Afantazie.Data.Model.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtHashtagEntity", b =>
-                {
-                    b.HasOne("Afantazie.Data.Model.Entity.HashtagEntity", "Hashtag")
-                        .WithMany()
-                        .HasForeignKey("HashtagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "Thought")
-                        .WithMany()
-                        .HasForeignKey("ThoughtId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hashtag");
-
-                    b.Navigation("Thought");
-                });
-
             modelBuilder.Entity("Afantazie.Data.Model.Entity.ThoughtReferenceEntity", b =>
                 {
                     b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "SourceThought")
                         .WithMany("Links")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Afantazie.Data.Model.Entity.ThoughtEntity", "TargetThought")
                         .WithMany("Backlinks")
                         .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("SourceThought");
@@ -215,6 +270,13 @@ namespace Afantazie.Data.Model.Migrations
                     b.Navigation("Backlinks");
 
                     b.Navigation("Links");
+
+                    b.Navigation("Notifications");
+                });
+
+            modelBuilder.Entity("Afantazie.Data.Model.Entity.UserEntity", b =>
+                {
+                    b.Navigation("Notifications");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,5 @@
 .settings-container {
-    background-color: black;
+    background-color: var(--black-color-light);
 
     .color-picker-overlay {
         position: fixed;
@@ -15,9 +15,9 @@
         z-index: 1000;
     }
 
-    h1 {
+    /* h1 {
         color: var(--primary-color-light);
-    }
+    } */
 
     .color-picker-popup {
         padding: 5px;

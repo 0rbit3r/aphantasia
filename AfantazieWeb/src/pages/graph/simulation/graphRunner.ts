@@ -1,10 +1,10 @@
 import { Application } from 'pixi.js';
-import { simulate_one_frame } from './forcesSimulation';
+import { simulate_one_frame_of_FDL } from './forcesSimulation';
 import { initGraphics } from '../view/GraphGraphics';
-import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME } from '../state_and_parameters/graphParameters';
+import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME, THOUGHTS_CACHE_SIZE } from '../state_and_parameters/graphParameters';
 import { useGraphStore } from '../state_and_parameters/GraphStore';
 import { ThoughtPositionCache } from '../model/thoughtPositionCache';
-import { updateTemporalThoughts } from './thoughtsProvider';
+import { handleTemporalThoughtsTimeShifting } from './thoughtsProvider';
 import { useGraphControlsStore } from '../state_and_parameters/GraphControlsStore';
 
 export default function runGraph(app: Application) {
@@ -44,7 +44,10 @@ export default function runGraph(app: Application) {
             // Use a Set to filter out duplicate thoughts by their id
             const uniqueThoughts = Array.from(
                 new Map(
-                    combinedThoughts.map(t => [t.id, t])
+                    combinedThoughts
+                        .sort((c1,c2) => c2.id - c1.id)
+                        .slice(0,THOUGHTS_CACHE_SIZE)
+                        .map(t => [t.id, t])
                 ).values()
             );
 
@@ -74,19 +77,20 @@ export default function runGraph(app: Application) {
         }
 
         // Update temporal thoughts
-        updateTemporalThoughts();
+        handleTemporalThoughtsTimeShifting();
 
         //move the viewport to the highlighted thought
         const lockedOnHighlighted = graphState.lockedOnHighlighted;
-        if (lockedOnHighlighted) {
+        if (lockedOnHighlighted && !controlsState.disableFollowHighlightedThought) {
             const highlightedThought = graphState.highlightedThought;
             const viewport = graphState.viewport;
             if (highlightedThought !== null) {
                 const dx = viewport.position.x + viewport.width / 2 / viewport.zoom - highlightedThought.position.x;
                 const dy = viewport.position.y + viewport.height / 3 * 2 / viewport.zoom - highlightedThought.position.y;
                 // console.log(dx, dy, lockedOnHighlighted);
-                if (Math.abs(dx) > 0.01 && Math.abs(dy) > 0.01) {
-                    graphState.viewport.moveBy({ x: dx / 10, y: dy / 10 });
+                const threshold = 20;
+                if (Math.abs(dx) > threshold && Math.abs(dy) > threshold) {
+                    graphState.viewport.moveBy({ x: (dx - threshold) / 100, y: (dy - threshold) / 100 });
                 }
                 // const idealZoom = INITIAL_ZOOM - ((INITIAL_ZOOM) / (highlightedThought.radius / MAX_RADIUS));
                 // const dz = idealZoom - viewport.zoom;
@@ -100,7 +104,7 @@ export default function runGraph(app: Application) {
         // force simulation
         const frame = graphState.frame;
         if (frame < SIMULATION_FRAMES) {
-            simulate_one_frame();
+            simulate_one_frame_of_FDL();
         }
         graphState.setFrame(frame + 1);
 

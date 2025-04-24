@@ -16,6 +16,11 @@ namespace Afantazie.Service.SiteActivity
         INotificationsRepository _notificationsRepo)
         : IActivityLogService
     {
+        public Task<Result<List<Thought>>> GetBiggest(int amount)
+        {
+            return _thoughtRepository.GetBiggestThoughts(amount);
+        }
+
         public async Task<Result<List<Thought>>> GetHotActivity(int amount)
         {
             var fortniteAgo = DateTime.Now.AddDays(-14);
@@ -32,12 +37,6 @@ namespace Afantazie.Service.SiteActivity
         public  Task<Result<List<Thought>>> GetLatestActivity(int amount)
         {
             return _thoughtRepository.GetLatestLog(amount);
-        }
-
-        public async  Task<Result<List<Thought>>> GetNotificationsLog(int userId, int amount)
-        {
-            var a = await _notificationsRepo.GetNotificationsForUser(userId, amount);
-            return a;
         }
     }
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { thoughtNodeDto } from "../api/dto/ThoughtDto";
-import { fetchThoughtTitles } from "../api/graphClient";
+import { fetchThoughtTitles } from "../api/graphApiClient";
 
 export default function ThoughtsList() {
     const [thoughts, setThoughts] = useState<thoughtNodeDto[]>([]);

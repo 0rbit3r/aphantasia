@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ExplorationMode } from '../simulation/modesManager';
-import { MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, ZOOM_TEXT_VISIBLE_THRESHOLD } from './graphParameters';
+import { DEFAULT_MAX_RADIUS as DEFAULT_MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT } from './graphParameters';
 
 interface GraphControlsStore {
 
@@ -36,10 +36,16 @@ interface GraphControlsStore {
 
     edgeLengthMultiplier: number;
     setEdgeLengthMultiplier: (multiplier: number) => void;
+
+    maxRadius: number;
+    setMaxRadius: (multiplier: number) => void;
+
+    disableFollowHighlightedThought: boolean;
+    setDisableFollowHighlightedThought: (enabled: boolean) => void;
 }
 export const useGraphControlsStore = create<GraphControlsStore>((set, _) => ({
 
-    edgeType: EdgeType.NONE,
+    edgeType: EdgeType.ARRROW,
     setEdgeType: (type: EdgeType) => set({ edgeType: type }),
 
     gravityEnabled: false,
@@ -70,7 +76,13 @@ export const useGraphControlsStore = create<GraphControlsStore>((set, _) => ({
     setTitleVisibilityThresholdMultiplier: (threshold: number) => set({ titleVisibilityThresholdMultiplier: threshold}),
 
     edgeLengthMultiplier: 1,
-    setEdgeLengthMultiplier: (multiplier: number) => set({ edgeLengthMultiplier: multiplier })
+    setEdgeLengthMultiplier: (multiplier: number) => set({ edgeLengthMultiplier: multiplier }),
+
+    maxRadius: DEFAULT_MAX_RADIUS,
+    setMaxRadius: (multiplier: number) => set({ maxRadius: multiplier }),
+
+    disableFollowHighlightedThought: false,
+    setDisableFollowHighlightedThought: (enabled: boolean) => set({ disableFollowHighlightedThought: enabled}),
 }));
 
 export enum EdgeType {

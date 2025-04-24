@@ -24,5 +24,8 @@ namespace Afantazie.Data.Model.Entity
 
         [MaxLength(300)]
         public string Bio { get; set; } = "";
+
+        public ICollection<NotificationEntity> Notifications { get; set; }
+            = new List<NotificationEntity>();
     }
 }

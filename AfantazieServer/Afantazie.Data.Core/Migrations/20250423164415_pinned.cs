@@ -5,24 +5,24 @@
 namespace Afantazie.Data.Model.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedShapeColumn : Migration
+    public partial class pinned : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<byte>(
-                name: "Shape",
+            migrationBuilder.AddColumn<bool>(
+                name: "Pinned",
                 table: "Thoughts",
-                type: "smallint",
+                type: "boolean",
                 nullable: false,
-                defaultValue: (byte)0);
+                defaultValue: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Shape",
+                name: "Pinned",
                 table: "Thoughts");
         }
     }

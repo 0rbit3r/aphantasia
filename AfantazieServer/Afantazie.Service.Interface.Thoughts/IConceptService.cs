@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Service.Interface.Thoughts
 {
-    public interface IHashtagService
+    public interface IConceptService
     {
-        Task<Result> HandleNewThoughtHashtagsAsync(Thought thought);
+        Task<Result> HandleNewThoughtConceptsAsync(Thought thought);
 
-
+        Task<Result<Concept>> GetConcept(string tag);
     }
 }

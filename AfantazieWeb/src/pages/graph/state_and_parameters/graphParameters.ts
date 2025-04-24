@@ -15,13 +15,15 @@ export const FRAMES_WITH_OVERLAP = 0;
 
 // Cache thought positions every N frames
 export const THOUGHTS_CACHE_FRAME = 1000;
+// Limits how many thought positions are saved in the browser
+export const THOUGHTS_CACHE_SIZE = 1000;
 
 // size and positions of nodes
 export const BASE_RADIUS = 60;
 // Size = BASE_RADIUS * RADIUS_MULTIPLIER ^ backlinks 
 export const REFERENCE_RADIUS_MULTIPLIER = 1.2;
 
-export const MAX_RADIUS = 1500;
+export const DEFAULT_MAX_RADIUS = 1500;
 
 // Radius of the initial positions circle
 export const INITIAL_POSITIONS_RADIUS = 3000;
@@ -33,15 +35,15 @@ export const EDGE_COMPRESSIBILITY_FACTOR = 0.7;
 
 export const MAX_PULL_FORCE = 100;
 
-export const VIRTUAL_EDGE_PULL_FORCE_MULTIPLIER = 0.2;
-export const VIRTUAL_EDGE_LINKED_DIST_MULTIPLIER = 1;
+export const VIRTUAL_EDGE_PULL_FORCE_MULTIPLIER = 0.05;
+export const VIRTUAL_EDGE_LINKED_DIST_MULTIPLIER = 2;
 export const IDEAL_DIST_SIZE_MULTIPLIER = 0.20;
 
 export const PUSH_THRESH = 7000;
 export const BORDERLESS_MODE_PUSH_THRESH_MULTIPLICATOR = 5;
 export const MAX_PUSH_FORCE = 100;
 
-export const GRAVITY_FREE_RADIUS = 300;
+export const GRAVITY_FREE_RADIUS = 1200;
 
 // When thoughts "appear" on screen they should not immediatelly start influencing other thoughts.
 // This parameter is the length of the "ease-in" period for influencing other thoughts
@@ -60,7 +62,7 @@ export const MAX_MOVEMENT_SPEED = 200;
 
 // Mass allows asymmetric forces based on radius
 export const NODE_MASS_ON = true;
-export const MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 1.1;
+export const MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 2;
 export const MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 0.9;
 export const MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 10;
 export const MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 0.9;

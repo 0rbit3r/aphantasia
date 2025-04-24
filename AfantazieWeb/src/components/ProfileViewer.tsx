@@ -32,7 +32,7 @@ export const ProfileViewer = (props: ProfileViewerProps) =>  {
                             <img draggable='false' src={PUBLIC_FOLDER + '/icons/close.svg'}></img>
                         </button>
     
-                        Follow
+                        {/* Follow */}
                         {/* <button className='profile-viewer-controls-button' onClick={() => { props.setExtendedHeight(!extendedHeight) }}>
                             {extendedHeight
                                 ? <img draggable='false' src={PUBLIC_FOLDER + '/icons/minimize.svg'}></img>

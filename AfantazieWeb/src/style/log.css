@@ -90,10 +90,3 @@
     }
 
 }
-
-.online-users-counter {
-    color: var(--primary-color-light);
-    text-align: center;
-    padding-top: 10px;
-    font-weight: bolder;
-}

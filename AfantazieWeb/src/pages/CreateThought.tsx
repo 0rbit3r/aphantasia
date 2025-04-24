@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { thoughtColoredTitleDto, fullThoughtDto, thoughtNodeDto } from '../api/dto/ThoughtDto';
-import { fetchThoughtTitles, postNewThought, fetchThought, fetchNeighborhoodThoughts } from '../api/graphClient';
+import { fetchThoughtTitles, postNewThought, fetchThought, fetchNeighborhoodThoughts } from '../api/graphApiClient';
 import { LocationState } from '../interfaces/LocationState';
 import { Localization } from '../locales/localization';
 import { LocalizedCreateThoughtHint } from '../locales/LocalizedCreateThoughtHint';
@@ -284,6 +284,8 @@ function CreateThought() {
                     <div className='text-scroll-container'>
                         <ThoughtViewer
                             thought={previewedThought}
+                            previewMode={true}
+                            clickedOnDate={() => { }}
                             closePreview={() => setPreviewOverlayVisible(false)}
                             clickedOnUser={() => {}}
                             links={previewedThoughtNeighborhood.filter(t => t.backlinks.includes(previewedThought.id))}

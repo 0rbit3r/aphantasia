@@ -1,21 +1,25 @@
 import { useState } from "react";
-import { fullThoughtDto, thoughtColoredTitleDto} from "../api/dto/ThoughtDto";
+import { fullThoughtDto, thoughtColoredTitleDto } from "../api/dto/ThoughtDto";
 import { useNavigate } from "react-router-dom";
 import { LocationState } from "../interfaces/LocationState";
 import { MediaContent } from "./MediaContent";
-import { getThoughtsOnScreen } from "../pages/graph/simulation/thoughtsProvider";
+import { getThoughtsOnScreen, HandleDeleteThought } from "../pages/graph/simulation/thoughtsProvider";
 import { useGraphControlsStore } from "../pages/graph/state_and_parameters/GraphControlsStore";
 import { useGraphStore } from "../pages/graph/state_and_parameters/GraphStore";
 import tinycolor from "tinycolor2";
-import { ExplorationMode } from "../pages/graph/simulation/modesManager";
+import { ExplorationMode, MM_SwitchToExplorationMode } from "../pages/graph/simulation/modesManager";
+import { deleteThought } from "../api/graphApiClient";
+import { Localization } from "../locales/localization";
 
 interface ThoughtViewerProps {
     thought: fullThoughtDto,
+    previewMode: boolean, // if true, only close button will be shown and the viewer will be extended
     links: thoughtColoredTitleDto[],
     backlinks: thoughtColoredTitleDto[],
     setHighlightedThoughtId: (id: number) => void,
     clickedOnUser: (username: string) => void,
     closePreview: () => void,
+    clickedOnDate: (username: string) => void,
 }
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
@@ -24,10 +28,14 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
 
     const navigate = useNavigate();
 
-    const [extendedHeight, setExtendedHeight] = useState(false);
+    const [extendedHeight, setExtendedHeight] = useState(props.previewMode);
     const setExplorationMode = useGraphControlsStore((state) => state.setExplorationMode);
 
     const setLockedOnHighlighted = useGraphStore((state) => state.setLockedOnHighlighted);
+
+    const signedInUsername = useGraphStore((state) => state.userSettings.username);
+
+    const [areYouSureVisible, setAreYouSureVisible] = useState(false);
 
     const handleLinkClick = (id: number) => {
 
@@ -38,7 +46,7 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
     }
 
     const handleMiddleMouseLinkClick = (e: React.MouseEvent, id: number) => {
-        console.log('click', e.button);
+        // console.log('click', e.button);
         if (e.button === 1) {
             e.preventDefault();
             window.open('/graph/' + id, '_blank');
@@ -56,7 +64,7 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
         //todo - if thought is not visible - bring it into view (timeshift?)
         if (!getThoughtsOnScreen().find(t => t.id == props.thought.id)) {
             // if (getThoughtsInTimeWindow().find(t => t.id == props.thought.id)) {
-            setExplorationMode(ExplorationMode.NEIGHBORHOOD);
+            MM_SwitchToExplorationMode(ExplorationMode.NEIGHBORHOOD, "");
             // }
             // else { // toto they can be out? maybe? In that case either time shift or fetch
             //     setExplorationMode(true);
@@ -65,16 +73,19 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
         setLockedOnHighlighted(true);
     }
 
+    const handleConceptClick = (tag: string) => {
+        MM_SwitchToExplorationMode(ExplorationMode.CONCEPT, tag);
+    }
 
     const renderContentWithThoughtLinks = (text: string) => {
         // thought links first
         const parts = text.split(/\[([0-9]*?)\]\[(.*?)\]/g);
-        // console.log("all : " , parts);
+        //console.log("splittedPartsInLinks : ", parts);
         const result = [];
         for (let i = 0; i < parts.length; i += 3) {
             const id = parseInt(parts[i + 1]);
 
-            const weblinksBefore = renderContentWithHashtags(parts[i]);
+            const weblinksBefore = renderContentWithConcepts(parts[i]);
             result.push(weblinksBefore);
 
             const thoughtTitle = parts[i + 2];
@@ -92,31 +103,51 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
         return result;
     }
 
-    const renderContentWithHashtags = (text: string) => {
-        const parts = text.split(/(?:^|\s)(#(?:[\p{L}\d]+(?:\/(?=[\p{L}\d]))?(?:[\p{L}\d]+)?){1,2})(?=\s|$)/gu);
+    const renderContentWithConcepts = (text: string) => {
+        const parts = text.split(/(^|\s)(_[0-9a-zA-Z]+)(_[0-9a-zA-Z]+)?(_[0-9a-zA-Z]+)?/g);
 
         //Oh god... todo
-        // console.log("all : " , parts);
+        // console.log("      splittedPartsInHashtags : ", parts);
 
         // console.log("all : " , parts);
         const result = [];
-        for (let i = 0; i < parts.length; i += 3) {
-            const id = parseInt(parts[i + 1]);
+        for (let i = 0; i < parts.length; i += 5) {
 
-            const weblinksBefore = renderContentWithWebLinks(parts[i]);
+            const weblinksBefore = renderContentWithWebLinks(
+                parts[i] + (parts[i + 1] ? parts[i + 1] : ''));
             result.push(weblinksBefore);
-
-            const thoughtTitle = parts[i + 2];
+            ;
             result.push(<span
-                className='in-text-thought-ref'
-                style={{ color: props.links.find(t => t.id == id)?.color }}
-                key={'link' + i}
-                onClick={_ => handleLinkClick(id)}
-                onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
-
+                className='in-text-concept-ref'
+                // style={{ color: props.links.find(t => t.id == id)?.color }}
+                key={'concept-link' + i}
+                // onClick={_ => handleLinkClick(id)}
+                onMouseDown={_ => handleConceptClick(parts[i + 2])}
             >
-                {thoughtTitle}
+                {parts[i + 2]}
             </span>);
+            if (parts[i + 3]) {
+                result.push(<span
+                    className='in-text-concept-ref'
+                    // style={{ color: props.links.find(t => t.id == id)?.color }}
+                    key={'concept-link' + i + 1}
+                    onClick={_ => handleConceptClick(parts[i + 2] + parts[i + 3])}
+                // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                >
+                    {parts[i + 3]}
+                </span>);
+                if (parts[i + 4]) {
+                    result.push(<span
+                        className='in-text-concept-ref'
+                        // style={{ color: props.links.find(t => t.id == id)?.color }}
+                        key={'concept-link' + i + 3}
+                        onClick={_ => handleConceptClick(parts[i + 2] + parts[i + 3] + parts[i + 4])}
+                    // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                    >
+                        {parts[i + 4]}
+                    </span>);
+                }
+            }
         }
         return result;
     }
@@ -163,6 +194,22 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
         return result;
     }
 
+    const handleDelete = () => {
+        //todo - delete thought
+        if (!areYouSureVisible) {
+            setAreYouSureVisible(true);
+            return;
+        }
+
+        deleteThought(props.thought.id).then(response => {
+            if (response.ok) {
+                HandleDeleteThought(props.thought.id);
+            } else {
+                console.log("Error deleting thought: ", response.error);
+            }
+        });
+    }
+
     return (
         <>
             <div className="thought-viewer-container" style={{ borderColor: props.thought.color }}>
@@ -172,7 +219,7 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                 </div>
                 <p className={extendedHeight ? "thought-viewer-content-extended" : "thought-viewer-content"}>
                     {/* {(props.neighborhoodLoaded && */}
-                        {renderContentWithThoughtLinks(props.thought.content)}
+                    {renderContentWithThoughtLinks(props.thought.content)}
                 </p>
                 <MediaContent id={props.thought.id}>
                 </MediaContent>
@@ -180,9 +227,11 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                     <button className="thought-viewer-author" style={{ color: props.thought.color }}
                         onClick={() => props.clickedOnUser(props.thought.author)}>
                         {props.thought.author}</button>
-                    <div className="thought-viewer-date">{props.thought.dateCreated}</div>
+                    <div className="thought-viewer-date" onClick={() => props.clickedOnDate(props.thought.author)}>
+                        {props.thought.dateCreated}
+                    </div>
                 </div>
-                {extendedHeight && props.thought !== null && props.backlinks.length > 0 &&
+                {extendedHeight && props.thought !== null && props.backlinks.length > 0 && !props.previewMode &&
                     <>
                         <div className='responses-container'>
                             {props.backlinks.map(t =>
@@ -196,28 +245,42 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                     </>}
             </div>
             <div className='thought-viewer-controls-container'>
-                <div className='thought-viewer-controls'>
+
+                {!props.previewMode && signedInUsername === props.thought.author &&
+                    <div className='thought-viewer-controls-my-thought'>
+                        {areYouSureVisible && <>{Localization.AreYouSure}</>}
+                        <button className='thought-viewer-controls-button' onClick={_ => handleDelete()}>
+                            <img draggable='false' src={PUBLIC_FOLDER + '/icons/delete.svg'}></img>
+                        </button>
+                    </div>
+                }
+
+                <div className={`thought-viewer-controls ${props.previewMode ? 'preview-mode' : ''}`}>
 
                     <button className='thought-viewer-controls-button' onClick={props.closePreview}>
                         <img draggable='false' src={PUBLIC_FOLDER + '/icons/close.svg'}></img>
                     </button>
 
-                    <button
-                        className='thought-viewer-controls-button'
-                        onClick={() => {
-                            if (props.thought !== null) {
-                                navigate('/create-thought', { state: { thoughtId: props.thought.id } as LocationState });
-                            }
-                        }}>
-                        <img draggable='false' src={PUBLIC_FOLDER + '/icons/reply.svg'}></img>
-                    </button>
+                    {!props.previewMode &&
+                        <>
+                            <button
+                                className='thought-viewer-controls-button'
+                                onClick={() => {
+                                    if (props.thought !== null) {
+                                        navigate('/create-thought', { state: { thoughtId: props.thought.id } as LocationState });
+                                    }
+                                }}>
+                                <img draggable='false' src={PUBLIC_FOLDER + '/icons/reply.svg'}></img>
+                            </button>
 
-                    <button className='thought-viewer-controls-button' onClick={() => { setExtendedHeight(!extendedHeight) }}>
-                        {extendedHeight
-                            ? <img draggable='false' src={PUBLIC_FOLDER + '/icons/minimize.svg'}></img>
-                            : <img draggable='false' src={PUBLIC_FOLDER + '/icons/fullscreen.svg'}></img>
-                        }
-                    </button>
+                            <button className='thought-viewer-controls-button' onClick={() => { setExtendedHeight(!extendedHeight) }}>
+                                {extendedHeight
+                                    ? <img draggable='false' src={PUBLIC_FOLDER + '/icons/minimize.svg'}></img>
+                                    : <img draggable='false' src={PUBLIC_FOLDER + '/icons/fullscreen.svg'}></img>
+                                }
+                            </button>
+                        </>
+                    }
                 </div>
             </div>
         </>

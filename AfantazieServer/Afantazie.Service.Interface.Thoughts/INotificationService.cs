@@ -10,6 +10,12 @@ namespace Afantazie.Service.Interface.Thoughts
 {
     public interface INotificationService
     {
-        Task<Result<List<Thought>>> GetNotificationsForUser(int userId, int amount);
+        Task<Result<List<Notification>>> GetNotificationsForUser(int userId, int amount);
+
+        Task<Result> HandleReplyNotificationsCreation(int thoughtId);
+
+        Task<Result> MarkAllNotificationsRead(int userId);
+
+        Task<Result> MarkNotificationRead(int id);
     }
 }

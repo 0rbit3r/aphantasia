@@ -16,7 +16,8 @@ namespace Afantazie.Service.Interface.Thoughts
         /// </summary>
         Task<Result<List<Thought>>> GetAllThoughts();
 
-        Task<Result<List<Thought>>> GetTemporalThoughtsAsync(ThoughtsTemporalFilter thoughtsTemporalFilter);
+        Task<Result<List<Thought>>> GetTemporalThoughtsAsync(
+            ThoughtsTemporalFilter thoughtsTemporalFilter, string? concept);
 
         Task<Result<Thought>> GetThoughtByIdAsync(int id);
 
@@ -31,5 +32,15 @@ namespace Afantazie.Service.Interface.Thoughts
         /// <param name="depth"></param>
         /// <returns></returns>
         Task<Result<List<List<Thought>>>> GetNeighborhoodAsync(int id, int depth, int limit);
+
+        /// <summary>
+        /// Deletes a thought entirely - concept associations, links, the thought itself
+        /// and  TODO notifications.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<Result> DeleteThoughtAsync(int id);
+
+        Task<Result<List<Thought>>> GetPinnedThoughtsAsync(int amount);
     }
 }

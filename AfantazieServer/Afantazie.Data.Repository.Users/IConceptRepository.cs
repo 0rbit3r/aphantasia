@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Data.Interface.Repository
 {
-    public interface IHashtagRepository
+    public interface IConceptRepository
     {
-        Task<Result<Hashtag>> InsertHashtagAsync(string tag, string color);
+        Task<Result<Concept>> InsertConceptAsync(string tag, string color);
 
-        Task<Result<Hashtag>> GetHashtag(string tag);
+        Task<Result<Concept>> GetConcept(string tag);
 
-        Task<Result> AssociateHashtagToThought(int thoughtId, int HashtagId);
+        Task<Result> AssociateConceptToThought(int thoughtId, int HashtagId);
     }
 }

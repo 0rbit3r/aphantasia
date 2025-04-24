@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Core.Model
 {
-    public class ThoughtHashtag
+    public enum NotificationType
     {
-        public int ThoughtId { get; set; }
-
-        public int HashtagId { get; set; }
+        Reply = 0
     }
 }

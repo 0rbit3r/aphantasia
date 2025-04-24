@@ -3,6 +3,7 @@
         color: var(--primary-color-light);
         text-align: center;
     }
+
     h2 {
         text-align: center;
         font-size: medium;
@@ -38,5 +39,12 @@
         font-style: italic;
         text-align: center;
         color: var(--secondary-color-dark);
+    }
+
+
+    .online-users-counter {
+        text-align: center;
+        padding-top: 10px;
+        font-weight: bolder;
     }
 }

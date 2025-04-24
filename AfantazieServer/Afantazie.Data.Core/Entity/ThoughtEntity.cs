@@ -23,10 +23,12 @@ namespace Afantazie.Data.Model.Entity
 
         public int SizeMultiplier { get; set; } = 0;
 
+        public byte Shape { get; set; } = 0;
+
+        public bool Pinned { get; set; } = false;
+
         [MaxLength(3000)]
         public required string Content { get; set; }
-
-        public byte Shape { get; set; } = 0;
 
         // Outgoing links (links from this Thought to others)
         public ICollection<ThoughtReferenceEntity> Links { get; set; }
@@ -36,7 +38,10 @@ namespace Afantazie.Data.Model.Entity
         public ICollection<ThoughtReferenceEntity> Backlinks { get; set; }
             = new List<ThoughtReferenceEntity>();
 
-        public ICollection<HashtagEntity> Hashtags { get; set; }
-            = new List<HashtagEntity>();
+        public ICollection<ConceptEntity> Concepts { get; set; }
+            = new List<ConceptEntity>();
+
+        public ICollection<NotificationEntity> Notifications { get; set; }
+            = new List<NotificationEntity>();
     }
 }

@@ -17,31 +17,31 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Data.Repository
 {
-    internal class HashtagRepository(
+    internal class ConceptRepository(
         DataContextProvider _contextProvider,
-        ILogger<HashtagRepository> _log) : IHashtagRepository
+        ILogger<ConceptRepository> _log) : IConceptRepository
     {
-        public async Task<Result> AssociateHashtagToThought(int thoughtId, int HashtagId)
+        public async Task<Result> AssociateConceptToThought(int thoughtId, int HashtagId)
         {
             try
             {
                 using (var context = _contextProvider.GetDataContext())
                 {
                     var thought = context.Thoughts.FirstOrDefault(x => x.Id == thoughtId);
-                    var hashtag = context.Hashtags.FirstOrDefault(x => x.Id == HashtagId);
+                    var hashtag = context.Concepts.FirstOrDefault(x => x.Id == HashtagId);
 
                     if (thought is null || hashtag is null)
                     {
                         return Error.NotFound();
                     }
 
-                    var thoughtHashtag = new ThoughtHashtagEntity
+                    var thoughtHashtag = new ThoughtConceptEntity
                     {
-                        Hashtag = hashtag,
+                        Concept = hashtag,
                         Thought = thought,
                     };
 
-                    context.ThoughtHashtags.Add(thoughtHashtag);
+                    context.ThoughtConcepts.Add(thoughtHashtag);
                     await context.SaveChangesAsync();
 
                     return Result.Success();
@@ -54,44 +54,46 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<Hashtag>> GetHashtag(string hashtag)
+        public async Task<Result<Concept>> GetConcept(string tag)
         {
             try
             {
                 using (var context = _contextProvider.GetDataContext())
                 {
-                        var existingHashtag = await context.Hashtags.FirstOrDefaultAsync(x => x.Tag == hashtag);
+                        var existingHashtag = await context
+                            .Concepts
+                            .FirstOrDefaultAsync(x => x.Tag.ToLower() == tag.ToLower());
                         if (existingHashtag is null)
                         {
                             return Error.NotFound();
                         }
-                        return existingHashtag.Adapt<Hashtag>();
+                        return existingHashtag.Adapt<Concept>();
                 }
             }
             catch (Exception e)
             {
-                _log.LogWarning(e, "Failed to get hashtag {tag}", hashtag);
+                _log.LogWarning(e, "Failed to get hashtag {tag}", tag);
                 return Error.ExceptionThrown(e);
             }
         }
 
-        public async Task<Result<Hashtag>> InsertHashtagAsync(string tag, string color)
+        public async Task<Result<Concept>> InsertConceptAsync(string tag, string color)
         {
             try
             {
                 _log.LogDebug("Inserting new hashtag {tag} into database", tag);
                 using (var context = _contextProvider.GetDataContext())
                 {
-                    var hashtag = new HashtagEntity
+                    var hashtag = new ConceptEntity
                     {
                         Color = color,
-                        Tag = tag,
+                        Tag = tag.ToLower(),
                     };
 
-                    context.Hashtags.Add(hashtag);
+                    context.Concepts.Add(hashtag);
                     await context.SaveChangesAsync();
 
-                    return(hashtag.Adapt<Hashtag>());
+                    return(hashtag.Adapt<Concept>());
                 }
             }
             catch (Exception e)

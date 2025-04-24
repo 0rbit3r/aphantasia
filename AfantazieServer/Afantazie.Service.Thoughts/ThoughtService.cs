@@ -18,7 +18,8 @@ namespace Afantazie.Service.Thoughts
     public class ThoughtService(
         IThoughtRepository _repo,
         ILogger<ThoughtService> _logger,
-        IHashtagService _hashtagService
+        IConceptService _hashtagService,
+        INotificationsRepository _notificationsRepository
         ) : IThoughtService
     {
         public async Task<Result<int>> CreateThoughtAsync(
@@ -26,7 +27,7 @@ namespace Afantazie.Service.Thoughts
         {
             _logger.LogInformation("Creating new thought: {title}", title);
 
-            var thoughtIdReferencesResult = await GetReferencesAsync(content);
+            var thoughtIdReferencesResult = GetReferencesAsync(content);
             if (!thoughtIdReferencesResult.IsSuccess)
             {
                 return thoughtIdReferencesResult.Error!;
@@ -38,7 +39,7 @@ namespace Afantazie.Service.Thoughts
             var referencedThoughts = new List<Thought>();
             foreach (var targetId in thoughtIdReferences)
             {
-                var referencedThought = await _repo.GetThoughtById(targetId);
+                var referencedThought = await _repo.GetThoughtByIdAsync(targetId);
                 if (!referencedThought.IsSuccess)
                 {
                     _logger.LogWarning("Referenced thought with id {id} not found.", targetId);
@@ -61,7 +62,7 @@ namespace Afantazie.Service.Thoughts
                 return insertResult.Error!;
             }
 
-            var insertedThought = await _repo.GetThoughtById(insertResult.Payload!);
+            var insertedThought = await _repo.GetThoughtByIdAsync(insertResult.Payload!);
 
             // bump all referenced thoughts
             foreach (var targetThought in referencedThoughts)
@@ -85,35 +86,38 @@ namespace Afantazie.Service.Thoughts
                 }
             }
 
-            await _hashtagService.HandleNewThoughtHashtagsAsync(insertedThought.Payload!);
+            await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
+
+            await _notificationsRepository.HandleReplyNotificationsCreationAsync(insertedThought.Payload!.Id);
+            //todo - add error handling here
 
             return insertResult;
         }
 
         public async Task<Result<List<Thought>>> GetAllThoughts()
         {
-            _logger.LogInformation("Requested thought graph.");
+            _logger.LogInformation("Requested all thoughts list.");
 
-            return await _repo.GetAllThoughts();//todo this method us used for only coloerdtitles which is wasteful
+            return await _repo.GetAllThoughtsAsync();//todo this method us used for only coloerdtitles which is wasteful
         }
 
-        public Task<Result<List<Thought>>> GetTemporalThoughtsAsync(ThoughtsTemporalFilter thoughtsTemporalFilter)
+        public Task<Result<List<Thought>>> GetTemporalThoughtsAsync(ThoughtsTemporalFilter thoughtsTemporalFilter, string? concept)
         {
             _logger.LogDebug("Requested temporal thoughts.");
 
             return thoughtsTemporalFilter.TemporalFilterType switch
             {
-                TemporalFilterType.BeforeId => _repo.TakeBeforeId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value),
-                TemporalFilterType.AfterId => _repo.TakeAfterId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value),
-                TemporalFilterType.AroundId => _repo.TakeAroundId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value),
-                TemporalFilterType.Latest => _repo.TakeLatest(thoughtsTemporalFilter.Amount),
+                TemporalFilterType.BeforeId => _repo.TakeBeforeId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value, concept),
+                TemporalFilterType.AfterId => _repo.TakeAfterId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value, concept),
+                TemporalFilterType.AroundId => _repo.TakeAroundId(thoughtsTemporalFilter.Amount, thoughtsTemporalFilter.ThoughtId!.Value, concept),
+                TemporalFilterType.Latest => _repo.TakeLatest(thoughtsTemporalFilter.Amount, concept),
                 _ => Task.FromResult(Result.Failure<List<Thought>>(Error.Validation("Wrong temporal filter format")))
             };
         }
 
         public async Task<Result<Thought>> GetThoughtByIdAsync(int id)
         {
-            var result = await _repo.GetThoughtById(id);
+            var result = await _repo.GetThoughtByIdAsync(id);
             if (!result.IsSuccess)
             {
                 _logger.LogWarning("Thought with id {id} not found.", id);
@@ -131,7 +135,7 @@ namespace Afantazie.Service.Thoughts
 
         public async Task<Result<List<Thought>>> GetRepliesAsync(int thoughtId)
         {
-            var thought = await _repo.GetThoughtById(thoughtId);
+            var thought = await _repo.GetThoughtByIdAsync(thoughtId);
 
             if (!thought.IsSuccess)
             {
@@ -142,7 +146,7 @@ namespace Afantazie.Service.Thoughts
 
             foreach (var link in thought.Payload!.Backlinks)
             {
-                var reply = await _repo.GetThoughtById(link.SourceId);
+                var reply = await _repo.GetThoughtByIdAsync(link.SourceId);
 
                 if (!reply.IsSuccess)
                 {
@@ -162,7 +166,7 @@ namespace Afantazie.Service.Thoughts
             var foundThoughts = new List<Thought>();
             var foundThoughtsDepths = new Dictionary<int, int>();
 
-            var initialThought = await _repo.GetThoughtById(id);
+            var initialThought = await _repo.GetThoughtByIdAsync(id);
             if (!initialThought.IsSuccess)
             {
                 return initialThought.Error!;
@@ -188,7 +192,7 @@ namespace Afantazie.Service.Thoughts
                     {
                         continue;
                     }
-                    var linkedThought = await _repo.GetThoughtById(link.TargetId);
+                    var linkedThought = await _repo.GetThoughtByIdAsync(link.TargetId);
                     if (linkedThought.IsSuccess)
                     {
                         foundThoughts.Add(linkedThought.Payload!);
@@ -201,7 +205,7 @@ namespace Afantazie.Service.Thoughts
                     {
                         continue;
                     }
-                    var backlinkedThought = await _repo.GetThoughtById(backlink.SourceId);
+                    var backlinkedThought = await _repo.GetThoughtByIdAsync(backlink.SourceId);
                     if (backlinkedThought.IsSuccess)
                     {
                         foundThoughts.Add(backlinkedThought.Payload!);
@@ -224,7 +228,14 @@ namespace Afantazie.Service.Thoughts
             return result;
         }
 
-        private async Task<Result<List<int>>> GetReferencesAsync(string content)
+        public Task<Result> DeleteThoughtAsync(int id)
+        {
+            _logger.LogInformation("Deleting thought {id}: ", id);
+
+            return _repo.DeleteThoughtAsync(id);
+        }
+
+        private Result<List<int>> GetReferencesAsync(string content)
         {
             var references = new List<int>();
             var regex = new Regex(@"\[([0-9]+)\]\[.*\]", RegexOptions.None, TimeSpan.FromSeconds(5));
@@ -266,6 +277,23 @@ namespace Afantazie.Service.Thoughts
             }
 
             return hashtags;
+        }
+
+        public async Task<Result<List<Thought>>> GetPinnedThoughtsAsync(int amount)
+        {
+            var result = await _repo.GetAllThoughtsAsync(); //todo - ew
+
+            if (!result.IsSuccess)
+            {
+                return result.Error!;
+            }
+
+            var pinnedThoughts = result.Payload!
+                .Where(t => t.IsPinned)
+                .Take(amount)
+                .ToList();
+
+            return pinnedThoughts;
         }
     }
 }

@@ -1,11 +1,11 @@
 import { thoughtNodeDto } from "../../../api/dto/ThoughtDto";
-import { fetchNeighborhoodThoughts, fetchTemporalThoughts } from "../../../api/graphClient";
+import { fetchNeighborhoodThoughts, fetchTemporalThoughts } from "../../../api/graphApiClient";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
-import { BASE_RADIUS, INITIAL_POSITIONS_RADIUS, MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, REFERENCE_RADIUS_MULTIPLIER, SIM_HEIGHT, SIM_WIDTH } from "../state_and_parameters/graphParameters";
+import { BASE_RADIUS, INITIAL_POSITIONS_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, REFERENCE_RADIUS_MULTIPLIER, SIM_HEIGHT, SIM_WIDTH } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { ThoughtPositionCache } from "../model/thoughtPositionCache";
 import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
-import { ExplorationMode, SetHighlightedThoughtById } from "./modesManager";
+import { ExplorationMode, MM_SetHighlightedThoughtById } from "./modesManager";
 
 // selects and returns thoughts to render and animate or consider highlighting in graph walk
 export function getThoughtsOnScreen() {
@@ -59,12 +59,12 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
 
     const response = await fetchTemporalThoughts({
       amount: maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT,
-      aroundThoughtId: initialHighligthedId ?? undefined
+      aroundThoughtId: initialHighligthedId ?? undefined,
     });
     if (response.ok) {
       graphState.setTemporalRenderedThoughts(mapDtosToRenderedThoughts(response.data!));
       if (initialHighligthedId && initialHighligthedId !== 0) {
-        SetHighlightedThoughtById(initialHighligthedId);
+        MM_SetHighlightedThoughtById(initialHighligthedId);
       }
     }
   };
@@ -74,37 +74,39 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
     return;
   }
 
-  const storage = localStorage.getItem('thoughts-cache');
+  // const storage = localStorage.getItem('thoughts-cache');
   // console.log(storage);
 
-  const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
+  // const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
 
-  const newThoughts = fetchedThoughts.map<RenderedThought>(t =>
-  ({
-    id: t.id, title: t.title,
-    color: t.color, radius: BASE_RADIUS, author: t.author,
-    links: t.links, backlinks: t.backlinks,
-    position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
-    held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, shape: 0, virtualLinks: [],
-  }));
+  // const newThoughts = fetchedThoughts.map<RenderedThought>(t =>
+  // ({
+  //   id: t.id, title: t.title,
+  //   color: t.color, radius: BASE_RADIUS, author: t.author,
+  //   links: t.links, backlinks: t.backlinks,
+  //   position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
+  //   held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, shape: 0, virtualLinks: [],
+  // }));
 
-  //set position either by cache or by initial positions circle
-  let angle = 0;
-  newThoughts.forEach(thought => {
-    if (initialHighligthedId === thought.id) {
-      thought.highlighted = true;
-    }
+  // //set position either by cache or by initial positions circle
+  // let angle = 0;
+  // newThoughts.forEach(thought => {
+  //   if (initialHighligthedId === thought.id) {
+  //     thought.highlighted = true;
+  //   }
 
-    const cached = cachedPositions.find(c => c.id === thought.id);
-    if (cached) {
-      thought.position = cached.position;
-    }
-    else {
-      thought.position.x = SIM_WIDTH / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
-      thought.position.y = SIM_HEIGHT / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
-    }
-    angle += Math.PI * 2 / newThoughts.length;
-  });
+  //   const cached = cachedPositions.find(c => c.id === thought.id);
+  //   if (cached) {
+  //     thought.position = cached.position;
+  //   }
+  //   else {
+  //     thought.position.x = SIM_WIDTH / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
+  //     thought.position.y = SIM_HEIGHT / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
+  //   }
+  //   angle += Math.PI * 2 / newThoughts.length;
+  // });
+
+  const newThoughts = mapDtosToRenderedThoughts(fetchedThoughts);
 
   graphState.setTemporalRenderedThoughts(newThoughts);
   // if (initialHighligthedId && initialHighligthedId !== 0) {
@@ -112,27 +114,53 @@ export function initializeTemporalThoughts(initialHighligthedId: number | null) 
   // }
 }
 
-// if the time window is exceded, this function will fetch new thoughts from api and update the temporal thoughts array
-export const updateTemporalThoughts = () => {
+export const initializeConceptThoughts = async (aroundThoughtId: number | null, concept: string) => {
   const graphState = useGraphStore.getState();
   const controlsState = useGraphControlsStore.getState();
 
+  const maxThoughts = controlsState.thoughtsOnScreenLimit;
+
+  const response = await fetchTemporalThoughts({
+    amount: maxThoughts ?? MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT,
+    aroundThoughtId: aroundThoughtId ?? undefined,
+  }, concept);
+  if (response.ok) {
+    const newThoughts = mapDtosToRenderedThoughts(response.data!);
+    graphState.setTemporalRenderedThoughts(newThoughts);
+  }
+
+}
+
+// if the time window is exceded, this function will fetch new thoughts from api and update the temporal thoughts array
+export const handleTemporalThoughtsTimeShifting = () => {
+  const graphState = useGraphStore.getState();
+  const controlsState = useGraphControlsStore.getState();
+
+
   const currentTemporalThoughts = graphState.temporalRenderedThoughts;
+  // if (controlsState.explorationMode === ExplorationMode.CONCEPT) {
+  //   console.log(currentTemporalThoughts);
+  // }
 
   if (currentTemporalThoughts.length === 0) {
     return;
   }
+  // console.log("fetching temporal thoughts:", graphState.fetchingTemporalThoughts)
 
   // EITHER - we need the after...
-  if (graphState.fetchingTemporalThoughts === false
-    && graphState.timeShift < 0) {
+  if (!graphState.fetchingTemporalThoughts
+    && graphState.timeShift < 0 && controlsState.explorationMode !== ExplorationMode.PROFILE) {
+    //now im fetching entire profile at once. Once it's paged, this will have to be reworked
 
     graphState.setFetchingTemporalThoughts(true);
     // console.log("time window bound exceded into the future -> Updating temporal thoughts");
+    // console.log(graphState.fetchingTemporalThoughts);
 
     const fetchAndSetStateAsync = async () => {
       // fetch the thoughts from BE
-      const response = await fetchTemporalThoughts({ amount: controlsState.thoughtsOnScreenLimit * 2, afterThoughtId: currentTemporalThoughts[currentTemporalThoughts.length - 1].id });
+      const response = await fetchTemporalThoughts(
+        { amount: controlsState.thoughtsOnScreenLimit * 2, afterThoughtId: currentTemporalThoughts[currentTemporalThoughts.length - 1].id },
+        controlsState.explorationMode === ExplorationMode.CONCEPT ? graphState.viewedConcept?.tag : undefined);
 
       if (response.ok && response.data!.length > 0) {
         const convertedToRenderedThoughts = mapDtosToRenderedThoughts(response.data!);
@@ -159,7 +187,7 @@ export const updateTemporalThoughts = () => {
     fetchAndSetStateAsync();
   }
   // OR we need the before... (this condition has to be tested second - the graph can have loaded only the first few thoughts)
-  else if (graphState.fetchingTemporalThoughts === false
+  else if (!graphState.fetchingTemporalThoughts
     && currentTemporalThoughts[0].id !== graphState.beginningThoughtId
     && graphState.timeShift + controlsState.thoughtsOnScreenLimit > currentTemporalThoughts.length) {
 
@@ -168,7 +196,9 @@ export const updateTemporalThoughts = () => {
 
     const fetchAndSetStateAsync = async () => {
 
-      const response = await fetchTemporalThoughts({ amount: controlsState.thoughtsOnScreenLimit * 2, beforeThoughtId: currentTemporalThoughts[0].id });
+      const response = await fetchTemporalThoughts({ amount: controlsState.thoughtsOnScreenLimit * 2, beforeThoughtId: currentTemporalThoughts[0].id },
+        controlsState.explorationMode === ExplorationMode.CONCEPT ? graphState.viewedConcept?.tag : undefined
+      );
       // console.log('new thoughts', response);
       if (response.ok) {
         graphState.setFetchingTemporalThoughts(false);
@@ -251,7 +281,6 @@ export const updateNeighborhoodThoughts = (thoughtId: number) => {
   fetchAndSetStateAsync();
 }
 
-
 // This function converts DTO to rendered thoughts including finding existing thoughts in the graph state
 // (instead of replacing them with the new dtos each time)
 export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): RenderedThought[] => {
@@ -284,24 +313,24 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
     return {
       id: t.id, title: t.title,
       color: t.color,
-      radius: Math.min(BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size), MAX_RADIUS),
+      radius: Math.min(BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size), useGraphControlsStore.getState().maxRadius),
       author: t.author,
       dateCreated: t.dateCreated,
       links: t.links, backlinks: t.backlinks,
       position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
       held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, virtualLinks: [],
-      shape: //t.shape
-        Math.random() > 0.5
-          ? Math.random() > 0.5
-            ? 0
-            : 1
-          : Math.random() > 0.5
-            ? Math.random() > 0.5
-              ? 2
-              : 3
-            : Math.random() > 0.5
-              ? 4
-              : 5
+      shape: t.shape
+        // Math.random() > 0.5
+        //   ? Math.random() > 0.5
+        //     ? 0
+        //     : 1
+        //   : Math.random() > 0.5
+        //     ? Math.random() > 0.5
+        //       ? 2
+        //       : 3
+        //     : Math.random() > 0.5
+        //       ? 4
+        //       : 5
     }
   });
 
@@ -333,3 +362,11 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
 
   return newThoughts;
 };
+
+export const HandleDeleteThought = (id: number) => {
+  const graphState = useGraphStore.getState();
+
+  graphState.setTemporalRenderedThoughts(graphState.temporalRenderedThoughts.filter(t => t.id !== id));
+  graphState.setNeighborhoodThoughts(graphState.neighborhoodThoughts.filter(t => t.id !== id));
+  graphState.unsetHighlightedThought();
+}

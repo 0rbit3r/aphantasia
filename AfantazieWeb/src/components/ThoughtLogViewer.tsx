@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { fetchHotLog as fetchHotLog, fetchLatestLog as fetchLatestLog } from "../api/LogApiClient";
+import { fetchBiggestLog, fetchHotLog as fetchHotLog, fetchLatestLog as fetchLatestLog, fetchPinnedLog } from "../api/LogApiClient";
 import { useNavigate } from "react-router-dom";
 import { Localization } from "../locales/localization";
-import { fetchNotifications } from "../api/graphClient";
 import { thoughtNodeDto } from "../api/dto/ThoughtDto";
 
 // const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
 
 interface ThoughtLogViewerProps {
-    source: 'latest' | 'hot' | 'notifications';
+    source: 'latest' | 'hot' | 'biggest' | 'pinned';
 }
 
 const ROWS_PER_LOG = 5;
@@ -21,13 +20,25 @@ const ThoughtListViewer = (props: ThoughtLogViewerProps) => {
 
     useEffect(() => {
         const getLogs = async () => {
-            const response = props.source === 'latest'
-                ? await fetchLatestLog(ROWS_PER_LOG)
-                : props.source === 'hot'
-                    ? await fetchHotLog(ROWS_PER_LOG)
-                    : props.source === 'notifications'
-                        ? await fetchNotifications(ROWS_PER_LOG)
-                        : { ok: false, data: null };
+            const response = await (async () => {
+                switch (props.source) {
+                    case 'latest': {
+                        return await fetchLatestLog(ROWS_PER_LOG);
+                    }
+                    case 'hot':
+                        {
+                           return await fetchHotLog(ROWS_PER_LOG);
+                        }
+                    case 'biggest':
+                        {
+                           return await fetchBiggestLog(ROWS_PER_LOG);
+                        }
+                    case 'pinned':
+                        {
+                            return await fetchPinnedLog(ROWS_PER_LOG);
+                        }
+                }
+            })();
             if (response.ok) {
                 setLogs(response.data!);
             }
@@ -51,10 +62,14 @@ const ThoughtListViewer = (props: ThoughtLogViewerProps) => {
                         <div className="log-title">{Localization.Hot}</div>
                     </>
                 )}
-                {(props.source === 'notifications' &&
+                {(props.source === 'biggest' &&
                     <>
-                        <div className="log-title">{Localization.Replies}</div>
-                        <div className="log-top-row-button" onClick={_ => navigate("/zvoneček")}>{Localization.All}</div>
+                        <div className="log-title">{Localization.Biggest}</div>
+                    </>
+                )}
+                {(props.source === 'pinned' &&
+                    <>
+                        <div className="log-title">{Localization.Pinned}</div>
                     </>
                 )}
             </div>

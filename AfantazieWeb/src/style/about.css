@@ -3,6 +3,7 @@
 }
 
 .about-page {
+    color: #d0d0d0;
     h2 {
         color: var(--secondary-color-light);
     }

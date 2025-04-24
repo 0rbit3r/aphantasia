@@ -7,19 +7,16 @@ using System.Threading.Tasks;
 
 namespace Afantazie.Data.Model.Entity
 {
-    public class SavedThoughtEntity
+    public class ConceptFollowEntity
     {
         public int Id { get; set; }
-
-        public int ThoughtId { get; set; }
-
         public int UserId { get; set; }
+        public int ConceptId { get; set; }
 
         [Required]
-        public ThoughtEntity Thought { get; set; } = null!;
+        public virtual UserEntity User { get; set; } = null!;
 
         [Required]
-        public UserEntity User { get; set; } = null!;
-
+        public virtual ConceptEntity Concept { get; set; } = null!;
     }
 }

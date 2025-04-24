@@ -101,7 +101,7 @@ function UserAndSettings() {
     }
 
     function handleBioChange(e: ChangeEvent<HTMLTextAreaElement>): void {
-        console.log(e.target.value);
+        // console.log(e.target.value);
         setBioInput(e.target.value);
 
         if (e.target.value.length > MAX_BIO_LENGTH) {
@@ -142,8 +142,7 @@ function UserAndSettings() {
                 </div>
             )}
 
-            <input className='color-hex-input' type='text' value={selectedColor} onChange={(e) => handleHexInputChange(e)}></input>
-            <hr></hr>
+            <input className='color-hex-input' type='text' value={selectedColor} onChange={(e) => handleHexInputChange(e)}></input> 
 
             <p>
                 <label className='settings-label'>{Localization.SettingsBioLabel}</label><br />

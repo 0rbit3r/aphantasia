@@ -9,4 +9,5 @@ export interface GraphControlsCache {
         ThoughtsOnScreenLimit: number;
         titleVisibilityThresholdMultiplier: number;
         edgeLengthMultiplier: number;
+        maxRadius: number;
 }

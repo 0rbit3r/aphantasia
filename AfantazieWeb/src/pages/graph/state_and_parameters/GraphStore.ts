@@ -3,6 +3,7 @@ import { Viewport } from '../model/Viewport';
 import { RenderedThought } from '../model/renderedThought';
 import { userSettingsDto } from '../../../api/dto/UserSettingsDto';
 import { userProfileDto } from '../../../api/dto/userProfileDto';
+import { conceptDto } from '../../../api/dto/ConceptDto';
 
 interface GraphStore {
 
@@ -20,7 +21,6 @@ interface GraphStore {
     //Flag to indicate whether the app is fetching temporal thoughts from API (to prevent from multiple calls)
     fetchingTemporalThoughts: boolean;
     setFetchingTemporalThoughts: (value: boolean) => void;
-
 
     // Neighborhood thoughts are thoughts that are in the neighborhood of the highlighted thought
     neighborhoodThoughts: RenderedThought[];
@@ -56,7 +56,14 @@ interface GraphStore {
 
     viewedProfile: userProfileDto | null;	
     setViewedProfile: (profile: userProfileDto) => void;
-    clearViewedProfile: () => void;   
+    clearViewedProfile: () => void;
+
+    viewedConcept: conceptDto | null;
+    setViewedConcept: (concept: conceptDto) => void;
+    clearViewedConcept: () => void;
+
+    hasUnreadNotifications: boolean;
+    setHasUnreadNotifications: (value: boolean) => void;
 }
 export const useGraphStore = create<GraphStore>((set, get) => ({
     temporalRenderedThoughts: [],
@@ -128,5 +135,12 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
 
     viewedProfile: null,
     setViewedProfile: (profile) => set({ viewedProfile: profile }),
-    clearViewedProfile: () => set({ viewedProfile: null})
+    clearViewedProfile: () => set({ viewedProfile: null}),
+
+    viewedConcept: null,
+    setViewedConcept: (concept) => set({ viewedConcept: concept}),
+    clearViewedConcept: () => set({ viewedConcept: null}),
+
+    hasUnreadNotifications: false,
+    setHasUnreadNotifications: (value) => set({ hasUnreadNotifications: value}),
 }));

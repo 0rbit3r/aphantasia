@@ -43,7 +43,7 @@ namespace Afantazie.Service.Profiles
                     continue;
                 }
 
-                var referencedThought = await _thoughtRepo.GetThoughtById(reference.TargetId);
+                var referencedThought = await _thoughtRepo.GetThoughtByIdAsync(reference.TargetId);
                 if (!referencedThought.IsSuccess)
                 {
                     _logger.LogWarning("Referenced thought with id {id} not found.", reference);
