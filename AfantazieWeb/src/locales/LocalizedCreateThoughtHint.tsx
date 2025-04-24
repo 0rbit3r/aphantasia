@@ -17,7 +17,7 @@ export const LocalizedCreateThoughtHint = () => {
             </p>
             <p>
                 Odkaz ale můžeš přidat a upravit i manuálně a to pomocí tvaru: <br />
-                <b>[ID MYŠLENKY](TEXT)</b>.
+                <b>[ID MYŠLENKY][TEXT]</b>.
             </p>
             <p>
                 <b>ID MYŠLENKY</b> musí odkazovat na nějakou již existující myšlenku.<br />
@@ -28,12 +28,12 @@ export const LocalizedCreateThoughtHint = () => {
             </p>
             <p>
                 Například místo<br />
-                "První myšlenka na Afantázi je: <b>[1](Hello World!)</b>"<br />
+                "První myšlenka na Afantázi je: <b>[1][Hello World!]</b>"<br />
                 můžeš napsat<br />
-                "První myšlenka na Afantázii je <b>[1](tato)</b>."
+                "První myšlenka na Afantázii je <b>[1][tato]</b>."
             </p>
             <p>
-                Jedna myšlenka může obsahovat až pět odkazů.
+                Jedna myšlenka může obsahovat až tři odkazy.
                 {/* Ale pozor! Čím víc odkazů, tím slabší bude síla, kterou tvoje myšlenka přitahuje ostatní.  */}
             </p>
         </>
@@ -54,7 +54,7 @@ export const LocalizedCreateThoughtHint = () => {
             </p>
             <p>
                 You can also add a refrence manually by using this format: <br />
-                <b>[THOUGHT ID](TEXT)</b>.
+                <b>[THOUGHT ID][TEXT]</b>.
             </p>
             <p>
                 where <b>THOUGHT ID</b> must reference another existing thought<br />
@@ -65,12 +65,12 @@ export const LocalizedCreateThoughtHint = () => {
             </p>
             <p>
                 For example, instead of<br />
-                "The first thought on Afantázie is <b>[1](Hello World!)</b>"<br />
+                "The first thought on Afantázie is <b>[1][Hello World!]</b>"<br />
                 you can write<br />
-                "The first thought on Afantázie is <b>[1](this one)</b>."
+                "The first thought on Afantázie is <b>[1][this one]</b>."
             </p>
             <p>
-                One thought can have up to 5 references.
+                One thought can have up to three references.
                 {/* Ale pozor! Čím víc odkazů, tím slabší bude síla, kterou tvoje myšlenka přitahuje ostatní.  */}
             </p>
         </>

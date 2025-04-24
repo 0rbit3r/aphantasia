@@ -1,0 +1,92 @@
+.log-container {
+    margin: 10px;
+    padding: 5px;
+    padding-top: 2px;
+    border: 2px solid var(--secondary-color-darker);
+    background: linear-gradient(300deg, var(--black-color-light) 0%, var(--black-color) 100%);
+    min-width: 200px;
+    width: 300px;
+    /* max-width: 600px; */
+
+    .log-container-top-row{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        border-bottom: 1px solid white;
+        padding: 4px;
+        flex-direction: row;
+        .log-title {
+
+            color: var(--white-color-dark);
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+        }
+        
+        .play-button {
+            height: 25px;
+            width: 25x;
+            /* non selectable drageable etc */
+            user-select: none;
+            cursor: pointer;
+            border: 1px var(--white-color-dark) solid;
+            padding: 4px;
+        }
+
+        .log-top-row-button {
+
+            color: black;
+            font-size: 20px;
+            text-align: center;
+            border: 1px solid var(--white-color);
+            padding: 2px;
+            padding-left: 4px;
+            padding-right: 4px;
+            cursor: pointer;
+            user-select: none;
+            background-color: white;
+
+        }
+    }
+
+    .log {
+        border-width: 1px;
+        border-style: solid;
+        /* background: linear-gradient(240deg, var(--black-color-light) 0%, var(--black-color) 100%); */
+        background-color: var(--black-color);
+        opacity: 0.9;
+        margin: 5px;
+        padding: 2px 5px 5px 5px;
+        .log-thought-title {
+            margin: 5px;
+            color: var(--white-color);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .log-author {
+            /* color: var(--white-color); */
+            font-weight: bold;
+        }
+
+        .log-bottom-row {
+            border-top: 1px solid var(--white-color-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: row;
+
+            .log-date {
+                color: var(--white-color-dark);
+            }
+        }
+
+    }
+
+    .log:hover {
+        background: var(--black-color-light);
+        cursor: pointer;
+    }
+
+}

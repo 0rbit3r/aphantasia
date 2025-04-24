@@ -54,7 +54,7 @@ namespace Afantazie.Data.Repository
                 }
 
                 var hashedPassword = HashPassword(password);
-                var newUser = new UserEntity { Username = username, Email = email, Password = hashedPassword, Color = "#dddddd", MaxThoughts = Constants.DefaultMaximumThoughts };
+                var newUser = new UserEntity { Username = username, Email = email, Password = hashedPassword, Color = "#dddddd", Bio = AfantazieConstants.DefaultBio };
                 context.Users.Add(newUser);
                 await context.SaveChangesAsync();
 

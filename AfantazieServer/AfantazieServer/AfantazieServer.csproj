@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Afantazie.Presentation.Api\Afantazie.Presentation.Api.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Authentication\Afantazie.Service.Auth.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.Authentication\Afantazie.Service.Interface.Authentication.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Profiles\Afantazie.Service.Profiles.csproj" />
     <ProjectReference Include="..\Afantazie.Service.SiteActivity\Afantazie.Service.SiteActivity.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Thoughts\Afantazie.Service.Thoughts.csproj" />
     <ProjectReference Include="..\Afantazie.Services.Chat\Afantazie.Service.Chat.csproj" />

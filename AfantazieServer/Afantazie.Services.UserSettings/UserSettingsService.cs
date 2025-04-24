@@ -1,4 +1,6 @@
-﻿using Afantazie.Core.Model.Results;
+﻿using Afantazie.Core.Constants;
+using Afantazie.Core.Localization.ThoughtValidation;
+using Afantazie.Core.Model.Results;
 using Afantazie.Core.Model.Results.Errors;
 using Afantazie.Data.Interface.Repository;
 using Afantazie.Service.Interface.UserSettings;
@@ -9,7 +11,8 @@ namespace Afantazie.Service.UserSettings
 {
     public class UserSettingsService(
         IUserRepository _repo,
-        ILogger<UserSettingsService> _logger
+        ILogger<UserSettingsService> _logger,
+        IValidationMessages _validationMessages
         ) : IUserSettingsService
     {
         public async Task<Result> UpdateColor(int userId, string color)
@@ -28,16 +31,21 @@ namespace Afantazie.Service.UserSettings
             return await _repo.GetColor(userId);
         }
 
-        public Task<Result<int>> GetMaxThoughts(int userId)
+        public Task<Result> UpdateBio(int userId, string bio)
         {
-            _logger.LogInformation("Getting max thoughts for userId: {userId}", userId);
-            return _repo.GetMaxThoughts(userId);
+            _logger.LogInformation("Updating bio for userId {userId} to {value}", userId, bio);
+            if (bio.Length > AfantazieConstants.MaxBioLength)
+            {
+                return Task.FromResult(Result.Failure(Error.Validation(_validationMessages.BioTooLong)));
+            }
+            return _repo.UpdateBio(userId, bio);
         }
 
-        public Task<Result> UpdateMaxThoughts(int userId, int maxThoughts)
+        public Task<Result<string>> GetBio(int userId)
         {
-            _logger.LogInformation("Updating max thoughts for userId {userId} to {value}", userId, maxThoughts);
-            return _repo.UpdateMaxThoughts(userId, maxThoughts);
+            _logger.LogDebug("Getting bio for userId {userId}", userId);
+
+            return _repo.GetBio(userId);
         }
     }
 }

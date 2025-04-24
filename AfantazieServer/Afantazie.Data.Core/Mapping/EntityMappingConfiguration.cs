@@ -21,7 +21,8 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.DateCreated, src => src.DateCreated)
                 .Map(dest => dest.Color, src => src.Author.Color)
                 .Map(dest => dest.Title, src => src.Title)
-                .Map(dest => dest.Size, src => src.SizeMultiplier); 
+                .Map(dest => dest.Size, src => src.SizeMultiplier)
+                .Map(dest => dest.IsPinned, src => src.Pinned); 
 
             // Map from Thought to ThoughtEntity
             TypeAdapterConfig<Thought, ThoughtEntity>.NewConfig()
@@ -29,6 +30,7 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Author, src => src.Author.Adapt<UserEntity>())
                 .Map(dest => dest.Content, src => src.Content)
+                .Map(dest => dest.Shape, src => (byte)src.Shape)
                 .Map(dest => dest.DateCreated,
                     src => DateTime.SpecifyKind(src.DateCreated, DateTimeKind.Utc))
                 .Ignore(dest => dest.Links)
@@ -50,6 +52,23 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.Email, src => src.Email)
                 .Map(dest => dest.Username, src => src.Username)
                 .Map(dest => dest.Color, src => src.Color);
+
+            TypeAdapterConfig<ConceptEntity, Concept>.NewConfig()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.Tag, src => src.Tag)
+                .Map(dest => dest.Color, src => src.Color);
+
+            TypeAdapterConfig<NotificationEntity, Notification>.NewConfig()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.UserId, src => src.UserId)
+                .Map(dest => dest.Type, src => src.Type)
+                .Map(dest => dest.DateCreated, src => src.DateCreated)
+                .Map(dest => dest.IsRead, src => src.IsRead)
+                .Map(dest => dest.Thought, src => src.Thought)
+                .Map(dest => dest.Color, src => src.Thought != null
+                    ? src.Thought.Author.Color
+                    : 
+                    "#FFFFFF");
         }
     }
 }

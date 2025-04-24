@@ -18,12 +18,12 @@ namespace Afantazie.Presentation.Api.Controllers
     public class ThoughtController: ApiControllerBase
     {
         private readonly IThoughtService _thoughtService;
-        private readonly IThoughtValidationLocalization _localization;
+        private readonly IValidationMessages _localization;
 
         public ThoughtController(
             IThoughtService service,
             IAuthValidationMessages errors,
-            IThoughtValidationLocalization locaization)
+            IValidationMessages locaization)
             : base(errors)
         {
             _thoughtService = service;
@@ -46,7 +46,7 @@ namespace Afantazie.Presentation.Api.Controllers
 
         [HttpGet]
         public async Task<ActionResult<List<ThoughtNodeDto>>> GetTemporalThoughtsNodes(
-            [FromQuery] ThoughtsTemporalFilterDto filter)
+            [FromQuery] ThoughtsTemporalFilterDto filter, [FromQuery] string? concept)
         {
             #region validations
             if (filter.Amount < 1)
@@ -68,7 +68,7 @@ namespace Afantazie.Presentation.Api.Controllers
             #endregion
 
             var response = await _thoughtService.GetTemporalThoughtsAsync(
-                filter.Adapt<ThoughtsTemporalFilter>());
+                filter.Adapt<ThoughtsTemporalFilter>(), concept);
 
             if (!response.IsSuccess)
             {
@@ -92,8 +92,9 @@ namespace Afantazie.Presentation.Api.Controllers
             return response.Payload!.Adapt<FullThoughtDto>();
         }
 
-        [HttpGet("titles")]
-        public async Task<ActionResult<List<ThoughtColoredTitleDto>>> GetThoughtTitles()
+        // todo - this is useless - use the endpoint above
+        [HttpGet("list")]
+        public async Task<ActionResult<List<ThoughtNodeDto>>> GetAllThoughts()
         {
             var response = await _thoughtService.GetAllThoughts();
 
@@ -102,40 +103,76 @@ namespace Afantazie.Presentation.Api.Controllers
                 return ResponseFromError(response.Error!);
             }
 
-            return response.Payload!.Adapt<List<ThoughtColoredTitleDto>>();
+            return response.Payload!.Adapt<List<ThoughtNodeDto>>();
         }
 
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<int>> CreateThought([FromBody] CreateThoughtDto thoughtDto)
         {
+            thoughtDto.Content = thoughtDto.Content.Replace("\u200B", "").TrimEnd();
+            thoughtDto.Title = thoughtDto.Title.Replace("\u200B", "").Trim();
+
             var errors = new StringBuilder();
             if(thoughtDto.Content.Length > 1000 || thoughtDto.Content.Length < 5)
             {
                 errors.AppendLine(_localization.InvalidContentLength);
             }
-            if (thoughtDto.Title.Length > 100 || thoughtDto.Title.Length < 1)
+            if (thoughtDto.Title.Length > 50 || thoughtDto.Title.Length < 1)
             {
                 errors.AppendLine(_localization.InvalidTitleLength);
+            }
+            if (thoughtDto.Title.Contains("]") || thoughtDto.Title.Contains("["))
+            {
+                errors.AppendLine(_localization.SquareBracketsNotAllowed);
             }
             if (errors.Length > 0)
             {
                 return BadRequest(new { Error = errors.ToString() });
-
             }
 
             if (UserId is null)
                 return Unauthorized();
 
             var response = await _thoughtService.CreateThoughtAsync(
-                UserId.Value, thoughtDto.Title, thoughtDto.Content, thoughtDto.Links);
+                UserId.Value, thoughtDto.Title, thoughtDto.Content, thoughtDto.Shape);
 
             if (!response.IsSuccess)
             {
                 return ResponseFromError(response.Error!);
             }
 
+
+
             return response.Payload!;
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteThought(int id)
+        {
+            if (UserId is null)
+                return Unauthorized();
+
+            var thoughtResult = await _thoughtService.GetThoughtByIdAsync(id);
+
+            if (!thoughtResult.IsSuccess)
+            {
+                return ResponseFromError(thoughtResult.Error!);
+            }
+            if (thoughtResult.Payload!.Author.Id != UserId)
+            {
+                return Unauthorized();
+            }
+
+            var deleteResult = await _thoughtService.DeleteThoughtAsync(id);
+
+            if (!deleteResult.IsSuccess)
+            {
+                return ResponseFromError(deleteResult.Error!);
+            }
+
+            return Ok();
         }
 
         [HttpGet("total-count")]
@@ -165,16 +202,16 @@ namespace Afantazie.Presentation.Api.Controllers
         }
 
         [HttpGet("{id}/neighborhood")]
-        public async Task<ActionResult<List<ThoughtNodeDto>>> GetNeighborhood(int id, [FromQuery]int depth)
+        public async Task<ActionResult<List<List<ThoughtNodeDto>>>> GetNeighborhood(int id, [FromQuery]int depth, [FromQuery]int limit)
         {
-            var response = await _thoughtService.GetNeighborhoodAsync(id, depth);
+            var response = await _thoughtService.GetNeighborhoodAsync(id, depth, limit);
 
             if (!response.IsSuccess)
             {
                 return ResponseFromError(response.Error!);
             }
 
-            return response.Payload!.Adapt<List<ThoughtNodeDto>>();
+            return response.Payload!.Adapt<List<List<ThoughtNodeDto>>>();
         }
     }
 }

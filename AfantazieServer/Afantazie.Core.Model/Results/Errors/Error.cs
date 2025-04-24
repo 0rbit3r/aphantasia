@@ -34,5 +34,7 @@ namespace Afantazie.Core.Model.Results.Errors
 
         public static NotFoundError NotFound() => new NotFoundError();
 
+        public static ExceptionThrownError ExceptionThrown(Exception e) => new ExceptionThrownError(e);
+
     }
 }

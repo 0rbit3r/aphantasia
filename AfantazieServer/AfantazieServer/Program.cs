@@ -10,6 +10,7 @@ using Afantazie.Service.Auth;
 using Afantazie.Service.Chat;
 using Afantazie.Service.SiteActivity;
 using Afantazie.Core.Localization;
+using Afantazie.Service.Profiles;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,8 @@ builder.Services.AddChatModule();
 builder.Services.AddSiteActivityModule();
 
 builder.Services.AddThoughtsModule();
+
+builder.Services.AddProfilesModule();
 
 builder.Services.AddDataModule();
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Afantazie.Core.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,6 @@ namespace Afantazie.Presentation.Model.Dto.Thought
 
         public string Content { get; set; } = "";
 
-        //todo - remove this and use content to create links
-        public List<int> Links { get; set; } = new List<int>();
+        public ThoughtShape Shape { get; set; } = 0;
     }
 }

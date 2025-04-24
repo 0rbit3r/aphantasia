@@ -92,7 +92,7 @@ namespace Afantazie.Tools
                         Console.WriteLine($"{i} / {nodes}");
                     }
                     await thoughtRepo.InsertThoughtAsync(
-                        $"{i}th thought", $"{i}th thought", i, references[i] ?? new List<int>());
+                        $"{i}th thought", $"{i}th thought", i, 0, references[i] ?? new List<int>());
                 }
 
                 Console.WriteLine("Done!");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Afantazie.Core.Model;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,14 +10,19 @@ namespace Afantazie.Presentation.Model.Dto
 {
     public class NotificationDto
     {
-        public string Title { get; set; } = "";
-
-        public string Text { get; set; } = "";
+        public int Id { get; set; }
+        public byte Type { get; set; } = (byte)NotificationType.Reply;
 
         public string Color { get; set; } = "";
 
-        public string Time { get; set; } = "";
+        public string DateCreated { get; set; } = "";
 
-        public string Link { get; set; } = "";
+        public int? ThoughtId { get; set; } = null;
+
+        public string? ThoughtTitle { get; set; } = "";
+
+        public string? ThoughtAuthor { get; set; } = "";
+
+        public bool isRead { get; set; } = false;
     }
 }

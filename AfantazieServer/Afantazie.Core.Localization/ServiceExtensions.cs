@@ -1,4 +1,5 @@
 ﻿using Afantazie.Core.Localization.Errors;
+using Afantazie.Core.Localization.Profile;
 using Afantazie.Core.Localization.SystemMessages;
 using Afantazie.Core.Localization.ThoughtValidation;
 using Microsoft.Extensions.Configuration;
@@ -20,13 +21,15 @@ namespace Afantazie.Core.Localization
             {
                 services.AddSingleton<IAuthValidationMessages, AuthValidation_CZ>();
                 services.AddSingleton<IChatMessages, ChatMessages_CZ>();
-                services.AddSingleton<IThoughtValidationLocalization, ThoughtValidationLocalization_CZ>();
+                services.AddSingleton<IValidationMessages, ValidationMessages_CZ>();
+                services.AddSingleton<IProfileMessages, ProfileMessages_CZ>();
             }
             else
             {
                 services.AddSingleton<IAuthValidationMessages, AuthValidation_EN>();
                 services.AddSingleton<IChatMessages, ChatMessages_EN>();
-                services.AddSingleton<IThoughtValidationLocalization, ThoughtValidationLocalization_EN>();
+                services.AddSingleton<IValidationMessages, ValidationMessages_EN>();
+                services.AddSingleton<IProfileMessages, ProfileMessages_EN>();
             }
         }
     }

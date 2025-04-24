@@ -43,6 +43,19 @@ namespace Afantazie.Data.Repository
             }
         }
 
+        public async Task<Result<string>> GetBio(int userId)
+        {
+            using (var context = _contextProvider.GetDataContext())
+            {
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
+                if (user == null)
+                {
+                    return Error.NotFound();
+                }
+                return user.Bio;
+            }
+        }
+
         public async Task<Result<string>> GetColor(int userId)
         {
             using (var context = _contextProvider.GetDataContext())
@@ -54,20 +67,6 @@ namespace Afantazie.Data.Repository
                 }
 
                 return user.Color;
-            }
-        }
-
-        public async Task<Result<int>> GetMaxThoughts(int userId)
-        {
-            using (var context = _contextProvider.GetDataContext())
-            {
-                var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId);
-                if (user == null)
-                {
-                    return Error.NotFound();
-                }
-
-                return user.MaxThoughts;
             }
         }
 
@@ -85,7 +84,21 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result> UpdateMaxThoughts(int userId, int maxThoughts)
+        public async Task<Result<User>> GetUserByUsernameAsync(string username)
+        {
+            using (var context = _contextProvider.GetDataContext())
+            {
+                var user = await context.Users.FirstOrDefaultAsync(x => x.Username == username);
+                if (user == null)
+                {
+                    return Error.NotFound();
+                }
+
+                return user.Adapt<User>();
+            }
+        }
+
+        public async Task<Result> UpdateBio(int userId, string bio)
         {
             using (var context = _contextProvider.GetDataContext())
             {
@@ -95,18 +108,18 @@ namespace Afantazie.Data.Repository
                     return Error.NotFound();
                 }
 
-                if (user.MaxThoughts == maxThoughts)
+                if (user.Bio == bio)
                 {
                     return Result.Success();
                 }
 
-                user.MaxThoughts = maxThoughts;
+                user.Bio = bio;
 
                 var rowsAffected = context.SaveChanges();
 
                 return rowsAffected > 0
                     ? Result.Success()
-                    : Error.General(500, "Failed to save database changes.");
+                    : Error.General(500, "Failed to save user bio in database.");
             }
         }
     }

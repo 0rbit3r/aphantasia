@@ -1,16 +1,10 @@
 ﻿using Afantazie.Core.Localization.Errors;
-using Afantazie.Core.Model;
 using Afantazie.Core.Model.Results;
 using Afantazie.Core.Model.Results.Errors;
 using Afantazie.Data.Interface.Repository;
 using Afantazie.Service.Interface.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Authentication;
-using System.Security.Claims;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Afantazie.Service.Auth
@@ -53,6 +47,7 @@ namespace Afantazie.Service.Auth
         {
             _log.LogInformation("Attempting to register user {username}", username);
 
+            username = username.Trim();
             var errors = new MultiError();
 
             if (username.Length < 3 || username.Length > 20)
@@ -67,17 +62,16 @@ namespace Afantazie.Service.Auth
             {
                 errors.Add(Error.Validation(_errorMessages.InvalidEmail));
             }
-            if (password.Length < 8 || password.Length > 20
+            if (password.Length < 8 || password.Length > 80 //todo magic numbers to AfantazieConstants
                 || !Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$"))
             {
-                errors.Add(Error.Validation(string.Format(_errorMessages.InvalidPassword, 8, 20)));
+                errors.Add(Error.Validation(string.Format(_errorMessages.InvalidPassword, 8, 80)));
             }
             if (errors.Any())
             {
                 _log.LogInformation("Registration failed with errors\n{errors}", errors);
                 return errors;
             }
-
 
             var result = await _userRepository.RegisterUserAsync(email, username, password);
             if (result.IsSuccess)

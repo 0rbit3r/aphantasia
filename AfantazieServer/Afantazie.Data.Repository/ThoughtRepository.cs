@@ -6,11 +6,6 @@ using Afantazie.Data.Model;
 using Afantazie.Data.Model.Entity;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Afantazie.Data.Repository
 {
@@ -18,7 +13,7 @@ namespace Afantazie.Data.Repository
         DataContextProvider _contextProvider
         ) : IThoughtRepository
     {
-        public async Task<Result<Thought>> GetThoughtById(int id)
+        public async Task<Result<Thought>> GetThoughtByIdAsync(int id)
         {
             using (var db = _contextProvider.GetDataContext())
             {
@@ -26,6 +21,7 @@ namespace Afantazie.Data.Repository
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
                     .Include(t => t.Author)
+                    .Include(t => t.Concepts) //could proove as performance issue
                     .Where(t => t.Id == id)
                     .SingleOrDefaultAsync();
 
@@ -46,7 +42,7 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> GetAllThoughts()
+        public async Task<Result<List<Thought>>> GetAllThoughtsAsync()
         {
             using (var db = _contextProvider.GetDataContext())
             {
@@ -67,15 +63,21 @@ namespace Afantazie.Data.Repository
         }
 
         public async Task<Result<int>> InsertThoughtAsync(
-            string title, string content, int authorId, IEnumerable<int> references)
+            string title,
+            string content,
+            int authorId,
+            byte shape,
+            IEnumerable<int> references)
         {
             using (var db = _contextProvider.GetDataContext())
             {
                 var thoughtEntity =
-                    new ThoughtEntity {
+                    new ThoughtEntity
+                    {
                         Title = title,
                         Content = content,
                         AuthorId = authorId,
+                        Shape = shape,
                         DateCreated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     };
 
@@ -99,7 +101,7 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> GetLatestMetaData(int amount)
+        public async Task<Result<List<Thought>>> GetLatestLog(int amount)
         {
             using (var db = _contextProvider.GetDataContext())
             {
@@ -114,7 +116,7 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> TakeBeforeId(int amount, int id)
+        public async Task<Result<List<Thought>>> TakeBeforeId(int amount, int id, string? concept)
         {
             // validations
             if (amount < 0)
@@ -129,21 +131,30 @@ namespace Afantazie.Data.Repository
             // get the thoughts
             using (var db = _contextProvider.GetDataContext())
             {
-                var list = await db.Thoughts
+                var query = db.Thoughts
                     .OrderBy(t => t.Id)
                     .Include(t => t.Author)
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
+                    .Include(t => t.Concepts)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(concept))
+                {
+                       query = query
+                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                }
+                var list = await query
                     .Where(t => t.Id < id)
                     .Where(t => t.Id >= id - amount)
                     .ToListAsync();
-                    
+
 
                 return (list.Take(amount)).Adapt<List<Thought>>();
             }
         }
 
-        public async Task<Result<List<Thought>>> TakeAfterId(int amount, int id)
+        public async Task<Result<List<Thought>>> TakeAfterId(int amount, int id, string? concept)
         {
             // validations
             if (amount < 0)
@@ -158,11 +169,19 @@ namespace Afantazie.Data.Repository
             // get the thoughts
             using (var db = _contextProvider.GetDataContext())
             {
-                var list = await db.Thoughts
+                var query = db.Thoughts
                     .OrderBy(t => t.Id)
                     .Include(t => t.Author)
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
+                    .Include(t => t.Concepts)
+                    .AsQueryable();
+                if (!string.IsNullOrEmpty(concept))
+                {
+                    query = query
+                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                }
+                var list = await query
                     .Where(t => t.Id > id)
                     .Where(t => t.Id <= id + amount)
                     .ToListAsync();
@@ -171,15 +190,25 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> TakeAroundId(int amount, int thoughtId)
+        public async Task<Result<List<Thought>>> TakeAroundId(int amount, int thoughtId, string? concept)
         {
             using (var db = _contextProvider.GetDataContext())
             {
-                var list = await db.Thoughts
+                var query = db.Thoughts
                     .OrderBy(t => t.Id)
                     .Include(t => t.Author)
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
+                    .Include(t => t.Concepts)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(concept))
+                {
+                    query = query
+                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                }
+
+                var list = await query
                     .Where(t => t.Id >= thoughtId - amount / 2)
                     .Where(t => t.Id < thoughtId + amount / 2)
                     .ToListAsync();
@@ -188,14 +217,24 @@ namespace Afantazie.Data.Repository
             }
         }
 
-        public async Task<Result<List<Thought>>> TakeLatest(int amount)
+        public async Task<Result<List<Thought>>> TakeLatest(int amount, string? concept)
         {
             using (var db = _contextProvider.GetDataContext())
             {
-                var thoughtsList = await db.Thoughts
+                var thoughtsQuery = db.Thoughts
                     .Include(t => t.Author)
                     .Include(t => t.Links)
                     .Include(t => t.Backlinks)
+                    .Include(t => t.Concepts)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(concept))
+                {
+                    thoughtsQuery = thoughtsQuery
+                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                }
+
+                var thoughtsList = await thoughtsQuery
                     .OrderByDescending(t => t.DateCreated)
                     .Take(amount)
                     .ToListAsync();
@@ -224,6 +263,75 @@ namespace Afantazie.Data.Repository
                 await db.SaveChangesAsync();
 
                 return thought.SizeMultiplier;
+            }
+        }
+
+        public async Task<Result<List<Thought>>> GetThoughtsAfterDate(DateTime date)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thoughtsList = await db.Thoughts
+                    .Include(t => t.Author)
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Where(t => t.DateCreated > date.ToUniversalTime())
+                    .ToListAsync();
+
+                return thoughtsList.Adapt<List<Thought>>();
+            }
+        }
+
+        public async Task<Result<List<Thought>>> GetUsersThoughts(int user)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thoughtsList = await db.Thoughts
+                    .Include(t => t.Author)
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Where(t => t.AuthorId == user)
+                    .ToListAsync();
+
+                return thoughtsList.Adapt<List<Thought>>();
+            }
+        }
+
+        public async Task<Result<List<Thought>>> GetBiggestThoughts(int amount)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thoughtsWithBoth = await db.Thoughts
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Include(t => t.Author)
+                    .OrderByDescending(t => t.SizeMultiplier)
+                    .Take(amount)
+                    .ToListAsync();
+
+                return thoughtsWithBoth
+                    .Adapt<List<Thought>>();
+            }
+        }
+
+        public async Task<Result> DeleteThoughtAsync(int id)
+        {
+            using (var db = _contextProvider.GetDataContext())
+            {
+                var thought = await db.Thoughts
+                    .Include(t => t.Links)
+                    .Include(t => t.Backlinks)
+                    .Include(t => t.Concepts)
+                    .SingleOrDefaultAsync(t => t.Id == id);
+
+                if (thought is null)
+                {
+                    return Error.NotFound();
+                }
+
+                db.Thoughts.Remove(thought);
+                await db.SaveChangesAsync();
+
+                return Result.Success();
             }
         }
     }

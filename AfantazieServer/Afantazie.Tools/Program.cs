@@ -41,7 +41,8 @@ Console.WriteLine(
 [7]  - Retroactively add links to content
 [8]  - Retroactively compute sizes
 [9]  - Generate javascript cithep array for Cytoscape.js
-[10] - Import programming languages influences dataset");
+[10] - Import programming languages influences dataset
+[11] - Update link format to brackets");
 
 var choice = Console.ReadLine();
 if (!int.TryParse(choice, out var choiceInt))
@@ -94,6 +95,10 @@ else if (choiceInt == 9)
 else if (choiceInt == 10)
 {
     await PLInfluenceImporter.ImportPLInfluence(serviceProvider);
+}
+else if (choiceInt == 11)
+{
+    await LinkFormatUpdater.UpdateLinkFormat();
 }
 else
 {

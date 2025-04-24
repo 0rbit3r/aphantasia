@@ -32,13 +32,16 @@ namespace Afantazie.Presentation.Api.Controllers
                 return Unauthorized();
             }
             var colorResult = await _service.UpdateColor(UserId.Value, dto.Color);
+            
+            var trimmedBio = dto.Bio.Replace("\u200B", "").TrimEnd();
 
             if (!colorResult.IsSuccess)
             {
                 return ResponseFromError(colorResult.Error!);
             }
 
-            var maxThoughtsResult = await _service.UpdateMaxThoughts(UserId.Value, dto.MaxThoughts);
+
+            var maxThoughtsResult = await _service.UpdateBio(UserId.Value, trimmedBio);
 
             if (maxThoughtsResult.IsSuccess)
             {
@@ -57,7 +60,7 @@ namespace Afantazie.Presentation.Api.Controllers
                 return Unauthorized();
             }
             var colorResult = await _service.GetColor(UserId.Value);
-            var maxThoughtsResult = await _service.GetMaxThoughts(UserId.Value);
+            var maxThoughtsResult = await _service.GetBio(UserId.Value);
 
             if (colorResult.IsSuccess)
             {
@@ -65,7 +68,7 @@ namespace Afantazie.Presentation.Api.Controllers
                 {
                     Color = colorResult.Payload!,
                     Username = User.Identity?.Name ?? "Unknown",
-                    MaxThoughts = maxThoughtsResult.Payload!
+                    Bio = maxThoughtsResult.Payload!
                 };
             }
 

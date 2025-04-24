@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
   redirectPath?: string; // Optional prop for specifying redirect path
 }
 
-const ProtectedRoute = ({ children, redirectPath = '/welcome' }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, redirectPath = '/' }: ProtectedRouteProps) => {
   const [isAllowed, setIsAllowed] = React.useState<null | boolean>(null);
   const authContext = useAuth();
 
