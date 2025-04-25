@@ -114,7 +114,7 @@ namespace Afantazie.Presentation.Api.Controllers
             thoughtDto.Title = thoughtDto.Title.Replace("\u200B", "").Trim();
 
             var errors = new StringBuilder();
-            if(thoughtDto.Content.Length > 1000 || thoughtDto.Content.Length < 5)
+            if(thoughtDto.Content.Length > 3000 || thoughtDto.Content.Length < 5)
             {
                 errors.AppendLine(_localization.InvalidContentLength);
             }

@@ -118,6 +118,10 @@ namespace Afantazie.Data.Repository
 
         public async Task<Result<List<Thought>>> TakeBeforeId(int amount, int id, string? concept)
         {
+            if (concept is not null)
+            {
+                concept = concept.ToLower();
+            }
             // validations
             if (amount < 0)
             {
@@ -156,6 +160,10 @@ namespace Afantazie.Data.Repository
 
         public async Task<Result<List<Thought>>> TakeAfterId(int amount, int id, string? concept)
         {
+            if (concept is not null)
+            {
+                concept = concept.ToLower();
+            }
             // validations
             if (amount < 0)
             {
@@ -192,6 +200,10 @@ namespace Afantazie.Data.Repository
 
         public async Task<Result<List<Thought>>> TakeAroundId(int amount, int thoughtId, string? concept)
         {
+            if (concept is not null)
+            {
+                concept = concept.ToLower();
+            }
             using (var db = _contextProvider.GetDataContext())
             {
                 var query = db.Thoughts
@@ -219,6 +231,10 @@ namespace Afantazie.Data.Repository
 
         public async Task<Result<List<Thought>>> TakeLatest(int amount, string? concept)
         {
+            if (concept is not null)
+            {
+                concept = concept.ToLower();
+            }
             using (var db = _contextProvider.GetDataContext())
             {
                 var thoughtsQuery = db.Thoughts
@@ -318,14 +334,21 @@ namespace Afantazie.Data.Repository
             using (var db = _contextProvider.GetDataContext())
             {
                 var thought = await db.Thoughts
-                    .Include(t => t.Links)
+                    .Include(t => t.Links).ThenInclude(l => l.TargetThought)
                     .Include(t => t.Backlinks)
                     .Include(t => t.Concepts)
                     .SingleOrDefaultAsync(t => t.Id == id);
 
+
                 if (thought is null)
                 {
                     return Error.NotFound();
+                }
+
+                // unbump referenced thoughts
+                foreach(var link in thought.Links)
+                {
+                    link.TargetThought.SizeMultiplier--;
                 }
 
                 db.Thoughts.Remove(thought);
