@@ -89,9 +89,10 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
             result.push(weblinksBefore);
 
             const thoughtTitle = parts[i + 2];
+            const color = props.links.find(t => t.id == id)?.color || "#676767";
             result.push(<span
-                className='in-text-thought-ref'
-                style={{ color: props.links.find(t => t.id == id)?.color }}
+                className= {props.links.find(t => t.id == id) ? 'in-text-thought-ref' : ''}
+                style={{ color: color }}
                 key={'link' + i}
                 onClick={_ => handleLinkClick(id)}
                 onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
