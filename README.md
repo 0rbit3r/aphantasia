@@ -51,6 +51,8 @@ The roadmap for the development is not clear-cut but will likely include:
     - [ ] More concept info (home-like - ie. newest, biggest, hot...)
     - [ ] Colorful concepts (based on their currently biggest thoughts)
 - [ ] Follow users / concepts / thoughts + Custom subscriptions-like graph feed
+- [ ] Scrollable home feeds
+- [ ] Back button should focus previously viewed thought
 - [ ] Email verification
 - [ ] Server-side layout
 - [ ] Pinned replies (this one is a maybe)
