@@ -21,7 +21,7 @@ namespace Afantazie.Service.Thoughts
     {
         public async Task<Result> HandleNewThoughtConceptsAsync(Thought thought)
         {
-            _log.LogDebug("Handling new thought hashtags");
+            _log.LogDebug("Handling new thought concepts");
 
             var matches = Regex.Matches(thought.Content, @"(?:^|\s)(_[0-9a-zA-Z]+)(_[0-9a-zA-Z]+)?(_[0-9a-zA-Z]+)?");
 
@@ -41,10 +41,10 @@ namespace Afantazie.Service.Thoughts
 
                     if (!existingTagsResult.IsSuccess && existingTagsResult.Error is NotFoundError)
                     {
-                        _log.LogInformation("Creating new hashtag: {tag}", tag);
-                        var insertHashtagResult = await _conceptRepository.InsertConceptAsync(subTag, thought.Color);
-                        if (!insertHashtagResult.IsSuccess) return insertHashtagResult.Error!;
-                        conceptObjects.Add(insertHashtagResult.Payload!);
+                        _log.LogInformation("Creating new concept: {tag}", subTag);
+                        var insertConceptResult = await _conceptRepository.InsertConceptAsync(subTag, thought.Color);
+                        if (!insertConceptResult.IsSuccess) return insertConceptResult.Error!;
+                        conceptObjects.Add(insertConceptResult.Payload!);
                     }
                     else if (!conceptObjects.Any(hashtagObjects => hashtagObjects.Tag == subTag))
                     {
@@ -53,7 +53,7 @@ namespace Afantazie.Service.Thoughts
                 }
             }
             // add references to thought;
-            foreach (var tag in conceptObjects)
+            foreach (var tag in conceptObjects.DistinctBy(t => t.Id))
             {
                 var associationResult = await _conceptRepository.AssociateConceptToThought(thought.Id, tag.Id);
                 if (!associationResult.IsSuccess) return associationResult.Error!;

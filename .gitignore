@@ -611,3 +611,5 @@ DeploymentScripts/*
 /AfantazieServer/Afantazie.Tools/appsettings.json
 Secondary_files/cytoscape.js-euler-master/cytoscape.js-euler-master
 /AfantazieServer/AfantazieServer/appsettings.Production.json
+/AfantazieServer/AfantazieServer/appsettings.Development.json
+/AfantazieServer/.vscode/
