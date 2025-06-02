@@ -26,5 +26,9 @@ namespace Afantazie.Presentation.Model.Dto.Thought
         public List<int> Backlinks { get; set; } = new List<int>();
 
         public int Size { get; set; } = 1;
+
+        public double? PositionX {get; set;}
+
+        public double? PositionY {get; set;}
     }
 }

@@ -22,7 +22,9 @@ namespace Afantazie.Data.Model.Mapping
                 .Map(dest => dest.Color, src => src.Author.Color)
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Size, src => src.SizeMultiplier)
-                .Map(dest => dest.IsPinned, src => src.Pinned); 
+                .Map(dest => dest.IsPinned, src => src.Pinned)
+                .Map(dest => dest.PositionX, src=> src.PositionX)
+                .Map(dest => dest.PositionY, src=> src.PositionY); 
 
             // Map from Thought to ThoughtEntity
             TypeAdapterConfig<Thought, ThoughtEntity>.NewConfig()

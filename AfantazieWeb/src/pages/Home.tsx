@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom"
 import ThoughtListViewer from "../components/ThoughtLogViewer";
 import { useOnlineUsers } from "../Contexts/RealtimeStatsContext";
-import { LocationState } from "../interfaces/LocationState";
+import { MessageLocationState } from "../interfaces/LocationState";
 import { Localization } from "../locales/localization";
 import { useGraphStore } from "./graph/state_and_parameters/GraphStore";
 import { useEffect } from "react";
@@ -12,7 +12,7 @@ function Home() {
 
     const onlineUsers = useOnlineUsers();
     const location = useLocation();
-    const message = (location.state as LocationState)?.message;
+    const message = (location.state as MessageLocationState)?.message;
 
     const userColor = useGraphStore(state => state.userSettings.color);
     const setHasUnread = useGraphStore(state => state.setHasUnreadNotifications);

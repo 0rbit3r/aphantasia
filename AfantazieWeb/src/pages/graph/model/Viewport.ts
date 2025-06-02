@@ -1,5 +1,5 @@
 import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
-import { INITIAL_ZOOM, MAX_ZOOM, MIN_ZOOM, SIM_HEIGHT, SIM_WIDTH, ZOOM_STEP_MULTIPLICATOR_BUTTONS, ZOOM_STEP_MULTIPLICATOR_WHEEL } from "../state_and_parameters/graphParameters";
+import { GRAVITY_FREE_RADIUS, INITIAL_ZOOM, MAX_ZOOM, MIN_ZOOM, ZOOM_STEP_MULTIPLICATOR_BUTTONS, ZOOM_STEP_MULTIPLICATOR_WHEEL } from "../state_and_parameters/graphParameters";
 import { XAndY } from "./xAndY";
 
 
@@ -18,7 +18,7 @@ export class Viewport {
         this.height = height;
         this.width = width;
         this.zoom = INITIAL_ZOOM;
-        this.position = { x: SIM_WIDTH / 2 - width / 2 / this.zoom, y: SIM_HEIGHT / 2 - height / 2 / this.zoom };
+        this.position = { x: 0, y: 0 };
         this.dragged = false;
         this.lockedOnNode = false;
         // console.log(simSize);
@@ -35,50 +35,50 @@ export class Viewport {
     public moveBy = (delta: XAndY) => {
         this.position.x -= delta.x;
         this.position.y -= delta.y;
-        if (!useGraphControlsStore.getState().noBorders){
+        if (!useGraphControlsStore.getState().noBorders) {
 
-            if (this.position.x + this.width / 2 / this.zoom > SIM_WIDTH)
-                this.position.x = SIM_WIDTH - this.width / 2 / this.zoom;
-            if (this.position.y + this.height / 2 / this.zoom > SIM_HEIGHT)
-                this.position.y = SIM_HEIGHT - this.height / 2 / this.zoom;
-            if (this.position.x + this.width / 2 / this.zoom < 0)
-                this.position.x = - this.width / 2 / this.zoom;
-            if (this.position.y + this.height / 2 / this.zoom < 0)
-                this.position.y = -+ this.height / 2 / this.zoom;
+            if (this.position.x > GRAVITY_FREE_RADIUS)
+                this.position.x = GRAVITY_FREE_RADIUS;
+            if (this.position.y > GRAVITY_FREE_RADIUS)
+                this.position.y = GRAVITY_FREE_RADIUS;
+            if (this.position.x < -GRAVITY_FREE_RADIUS)
+                this.position.x = -GRAVITY_FREE_RADIUS;
+            if (this.position.y < -GRAVITY_FREE_RADIUS)
+                this.position.y = -GRAVITY_FREE_RADIUS;
         }
     }
 
     //Used for zooming by buttons
     public zoomByButtonDelta(dir: number) {
-        const oldBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
+        // const oldBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
 
         if (dir < 0 && this.zoom > MIN_ZOOM)
             this.zoom /= ZOOM_STEP_MULTIPLICATOR_BUTTONS;
         if (dir > 0 && this.zoom < MAX_ZOOM)
             this.zoom *= ZOOM_STEP_MULTIPLICATOR_BUTTONS;
 
-        const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
+        // const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
 
-        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3});
+        // this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3});
     }
 
     //used for zoom by mouse wheel
     public zoomByWheelDelta(dir: number) {
-        const oldBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
+        // const oldBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
         if (dir < 0 && this.zoom > MIN_ZOOM)
             this.zoom /= ZOOM_STEP_MULTIPLICATOR_WHEEL;
         if (dir > 0 && this.zoom < MAX_ZOOM)
             this.zoom *= ZOOM_STEP_MULTIPLICATOR_WHEEL;
 
-        const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
+        // const newBottomRight: XAndY = { x: this.position.x + this.zoomedViewportSize().x, y: this.position.y + this.zoomedViewportSize().y };
 
-        this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3 });
+        // this.moveBy({ x: -(oldBottomRight.x - newBottomRight.x) / 2, y: -(oldBottomRight.y - newBottomRight.y) * 2 / 3 });
     }
 
     toViewportCoordinates = (position: XAndY): XAndY => {
         return {
-            x: (position.x - this.position.x) * this.zoom,
-            y: (position.y - this.position.y) * this.zoom
+            x: (position.x - this.position.x) * this.zoom + this.width / 2,
+            y: (position.y - this.position.y) * this.zoom + this.height / 2
         };
     }
 

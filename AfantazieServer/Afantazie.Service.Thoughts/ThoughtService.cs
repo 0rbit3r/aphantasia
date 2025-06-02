@@ -238,7 +238,7 @@ namespace Afantazie.Service.Thoughts
         private Result<List<int>> GetReferencesAsync(string content)
         {
             var references = new List<int>();
-            var regex = new Regex(@"\[([0-9]+)\]\[.+?\]", RegexOptions.Compiled);
+            var regex = new Regex(@"\[([0-9]+)\]\[[^\[\]]+?\]", RegexOptions.Compiled);
 
             var matches = regex.Matches(content);
             if (matches.Count == 0)

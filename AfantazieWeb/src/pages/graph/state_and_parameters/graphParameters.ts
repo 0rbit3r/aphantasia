@@ -37,13 +37,14 @@ export const MAX_PULL_FORCE = 100;
 
 export const VIRTUAL_EDGE_PULL_FORCE_MULTIPLIER = 0.05;
 export const VIRTUAL_EDGE_LINKED_DIST_MULTIPLIER = 2;
-export const IDEAL_DIST_SIZE_MULTIPLIER = 0.20;
+// can only increase the thought (ie. first few sizes will default to 1 if set under 1)
+export const IDEAL_DIST_SIZE_MULTIPLIER = 0.1;//0.01;
 
 export const PUSH_THRESH = 7000;
 export const BORDERLESS_MODE_PUSH_THRESH_MULTIPLICATOR = 5;
 export const MAX_PUSH_FORCE = 100;
 
-export const GRAVITY_FREE_RADIUS = 1200;
+export const GRAVITY_FREE_RADIUS = 40000;
 
 // When thoughts "appear" on screen they should not immediatelly start influencing other thoughts.
 // This parameter is the length of the "ease-in" period for influencing other thoughts
@@ -77,13 +78,13 @@ export const UNHIGHLIGHTED_EDGE_WIDTH = 8;
 export const UNHIGHLIGHTED_EDGE_ALPHA = 0.7;
 
 // nodes appearing appearance
-export const NEW_NODE_INVISIBLE_FOR = 35;
-export const NEW_NODE_FADE_IN_FRAMES = 70;
+export const NEW_NODE_INVISIBLE_FOR = 1;
+export const NEW_NODE_FADE_IN_FRAMES = 5;
 
 // zoom
 export const MAX_ZOOM = 5;
 export const MIN_ZOOM = 0.01;
-export const INITIAL_ZOOM = 0.1;
+export const INITIAL_ZOOM = 0.0129;
 // Titles are visible when the zoom is bigger than this value
 export const ZOOM_TEXT_VISIBLE_THRESHOLD = 0.2;
 // Constants for controlling the zoop step on mouse wheel
@@ -146,7 +147,7 @@ export const backlinksNumberForceDivisor = (bl: number) => {
     if (bl < 3) {
         return 1;
     }
-    return 1 + bl;
+    return 1 + bl / 5;
 }
 
 // export const linksNumberForceDivisor = (source: RenderedThought, target: RenderedThought) => {

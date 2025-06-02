@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Afantazie.Service.GraphLayout/Afantazie.Service.GraphLayout.csproj" />
     <ProjectReference Include="..\Afantazie.Core.Localization\Afantazie.Core.Localization.csproj" />
     <ProjectReference Include="..\Afantazie.Data.Repository\Afantazie.Data.Repository.csproj" />
     <ProjectReference Include="..\Afantazie.Presentation.Api\Afantazie.Presentation.Api.csproj" />
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\Afantazie.Service.Thoughts\Afantazie.Service.Thoughts.csproj" />
     <ProjectReference Include="..\Afantazie.Services.Chat\Afantazie.Service.Chat.csproj" />
     <ProjectReference Include="..\Afantazie.Services.UserSettings\Afantazie.Service.UserSettings.csproj" />
+    <ProjectReference Include="..\Afantazie.Services.GraphLayout\Afantazie.Service.GraphLayout.csproj" />
   </ItemGroup>
 
   <ItemGroup>

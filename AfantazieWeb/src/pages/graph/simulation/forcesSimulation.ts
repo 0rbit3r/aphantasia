@@ -51,13 +51,15 @@ export const simulate_one_frame_of_FDL = () => {
             const sourceThought = onScreenThoughts[i];
             handleOutOfBounds(sourceThought);
             if (!graphControlsState.noBorders) {
-                handleOutOfBorders(sourceThought);
+                // handleOutOfBorders(sourceThought);
+
+                //todo - here goes new gravity
             }
             for (let j = 0; j < i; j++) {
                 const targetThought = onScreenThoughts[j];
                 if (sourceThought.id > targetThought.id) { //This relies on the fact that thoughts can only reference older ones... and sorted array...
                     const borderDistance = get_border_distance(sourceThought, targetThought);
-
+                    
                     if (sourceThought.links.includes(targetThought.id)) {
                         pull_or_push_connected_to_ideal_distance(
                             {
@@ -233,8 +235,8 @@ export const gravity_pull = (thought: RenderedThought) => {
     if (thought.held) {
         return;
     }
-    const dx = SIM_WIDTH / 2 - thought.position.x;
-    const dy = SIM_HEIGHT / 2 - thought.position.y;
+    const dx = thought.position.x;
+    const dy = thought.position.y;
     const centerDistance = Math.sqrt(dx * dx + dy * dy);
     if (centerDistance < GRAVITY_FREE_RADIUS) {
         return;
@@ -261,17 +263,17 @@ const handleOutOfBounds = (thought: RenderedThought) => {
     }
 }
 
-const handleOutOfBorders = (thought: RenderedThought) => {
-    if (thought.position.x < thought.radius) {
-        thought.position.x = thought.radius;
-    }
-    if (thought.position.x > SIM_WIDTH - thought.radius) {
-        thought.position.x = SIM_WIDTH - thought.radius;
-    }
-    if (thought.position.y < thought.radius) {
-        thought.position.y = thought.radius ;
-    }
-    if (thought.position.y > SIM_HEIGHT - thought.radius) {
-        thought.position.y = SIM_HEIGHT - thought.radius;
-    }
-}
+// const handleOutOfBorders = (thought: RenderedThought) => {
+//     if (thought.position.x < thought.radius) {
+//         thought.position.x = thought.radius;
+//     }
+//     if (thought.position.x > SIM_WIDTH - thought.radius) {
+//         thought.position.x = SIM_WIDTH - thought.radius;
+//     }
+//     if (thought.position.y < thought.radius) {
+//         thought.position.y = thought.radius;
+//     }
+//     if (thought.position.y > SIM_HEIGHT - thought.radius) {
+//         thought.position.y = SIM_HEIGHT - thought.radius;
+//     }
+// }
