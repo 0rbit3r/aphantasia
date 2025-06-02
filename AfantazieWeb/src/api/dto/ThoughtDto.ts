@@ -33,6 +33,8 @@ export interface thoughtNodeDto {
     dateCreated: string,
     color: string,
     shape: ThoughtShape,
+    positionX: number,
+    positionY: number,
     links: number[],
     backlinks: number[],
     virtualLinks: number[],

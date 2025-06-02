@@ -11,6 +11,7 @@ using Afantazie.Service.Chat;
 using Afantazie.Service.SiteActivity;
 using Afantazie.Core.Localization;
 using Afantazie.Service.Profiles;
+using Afantazie.Service.GraphLayout;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,6 +66,8 @@ builder.Services.AddAuthenticationModule(builder.Configuration);
 builder.Services.AddUserSettingsModule();
 
 builder.Services.AddSerilog();
+
+builder.Services.RegisterGraphLayoutModule(builder.Configuration);
 
 EntityMappingConfiguration.ConfigureEntityMapping();
 DtoMappingConfiguration.ConfigureDtoMapping();

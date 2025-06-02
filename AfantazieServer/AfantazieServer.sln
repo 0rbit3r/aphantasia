@@ -57,6 +57,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afantazie.Service.Profiles"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afantazie.Service.Interface.Profiles", "Afantazie.Service.Interface.Profiles\Afantazie.Service.Interface.Profiles.csproj", "{AF797DDD-ADDF-4829-9E50-6B2A0B2653FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afantazie.Service.Interface.GraphLayout", "Afantazie.Service.Interface.GraphLayout\Afantazie.Service.Interface.GraphLayout.csproj", "{B1794E7E-5131-4B79-8CE4-E6B4DF29E2AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Afantazie.Service.GraphLayout", "Afantazie.Service.GraphLayout\Afantazie.Service.GraphLayout.csproj", "{7C277DA9-E306-4008-8D62-CEAA58A65A21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +155,14 @@ Global
 		{AF797DDD-ADDF-4829-9E50-6B2A0B2653FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF797DDD-ADDF-4829-9E50-6B2A0B2653FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF797DDD-ADDF-4829-9E50-6B2A0B2653FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1794E7E-5131-4B79-8CE4-E6B4DF29E2AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1794E7E-5131-4B79-8CE4-E6B4DF29E2AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1794E7E-5131-4B79-8CE4-E6B4DF29E2AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1794E7E-5131-4B79-8CE4-E6B4DF29E2AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C277DA9-E306-4008-8D62-CEAA58A65A21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C277DA9-E306-4008-8D62-CEAA58A65A21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C277DA9-E306-4008-8D62-CEAA58A65A21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C277DA9-E306-4008-8D62-CEAA58A65A21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,7 @@
 import { Application, Color, Container, Graphics, TextStyle, Text } from "pixi.js";
 import { ARROW_Z, NODES_Z, TEXT_Z } from "./zIndexes";
-import { BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, SIM_HEIGHT, SIM_WIDTH, UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../state_and_parameters/graphParameters";
+import { BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, GRAVITY_FREE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, SIM_HEIGHT, 
+    UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { addDraggableViewport } from "./ViewportInitializer";
 import { XAndY } from "../model/xAndY";
@@ -154,6 +155,7 @@ export const initGraphics = (
             textContainer.addChild(fpsCounter);
         }
 
+
         const onScreenThoughts = getThoughtsOnScreen()
             .concat(graphState.fadeOutThoughts);
 
@@ -168,12 +170,12 @@ export const initGraphics = (
                 child.clear();
             }
         });
-        
+
         // nodes
         onScreenThoughts.forEach(thought => {
-            
+
             const TimeAffectedRadius = thought.radius
-                * (thought.timeOnScreen < NEW_NODE_INVISIBLE_FOR ? 0 : 
+                * (thought.timeOnScreen < NEW_NODE_INVISIBLE_FOR ? 0 :
                     Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES)
                 );
             // if (thought.graphics === undefined) {
@@ -185,12 +187,14 @@ export const initGraphics = (
             }
 
             // indicate that htere are neighbors not currently on screen
-            const explorable = (thought.links.some(l => onScreenThoughts.filter(t => t.id === l).length === 0) || // any links or replies outside onscreen thoughts check 
-                thought.backlinks.some(l => onScreenThoughts.filter(t => t.id === l).length === 0));
+            // const explorable = (thought.links.some(l => onScreenThoughts.filter(t => t.id === l).length === 0) || // any links or replies outside onscreen thoughts check 
+            // thought.backlinks.some(l => onScreenThoughts.filter(t => t.id === l).length === 0));
+
+            const explorable = false;
 
             const circle = thought.graphics as Graphics;
 
-            circle.clear();
+            // circle.clear();
 
             // if the node is out of screen, don't draw it
             const circleCoors = stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
@@ -278,25 +282,27 @@ export const initGraphics = (
                 }
                 circle.endFill();
 
+
+
                 if (explorable) {
                     circle.beginFill("black", 1);
                     circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), 1);
                     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
                     circle.endFill();
                 } else {
-                    const explorableLowestTimeOnScreen = onScreenThoughts
-                        .filter(t => thought.links.includes(t.id) || thought.backlinks.includes(t.id))
-                        .map(t => t.timeOnScreen)
-                        .reduce((min, cur) => Math.min(min, cur), Number.MAX_SAFE_INTEGER);
+                    // const explorableLowestTimeOnScreen = onScreenThoughts
+                    //     .filter(t => thought.links.includes(t.id) || thought.backlinks.includes(t.id))
+                    //     .map(t => t.timeOnScreen)
+                    //     .reduce((min, cur) => Math.min(min, cur), Number.MAX_SAFE_INTEGER);
 
-                    const blackDotOpacity = explorableLowestTimeOnScreen > NEW_NODE_INVISIBLE_FOR
-                        ? 0
-                        : Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+                    // const blackDotOpacity = explorableLowestTimeOnScreen > NEW_NODE_INVISIBLE_FOR
+                    //     ? 0
+                    //     : Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
 
-                    circle.beginFill("black", blackDotOpacity);
-                    circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), blackDotOpacity);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
-                    circle.endFill();
+                    // circle.beginFill("black", blackDotOpacity);
+                    // circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), blackDotOpacity);
+                    // circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
+                    // circle.endFill();
                 }
 
                 // muffins!
@@ -354,11 +360,8 @@ export const initGraphics = (
 
                 textContainer.addChild(text);
             }
-        });
 
-        // edges
-        onScreenThoughts.forEach(thought => {
-            const highlightedThought = useGraphStore.getState().highlightedThought;
+            const highlightedThought = graphState.highlightedThought;
 
             thought.links.forEach(referencedThoughtId => {
                 const referencedThought = onScreenThoughts.filter(t => t.id == referencedThoughtId)[0];
@@ -422,24 +425,28 @@ export const initGraphics = (
                             "#ffffff", stateViewport.zoom, thought.radius, arrowThickness, edgeOpacity);
                     }
                 });
-
         });
 
         // boundaries
-        nodeContainer.lineStyle(2, graphState.userSettings.color, 0.2);
+        nodeContainer.lineStyle(2, graphState.userSettings.color, 1);
         if (!graphControlsState.noBorders) {
-            nodeContainer.drawRect(
+            // nodeContainer.drawRect(
+            //     stateViewport.toViewportCoordinates({ x: 0, y: 0 }).x,
+            //     stateViewport.toViewportCoordinates({ x: 0, y: 0 }).y,
+            //     SIM_WIDTH * stateViewport.zoom,
+            //     SIM_HEIGHT * stateViewport.zoom
+            // );
+
+            nodeContainer.drawCircle(
                 stateViewport.toViewportCoordinates({ x: 0, y: 0 }).x,
                 stateViewport.toViewportCoordinates({ x: 0, y: 0 }).y,
-                SIM_WIDTH * stateViewport.zoom,
-                SIM_HEIGHT * stateViewport.zoom
-            );
+                GRAVITY_FREE_RADIUS * graphState.viewport.zoom)
         } else {
             const CROSS_SIZE = SIM_HEIGHT / 100;
-            const pointAbove = stateViewport.toViewportCoordinates({ x: SIM_HEIGHT / 2, y: SIM_HEIGHT / 2 - CROSS_SIZE });
-            const pointBelow = stateViewport.toViewportCoordinates({ x: SIM_HEIGHT / 2, y: SIM_HEIGHT / 2 + CROSS_SIZE });
-            const pointLeft = stateViewport.toViewportCoordinates({ x: SIM_HEIGHT / 2 - CROSS_SIZE, y: SIM_HEIGHT / 2 });
-            const pointRight = stateViewport.toViewportCoordinates({ x: SIM_HEIGHT / 2 + CROSS_SIZE, y: SIM_HEIGHT / 2 });
+            const pointAbove = stateViewport.toViewportCoordinates({ x: 0, y: 0 - CROSS_SIZE });
+            const pointBelow = stateViewport.toViewportCoordinates({ x: 0, y: 0 + CROSS_SIZE });
+            const pointLeft = stateViewport.toViewportCoordinates({ x: 0 - CROSS_SIZE, y: 0 });
+            const pointRight = stateViewport.toViewportCoordinates({ x: 0 + CROSS_SIZE, y: 0 });
             nodeContainer.moveTo(pointAbove.x, pointAbove.y);
             nodeContainer.lineTo(pointBelow.x, pointBelow.y);
             nodeContainer.moveTo(pointLeft.x, pointLeft.y);

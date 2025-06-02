@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LocationState } from '../../interfaces/LocationState';
+import { MessageLocationState } from '../../interfaces/LocationState';
 import { useState } from 'react';
 import { useAuth } from '../../Contexts/AuthContext';
 import { loginUser } from '../../api/AuthApiClient';
@@ -8,7 +8,7 @@ import { Localization } from '../../locales/localization';
 function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const location = useLocation();
-    const topmessage = (location.state as LocationState)?.message;
+    const topmessage = (location.state as MessageLocationState)?.message;
     const { setAccessToken } = useAuth();
     const navigate = useNavigate();
     const [validationMessage, setValidationMessage] = useState<string | null>(null);
@@ -25,7 +25,7 @@ function Login() {
         }
         else {
             setAccessToken(response.data?.token as string);
-            navigate('/home', { state: { message: Localization.WelcomeBack } as LocationState })
+            navigate('/home', { state: { message: Localization.WelcomeBack } as MessageLocationState })
         }
     }
 

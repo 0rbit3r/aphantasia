@@ -55,7 +55,9 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
                 .Map(dest => dest.DateCreated, src => src.DateCreated.ToString("yyyy-MM-dd"))
-                .Map(dest => dest.Size, src => src.Size);
+                .Map(dest => dest.Size, src => src.Size)
+                .Map(dest => dest.PositionX, src => src.PositionX)
+                .Map(dest => dest.PositionY, src => src.PositionY);
 
             TypeAdapterConfig<Profile, ProfileDto>.NewConfig()
                 .Map(dest => dest.Username, src => src.Username)
