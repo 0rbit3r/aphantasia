@@ -59,7 +59,7 @@ public class GraphLayoutService(
             ForcesY = 0,
             PositionX = t.PositionX ?? 0,
             PositionY = t.PositionY ?? 0, //todo
-            Radius = (int)Math.Min(opts.BaseRadius * Math.Pow(opts.ReferenceRadiusMultiplier, t.SizeMultiplier), opts.MaxRadius),
+            Radius = GetRadius(t.SizeMultiplier, opts),
         }).ToList();
 
         for (int frame = 0; frame < frames; frame++)
@@ -113,14 +113,15 @@ public class GraphLayoutService(
 
             if (x is null || y is null) continue;
 
-            var radius = (float)(_fdlParams.CurrentValue.BaseRadius
+            var radius = GetRadius(thought.SizeMultiplier, _fdlParams.CurrentValue) * _fdlParams.CurrentValue.Scale;
+            var radiusold = (float)(_fdlParams.CurrentValue.BaseRadius
                 * Math.Pow(_fdlParams.CurrentValue.ReferenceRadiusMultiplier, thought.SizeMultiplier)
                 * _fdlParams.CurrentValue.Scale);
             var color = ParseHexColor(thought.Author.Color);
 
             // Draw a filled circle at the position
             var circle = new EllipsePolygon((float)x, (float)y,
-                Math.Min(radius, (float)(_fdlParams.CurrentValue.MaxRadius * _fdlParams.CurrentValue.Scale)));
+                Math.Min((float)radius, (float)(_fdlParams.CurrentValue.MaxRadius * _fdlParams.CurrentValue.Scale)));
             image.Mutate(ctx => ctx.Fill(color, circle));
 
             var links = thought.Links.Select(l => l.TargetId);
@@ -145,7 +146,7 @@ public class GraphLayoutService(
                         }
                     },
                 Color.ParseHex(targetThought.Author.Color).WithAlpha(0.3f),
-                1f,
+                3f,
                 new PointF((float)x, (float)y), new PointF((float)targetX, (float)targetY)));
             }
         }
@@ -157,7 +158,7 @@ public class GraphLayoutService(
         return Result.Success();
     }
 
-    // Helper to parse hex color string (e.g., "#FF00FF")
+    // Helper to parse hex color string /home/ales/Projects/Afantazie/ServerSideLayout(e.g., "#FF00FF")
     private static Color ParseHexColor(string hex)
     {
         if (string.IsNullOrWhiteSpace(hex))
@@ -351,6 +352,12 @@ public class GraphLayoutService(
         return dist == 0 ? 0.01 : dist;
     }
 
+    private int GetRadius(int repliesNum, FdlParametersOptions opts)
+    {
+        // return (int)Math.Min(opts.BaseRadius * Math.Pow(opts.ReferenceRadiusMultiplier, repliesNum), opts.MaxRadius);
+        return (int)(Math.Log(repliesNum + 10) * 700 -1610 + opts.BaseRadius);
+    }
+
     /// <summary>
     /// Calculates a push force based on the distance to a border.
     /// </summary>
@@ -396,7 +403,7 @@ public class GraphLayoutService(
 
             //return opts.GravityForce * Math.Log(centerDistance - opts.GravityFreeRadius + 1);
 
-            return -opts.GravityForce / (centerDistance - opts.GravityFreeRadius) - opts.GravityForce / opts.GravityFreeRadius;
+            return -opts.GravityForce / (centerDistance - opts.GravityFreeRadius);
         }
         else
         {

@@ -53,7 +53,8 @@ Console.WriteLine(
 [10] - Import programming languages influences dataset
 [11] - Update link format to brackets
 [12] - Randomize positions
-[13] - Run FDL");
+[13] - Run FDL
+[14] - Export Thought positions");
 
 var choice = Console.ReadLine();
 if (!int.TryParse(choice, out var choiceInt))
@@ -111,11 +112,17 @@ else if (choiceInt == 11)
 {
     await LinkFormatUpdater.UpdateLinkFormat();
 }
-else if (choiceInt == 12){
+else if (choiceInt == 12)
+{
     await ManualFDL.RandomizePositions(serviceProvider);
 }
-else if (choiceInt == 13){
+else if (choiceInt == 13)
+{
     await ManualFDL.RunFDL(serviceProvider);
+}
+else if (choiceInt == 14)
+{
+    await PositionsExporter.ExportPositions(serviceProvider);
 }
 
 else

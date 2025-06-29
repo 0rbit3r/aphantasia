@@ -60,7 +60,9 @@ function Navbar() {
             <div className='top-row'>
 
                 <a className='aphantasia-title' onClick={() => navigate("home")} style={{color: userSettings?.color}}
-                onMouseDown={e => {if (e.button === 1){window.open('/home')}}}>{Localization.Title}</a>
+                onMouseDown={e => {if (e.button === 1){window.open('/home')}}}>Aphant DEV</a>
+                
+                {/* {Localization.Title}</a> */}
 
                 {/* <div className='aphantasia-title-logged-out' onClick={() => navigate("/")}>{Localization.Title}</div> */}
 

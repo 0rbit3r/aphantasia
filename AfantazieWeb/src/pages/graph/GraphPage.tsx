@@ -159,10 +159,10 @@ const GraphPage: React.FC = () => {
                         clickedOnUser={username => handleUserProfileClick(username)}
                         clickedOnDate={handleDateClick}
                         links={neighborhoodThoughts.filter(t => t.backlinks.includes(fullHighlightedThought.id)).map(t => (
-                            { id: t.id, color: t.color, title: t.title }
+                            { id: t.id, color: t.authorColor, title: t.title }
                         ))}
                         backlinks={neighborhoodThoughts.filter(t => t.links.includes(fullHighlightedThought.id)).map(t => (
-                            { id: t.id, color: t.color, title: t.title }
+                            { id: t.id, color: t.authorColor, title: t.title }
                         ))}
                     >
                     </ThoughtViewer>

@@ -49,7 +49,7 @@ namespace Afantazie.Tools
             for (int i = 1; i < thoughtsNum + 1; i++)
             {
                 var userId = i;
-                var refNum = i < 5 ? 0 : new Random().Next(1, 4);
+                var refNum = i < 5 ? 0 : new Random().Next(1, 3);
 
                 var chosenClusterIndex = new Random().Next(0, clustersNum);
                 var references = new List<int>();

@@ -10,7 +10,8 @@ export interface RenderedThought {
   content?: string,
   radius: number,
   size: number,
-  color: string,
+  authorColor: string,
+  selectedColor: number,
   shape: ThoughtShape,
 
   graphics?: Graphics,

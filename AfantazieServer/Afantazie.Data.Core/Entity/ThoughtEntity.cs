@@ -24,6 +24,7 @@ namespace Afantazie.Data.Model.Entity
         public int SizeMultiplier { get; set; } = 0;
 
         public byte Shape { get; set; } = 0;
+        // public byte Color { get; set; } = 0;
 
         public double? PositionX { get; set; }
 
