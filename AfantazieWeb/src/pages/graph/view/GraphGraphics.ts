@@ -1,7 +1,12 @@
-import { Application, Color, Container, Graphics, TextStyle, Text } from "pixi.js";
+import { Application, Color, Container, Graphics, TextStyle, Text, Assets, Sprite, Texture, LineStyle, State } from "pixi.js";
 import { ARROW_Z, NODES_Z, TEXT_Z } from "./zIndexes";
-import { BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, GRAVITY_FREE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, SIM_HEIGHT, 
-    UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD } from "../state_and_parameters/graphParameters";
+import {
+    BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE,
+    BACKDROP_ZOOM_THRESHOLD_HIDDEN,
+    BASE_EDGE_ALPHA, BASE_EDGE_WIDTH, BASE_RADIUS, GRAVITY_FREE_RADIUS, HIGHLIGHTED_EDGE_ALPHA, HIGHLIGHTED_EDGE_WIDTH, NEW_NODE_FADE_IN_FRAMES, NEW_NODE_INVISIBLE_FOR, SIM_HEIGHT,
+    THOUGHT_BORDER_THICKNESS,
+    UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD
+} from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { addDraggableViewport } from "./ViewportInitializer";
 import { XAndY } from "../model/xAndY";
@@ -9,13 +14,15 @@ import tinycolor from "tinycolor2";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
 import { getThoughtsOnScreen } from "../simulation/thoughtsProvider";
 import { EdgeType, useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
-import { ThoughtShape } from "../model/thoughtShape";
+import { ThoughtColor, ThoughtShape } from "../model/thoughtShape";
 import { ExplorationMode } from "../simulation/modesManager";
 
-
+let lastZoom: number = -1;
 // Threshold between clicking a node to open it and hoolding it to drag it around in ms
 const DRAG_TIME_THRESHOLD = 200;
 // const muffinSvg = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/muffin.svg');
+// const thoughtNode = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/node.svg');
+const backdrop = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/backdrop.png');
 
 export const initGraphics = (
     app: Application, renderedThoughts: RenderedThought[],
@@ -128,6 +135,20 @@ export const initGraphics = (
     const renderTimeDeltas: number[] = [1];
     let lastRenderTime = performance.now();
 
+
+    const backdropTexture = new Sprite(backdrop as Texture);
+    backdropTexture.width = 100;
+    backdropTexture.height = 100;
+    backdropTexture.position.set(- backdropTexture.width / 2, - backdropTexture.height / 2);
+
+    backdropTexture.alpha = 1;
+    backdropTexture.interactive = false;
+    backdropTexture.hitArea = null;
+    backdropTexture.zIndex = -1;
+
+    zSortedContainer.addChild(backdropTexture);
+    zSortedContainer.sortChildren();
+
     const renderGraph = () => {
         const graphState = useGraphStore.getState();
         const graphControlsState = useGraphControlsStore.getState();
@@ -165,16 +186,42 @@ export const initGraphics = (
         }
 
         nodeContainer.clear();
-        nodeContainer.children.forEach(child => {
-            if (child instanceof Graphics) {
-                child.clear();
-            }
-        });
 
-        // nodes
+        // nodeContainer.children.forEach(child => {
+        //     if (child instanceof Graphics) {
+        //         child.clear();
+        //     }
+        // });
+
+
+
+
+        const sizeOnScreen = 27.75 * graphState.viewport.zoom;
+        const onScreenCoors = graphState.viewport.toViewportCoordinates(
+            { x: -41600, y: -41600 }
+        );
+
+        backdropTexture.setTransform(
+            onScreenCoors.x, onScreenCoors.y,
+            sizeOnScreen, sizeOnScreen);
+
+        const backdropOpacity = 1 - Math.min(1, Math.max(0, graphState.viewport.zoom - BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
+            / (BACKDROP_ZOOM_THRESHOLD_HIDDEN - BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE));
+
+        backdropTexture.alpha = backdropOpacity;
+
+        nodeContainer.alpha = 1 - backdropOpacity;
+
+        if (graphState.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
+            graphState.temporalRenderedThoughts.concat(graphState.neighborhoodThoughts)
+                .forEach(t => {
+                    if (!onScreenThoughts.includes(t))
+                        t.graphics?.clear();
+            });
+        // nodes and edges
         onScreenThoughts.forEach(thought => {
 
-            const TimeAffectedRadius = thought.radius
+            const TimeAffectedRadius = (thought.radius * (1 - THOUGHT_BORDER_THICKNESS / 2))
                 * (thought.timeOnScreen < NEW_NODE_INVISIBLE_FOR ? 0 :
                     Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES)
                 );
@@ -198,95 +245,129 @@ export const initGraphics = (
 
             // if the node is out of screen, don't draw it
             const circleCoors = stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
-            if (circleCoors.x < -thought.radius * 3 || circleCoors.x > stateViewport.width + thought.radius * 3
-                || circleCoors.y < -thought.radius * 3 || circleCoors.y > stateViewport.height + thought.radius * 3) {
+            if (circleCoors.x < -thought.radius * graphState.viewport.zoom || circleCoors.x > stateViewport.width + thought.radius * graphState.viewport.zoom
+                || circleCoors.y < -thought.radius * graphState.viewport.zoom || circleCoors.y > stateViewport.height + thought.radius * graphState.viewport.zoom) {
+                circle.clear();
                 return;
             }
-
+            // console.log("last zoom: " , + lastZoom + " zoom: " + graphState.viewport.zoom);
+            if (lastZoom === graphState.viewport.zoom) {
+                // if (thought.id === 1) console.log(circle.transform.position.x);
+                const pos = graphState.viewport.toViewportCoordinates(thought.position);
+                circle.setTransform(pos.x, pos.y);
+            }
             // draw node
-            if (thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR) {
-
+            else if (thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR && lastZoom !== graphState.viewport.zoom) {
+                circle.clear();
                 const opacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+                const selectedColor = thought.selectedColor == ThoughtColor.None
+                    ? thought.authorColor
+                    : getSelectedColorHex(thought.selectedColor);
 
                 // pulsating color if the node is explorable
                 const pulsingColor = graphState.frame % 150 < 50 &&
                     explorable
-                    ? tinycolor(thought.color).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
-                    : thought.color;
-                const thoughtLineStyle = { width: thought.radius * 0.1 * stateViewport.zoom, color: tinycolor(thought.color).lighten(15).toString(), alpha: opacity };
+                    ? tinycolor(selectedColor).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
+                    : selectedColor;
+                const thoughtLineStyle =
+                    thought.selectedColor === ThoughtColor.None
+                        ? { width: thought.radius * THOUGHT_BORDER_THICKNESS * stateViewport.zoom, color: tinycolor(thought.authorColor).toString(), alpha: opacity }
+                        : { width: thought.radius * THOUGHT_BORDER_THICKNESS * stateViewport.zoom, color: tinycolor(thought.authorColor).toString(), alpha: opacity };
+                // : { width: thought.radius * 0.1 * stateViewport.zoom, color: getSelectedColorHex(thought.selectedColor), alpha: opacity }
                 const thoughtFillStyle = { color: pulsingColor, alpha: opacity };
 
-                circle.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
+
+                circle.beginFill(tinycolor(thoughtFillStyle.color).lighten(5).toString(), thoughtFillStyle.alpha);
                 circle.lineStyle(thoughtLineStyle);
 
+                if (circle.children.length == 0)
+                    switch (thought.shape) {
+                        case ThoughtShape.Circle:
+                            circle.drawCircle(0, 0, stateViewport.zoom * TimeAffectedRadius);
+                            break;
+                        case ThoughtShape.Square:
+                            circle.drawRoundedRect(
+                                - TimeAffectedRadius / 3 * 2 * stateViewport.zoom, - TimeAffectedRadius / 3 * 2 * stateViewport.zoom,
+                                TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius / 3 * stateViewport.zoom
+                            );
+                            break;
+                        case ThoughtShape.UpTriangle:
+                            circle.moveTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
+                            circle.lineTo(0 - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 + stateViewport.zoom * TimeAffectedRadius / 2);
+                            circle.lineTo(0 + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 + stateViewport.zoom * TimeAffectedRadius / 2);
+                            circle.lineTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
+                            // circle.lineStyle(thoughtLineStyle.width / 2, thoughtLineStyle.color, thoughtLineStyle.alpha, 1);
+                            // circle.drawCircle(0, 0 - stateViewport.zoom * thought.radius, thoughtLineStyle.width / 4 );
+                            break;
 
-                switch (thought.shape) {
-                    case ThoughtShape.Circle:
-                        circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius);
-                        break;
-                    case ThoughtShape.Square:
-                        circle.drawRoundedRect(
-                            circleCoors.x - TimeAffectedRadius / 3 * 2 * stateViewport.zoom, circleCoors.y - TimeAffectedRadius / 3 * 2 * stateViewport.zoom,
-                            TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius / 3 * stateViewport.zoom
-                        );
-                        break;
-                    case ThoughtShape.UpTriangle:
-                        circle.moveTo(circleCoors.x, circleCoors.y - stateViewport.zoom * TimeAffectedRadius);
-                        circle.lineTo(circleCoors.x - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, circleCoors.y + stateViewport.zoom * TimeAffectedRadius / 2);
-                        circle.lineTo(circleCoors.x + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, circleCoors.y + stateViewport.zoom * TimeAffectedRadius / 2);
-                        circle.lineTo(circleCoors.x, circleCoors.y - stateViewport.zoom * TimeAffectedRadius);
-                        // circle.lineStyle(thoughtLineStyle.width / 2, thoughtLineStyle.color, thoughtLineStyle.alpha, 1);
-                        // circle.drawCircle(circleCoors.x, circleCoors.y - stateViewport.zoom * thought.radius, thoughtLineStyle.width / 4 );
-                        break;
+                        case ThoughtShape.DownTriangle:
+                            circle.moveTo(0, 0 + stateViewport.zoom * TimeAffectedRadius);
+                            circle.lineTo(0 - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 - stateViewport.zoom * TimeAffectedRadius / 2);
+                            circle.lineTo(0 + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 - stateViewport.zoom * TimeAffectedRadius / 2);
+                            circle.lineTo(0, 0 + stateViewport.zoom * TimeAffectedRadius);
+                            break;
 
-                    case ThoughtShape.DownTriangle:
-                        circle.moveTo(circleCoors.x, circleCoors.y + stateViewport.zoom * TimeAffectedRadius);
-                        circle.lineTo(circleCoors.x - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, circleCoors.y - stateViewport.zoom * TimeAffectedRadius / 2);
-                        circle.lineTo(circleCoors.x + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, circleCoors.y - stateViewport.zoom * TimeAffectedRadius / 2);
-                        circle.lineTo(circleCoors.x, circleCoors.y + stateViewport.zoom * TimeAffectedRadius);
-                        break;
+                        case ThoughtShape.Diamond:
+                            circle.lineStyle();
+                            circle.endFill();
+                            // circle.moveTo(0 - thought.radius * 2 / 16 * stateViewport.zoom, 0 - stateViewport.zoom * (thought.radius * 14 / 16));
+                            circle.moveTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
+                            circle.arcTo(0 - stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
+                            circle.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
+                            circle.lineStyle(thoughtLineStyle);
+                            circle.arcTo(0, 0 + stateViewport.zoom * TimeAffectedRadius, 0 + stateViewport.zoom * TimeAffectedRadius, 0, TimeAffectedRadius / 3 * stateViewport.zoom);
+                            circle.arcTo(0 + stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 - stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
+                            circle.arcTo(0, 0 - stateViewport.zoom * TimeAffectedRadius, 0 - stateViewport.zoom * TimeAffectedRadius, 0, TimeAffectedRadius / 3 * stateViewport.zoom);
+                            circle.arcTo(0 - stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
+                            break;
+                        case ThoughtShape.Cross:
+                            circle.lineStyle();
+                            circle.beginFill(thoughtLineStyle.color);
+                            const gridSize = TimeAffectedRadius / 7 * 3 * stateViewport.zoom;
+                            const smallerGridSize = gridSize * 0.5;
 
-                    case ThoughtShape.Diamond:
-                        circle.lineStyle();
-                        circle.endFill();
-                        // circle.moveTo(circleCoors.x - thought.radius * 2 / 16 * stateViewport.zoom, circleCoors.y - stateViewport.zoom * (thought.radius * 14 / 16));
-                        circle.moveTo(circleCoors.x, circleCoors.y - stateViewport.zoom * TimeAffectedRadius);
-                        circle.arcTo(circleCoors.x - stateViewport.zoom * TimeAffectedRadius, circleCoors.y, circleCoors.x, circleCoors.y + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                        circle.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
-                        circle.lineStyle(thoughtLineStyle);
-                        circle.arcTo(circleCoors.x, circleCoors.y + stateViewport.zoom * TimeAffectedRadius, circleCoors.x + stateViewport.zoom * TimeAffectedRadius, circleCoors.y, TimeAffectedRadius / 3 * stateViewport.zoom);
-                        circle.arcTo(circleCoors.x + stateViewport.zoom * TimeAffectedRadius, circleCoors.y, circleCoors.x, circleCoors.y - stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                        circle.arcTo(circleCoors.x, circleCoors.y - stateViewport.zoom * TimeAffectedRadius, circleCoors.x - stateViewport.zoom * TimeAffectedRadius, circleCoors.y, TimeAffectedRadius / 3 * stateViewport.zoom);
-                        circle.arcTo(circleCoors.x - stateViewport.zoom * TimeAffectedRadius, circleCoors.y, circleCoors.x, circleCoors.y + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                        break;
-                    case ThoughtShape.Cross:
-                        const gridSize = TimeAffectedRadius / 7 * 3 * stateViewport.zoom;
+                            circle.moveTo(0, 0 - gridSize);
+                            circle.lineTo(0 - gridSize, 0 - gridSize * 2);
+                            circle.lineTo(0 - gridSize * 2, 0 - gridSize);
+                            circle.lineTo(0 - gridSize, 0);
+                            circle.lineTo(0 - gridSize * 2, 0 + gridSize);
+                            circle.lineTo(0 - gridSize, 0 + gridSize * 2);
+                            circle.lineTo(0, 0 + gridSize);
+                            circle.lineTo(0 + gridSize, 0 + gridSize * 2);
+                            circle.lineTo(0 + gridSize * 2, 0 + gridSize);
+                            circle.lineTo(0 + gridSize, 0);
+                            circle.lineTo(0 + gridSize * 2, 0 - gridSize);
+                            circle.lineTo(0 + gridSize, 0 - gridSize * 2);
+                            circle.lineTo(0, 0 - gridSize);
 
-                        circle.moveTo(circleCoors.x, circleCoors.y - gridSize);
-                        circle.lineTo(circleCoors.x - gridSize, circleCoors.y - gridSize * 2);
-                        circle.lineTo(circleCoors.x - gridSize * 2, circleCoors.y - gridSize);
-                        circle.lineTo(circleCoors.x - gridSize, circleCoors.y);
-                        circle.lineTo(circleCoors.x - gridSize * 2, circleCoors.y + gridSize);
-                        circle.lineTo(circleCoors.x - gridSize, circleCoors.y + gridSize * 2);
-                        circle.lineTo(circleCoors.x, circleCoors.y + gridSize);
-                        circle.lineTo(circleCoors.x + gridSize, circleCoors.y + gridSize * 2);
-                        circle.lineTo(circleCoors.x + gridSize * 2, circleCoors.y + gridSize);
-                        circle.lineTo(circleCoors.x + gridSize, circleCoors.y);
-                        circle.lineTo(circleCoors.x + gridSize * 2, circleCoors.y - gridSize);
-                        circle.lineTo(circleCoors.x + gridSize, circleCoors.y - gridSize * 2);
-                        circle.lineTo(circleCoors.x, circleCoors.y - gridSize);
-                        break;
-                    default:
-                        circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius);
-                        break;
-                }
+                            circle.endFill();
+                            circle.moveTo(0, 0 - smallerGridSize);
+                            circle.beginFill(thoughtFillStyle.color);
+                            circle.lineTo(0 - smallerGridSize, 0 - smallerGridSize * 2);
+                            circle.lineTo(0 - smallerGridSize * 2, 0 - smallerGridSize);
+                            circle.lineTo(0 - smallerGridSize, 0);
+                            circle.lineTo(0 - smallerGridSize * 2, 0 + smallerGridSize);
+                            circle.lineTo(0 - smallerGridSize, 0 + smallerGridSize * 2);
+                            circle.lineTo(0, 0 + smallerGridSize);
+                            circle.lineTo(0 + smallerGridSize, 0 + smallerGridSize * 2);
+                            circle.lineTo(0 + smallerGridSize * 2, 0 + smallerGridSize);
+                            circle.lineTo(0 + smallerGridSize, 0);
+                            circle.lineTo(0 + smallerGridSize * 2, 0 - smallerGridSize);
+                            circle.lineTo(0 + smallerGridSize, 0 - smallerGridSize * 2);
+                            circle.lineTo(0, 0 - smallerGridSize);
+
+                            break;
+                        default:
+                            circle.drawCircle(0, 0, stateViewport.zoom * TimeAffectedRadius);
+                            break;
+                    }
                 circle.endFill();
 
 
 
                 if (explorable) {
                     circle.beginFill("black", 1);
-                    circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), 1);
+                    circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.authorColor).lighten(15).toString(), 1);
                     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
                     circle.endFill();
                 } else {
@@ -318,30 +399,62 @@ export const initGraphics = (
                 //     circle.addChild(muffinTexture);
                 // })();
 
+                // texture approach
+                // (async () => {
+                //     if (circle.children.length > 0)
+                //         return;
+                //     const nodeTexture = new Sprite(thoughtNode as Texture);
+                //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
+                //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
+                //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
+                //     nodeTexture.interactive = false;
+
+                //     circle.removeChildren();
+                //     circle.addChild(nodeTexture);
+                // })();
+
+                //graphics approach
+                // (async () => {
+                //     if (circle.children.length > 0)
+                //         return;
+                //     const nodeTexture = new Sprite(thoughtNode as Texture);
+                //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
+                //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
+                //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
+                //     nodeTexture.interactive = false;
+
+                //     circle.removeChildren();
+                //     circle.addChild(nodeTexture);
+                // })();
+
+                // const scale = graphState.viewport.zoom * thought.radius / 2;
+                // circle.scale = { x: scale, y: scale };
+                circle.position = graphState.viewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
 
                 if (thought.highlighted) {
-                    circle.lineStyle(500 * stateViewport.zoom, thought.color, 0.05);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius + 400));
+                    circle.lineStyle(500 * stateViewport.zoom, thought.authorColor, 0.05);
+                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 400));
 
-                    circle.lineStyle(400 * stateViewport.zoom, thought.color, 0.05);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius + 350));
+                    circle.lineStyle(400 * stateViewport.zoom, thought.authorColor, 0.05);
+                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 350));
 
-                    circle.lineStyle(300 * stateViewport.zoom, thought.color, 0.05);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius + 300));
+                    circle.lineStyle(300 * stateViewport.zoom, thought.authorColor, 0.05);
+                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 300));
 
-                    circle.lineStyle(200 * stateViewport.zoom, thought.color, 0.05);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius + 250));
+                    circle.lineStyle(200 * stateViewport.zoom, thought.authorColor, 0.05);
+                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 250));
 
-                    circle.lineStyle(100 * stateViewport.zoom, thought.color, 0.2);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius + 200));
+                    circle.lineStyle(100 * stateViewport.zoom, thought.authorColor, 0.2);
+                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 200));
                 }
-                if (thought.size <= 3) {
-                    circle.lineStyle(0);
-                    circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius + 8);
-                    circle.endFill();
-                }
+                // if (thought.size <= 3) {
+                //     circle.lineStyle(0);
+                //     circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
+                //     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius + 8);
+                //     circle.endFill();
+                // }
             }
+            
 
             const text = thought.text as Text;
             // console.log(graphState.viewport.zoom, ZOOM_TEXT_VISIBLE_THRESHOLD);
@@ -372,7 +485,7 @@ export const initGraphics = (
                     //     : highlightedThought === thought || highlightedThought === referencedThought
                     //         ? tinycolor(referencedThought.color).lighten(5).toString()
                     //         : tinycolor(referencedThought.color).darken(10).toString();
-                    const arrowColor = referencedThought.color;
+                    const arrowColor = referencedThought.authorColor;
                     const arrowThickness = highlightedThought === null
                         ? BASE_EDGE_WIDTH
                         : highlightedThought === thought || highlightedThought === referencedThought
@@ -426,6 +539,7 @@ export const initGraphics = (
                     }
                 });
         });
+        lastZoom = graphState.viewport.zoom;
 
         // boundaries
         nodeContainer.lineStyle(2, graphState.userSettings.color, 1);
@@ -646,5 +760,28 @@ function drawFadingTaperedEdge(
         graphics.beginFill(color, segmentAlpha);
         graphics.drawPolygon(quad);
         graphics.endFill();
+    }
+}
+
+const getSelectedColorHex = (color: ThoughtColor) => {
+    switch (color) {
+        case ThoughtColor.None:
+            return "#000000";
+        case ThoughtColor.Red:
+            return "#ba4745";
+        case ThoughtColor.Orange:
+            return "#ba7f45";
+        case ThoughtColor.Yellow:
+            return "#b4ba45";
+        case ThoughtColor.Green:
+            return "#58ba45";
+        case ThoughtColor.Cyan:
+            return "#45b5ba";
+        case ThoughtColor.Blue:
+            return "#4547ba";
+        case ThoughtColor.Violet:
+            return "#b745ba";
+        case ThoughtColor.White:
+            return "#eeeeee ";
     }
 }

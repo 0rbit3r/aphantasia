@@ -145,8 +145,8 @@ namespace Afantazie.Data.Repository
 
                 if (!string.IsNullOrEmpty(concept))
                 {
-                       query = query
-                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                    query = query
+                     .Where(t => t.Concepts.Any(c => c.Tag == concept));
                 }
                 var list = await query
                     .Where(t => t.Id < id)
@@ -334,7 +334,10 @@ namespace Afantazie.Data.Repository
             using (var db = _contextProvider.GetDataContext())
             {
                 var thought = await db.Thoughts
-                    .Include(t => t.Links).ThenInclude(l => l.TargetThought)
+                    .Include(t => t.Links)
+                        .ThenInclude(l => l.TargetThought)
+                        .ThenInclude(tt => tt.Backlinks)
+                        .ThenInclude(ttt => ttt.SourceThought)
                     .Include(t => t.Backlinks)
                     .Include(t => t.Concepts)
                     .SingleOrDefaultAsync(t => t.Id == id);
@@ -346,8 +349,16 @@ namespace Afantazie.Data.Repository
                 }
 
                 // unbump referenced thoughts
-                foreach(var link in thought.Links)
+                foreach (var link in thought.Links)
                 {
+                    //check whether the thought is not from the same author
+                    if (link.TargetThought.AuthorId == thought.AuthorId)
+                        continue;
+                    //check whether I have other replies to the thought
+                    // (without this I could do bump once, add more replies and then shrink with every deletion.)
+                    if (link.TargetThought.Backlinks.Where(b => b.SourceThought.AuthorId == thought.AuthorId).Count() > 1)
+                        continue;
+
                     link.TargetThought.SizeMultiplier--;
                 }
 

@@ -52,7 +52,7 @@ export const INFLUENCE_FADE_IN = 250;
 export const FRAMES_WITH_NO_INFLUENCE = 40;
 
 // Slows the simulation but makes it more stable
-export const MAX_MOMENTUM_DAMPENING = 1.7; //1.55
+export const MAX_MOMENTUM_DAMPENING = 2; //1.55
 
 // These parameters are the ease-in starting value for the momentum dampening rate
 export const MOMENTUM_DAMPENING_START_AT = 1.5;
@@ -64,9 +64,9 @@ export const MAX_MOVEMENT_SPEED = 200;
 // Mass allows asymmetric forces based on radius
 export const NODE_MASS_ON = true;
 export const MAX_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 2;
-export const MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 0.9;
-export const MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 10;
-export const MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 0.9;
+export const MIN_MASS_DIFFERENCE_PULL_FORCE_MULTIPLIER = 0.5;
+export const MAX_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 2;
+export const MIN_MASS_DIFFERENCE_PUSH_FORCE_MULTIPLIER = 0.5;
 
 export const BASE_EDGE_WIDTH = 9;
 export const BASE_EDGE_ALPHA = 0.8;
@@ -80,6 +80,10 @@ export const UNHIGHLIGHTED_EDGE_ALPHA = 0.7;
 // nodes appearing appearance
 export const NEW_NODE_INVISIBLE_FOR = 1;
 export const NEW_NODE_FADE_IN_FRAMES = 5;
+// Backdrop
+export const BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE = 0.05;
+export const BACKDROP_ZOOM_THRESHOLD_HIDDEN = 0.1;
+
 
 // zoom
 export const MAX_ZOOM = 5;
@@ -157,3 +161,7 @@ export const backlinksNumberForceDivisor = (bl: number) => {
 //     return maxBacklinks / 3 + Math.pow(maxReferences, 1.1);
 // }
 
+
+
+// MORE SET IN STONE OBSCURE PARAMETERS
+export const THOUGHT_BORDER_THICKNESS = 0.5;   

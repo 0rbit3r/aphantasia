@@ -229,16 +229,17 @@ const GraphControls = () => {
 
     const handleSetMaxRadius = (value: number) => {
         setMaxRadius(value);
-        setFrame(0);
-        const graphState = useGraphStore.getState();
-        graphState.neighborhoodThoughts.forEach(
-            t => t.radius = Math.min(
-                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
-                value));
-        graphState.temporalRenderedThoughts.forEach(
-            t => t.radius = Math.min(
-                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
-                value));
+        //todo -remove this
+        // setFrame(0);
+        // const graphState = useGraphStore.getState();
+        // graphState.neighborhoodThoughts.forEach(
+        //     t => t.radius = Math.min(
+        //         BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+        //         value));
+        // graphState.temporalRenderedThoughts.forEach(
+        //     t => t.radius = Math.min(
+        //         BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+        //         value));
     };
 
     return (
@@ -387,7 +388,7 @@ const GraphControls = () => {
                     }
                 </button>
                 <button className='graph-controls-button'>
-                    {/* <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img> */}
+                    <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img>
                 </button>
                 <button className={`graph-controls-button ${settingsWindowVisible ? 'graph-controls-button-active' : ''}`}
                     onClick={() => handleMainButtonPress('settings')}>

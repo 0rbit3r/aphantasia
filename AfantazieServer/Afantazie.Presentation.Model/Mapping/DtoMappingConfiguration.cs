@@ -51,7 +51,7 @@ namespace Afantazie.Presentation.Model.Mapping
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Title, src => src.Title)
                 .Map(dest => dest.Author, src => src.Author.Username)
-                .Map(dest => dest.Color, src => src.Color)
+                .Map(dest => dest.AuthorColor, src => src.Color)
                 .Map(dest => dest.Links, src => src.Links.Select(l => l.TargetId).ToList())
                 .Map(dest => dest.Backlinks, src => src.Backlinks.Select(b => b.SourceId).ToList())
                 .Map(dest => dest.DateCreated, src => src.DateCreated.ToString("yyyy-MM-dd"))

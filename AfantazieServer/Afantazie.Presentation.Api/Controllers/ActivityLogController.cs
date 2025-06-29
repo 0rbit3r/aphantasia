@@ -37,7 +37,7 @@ namespace Afantazie.Presentation.Api.Controllers
                 Id = thought.Id,
                 Title = thought.Title,
                 Author = thought.Author.Username,
-                Color = thought.Author.Color,
+                AuthorColor = thought.Author.Color,
                 DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - thought.DateCreated),
                 Backlinks = [],
                 Links = []
@@ -56,7 +56,7 @@ namespace Afantazie.Presentation.Api.Controllers
             return activityResult.Payload!.Select(thought => new ThoughtNodeDto { 
                 Id = thought.Id,
                 Author = thought.Author.Username,
-                Color = thought.Author.Color,
+                AuthorColor = thought.Author.Color,
                 Title = thought.Title,
                 DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - thought.DateCreated),
                 Backlinks = [],
@@ -77,7 +77,7 @@ namespace Afantazie.Presentation.Api.Controllers
             {
                 Id = thought.Id,
                 Author = thought.Author.Username,
-                Color = thought.Author.Color,
+                AuthorColor = thought.Author.Color,
                 Title = thought.Title,
                 DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - thought.DateCreated),
                 Backlinks = [],
@@ -127,7 +127,7 @@ namespace Afantazie.Presentation.Api.Controllers
             {
                 Id = thought.Id,
                 Author = thought.Author.Username,
-                Color = thought.Author.Color,
+                AuthorColor = thought.Author.Color,
                 Title = thought.Title,
                 DateCreated = DateFormatHelper.ConvertSecondsToReadable(DateTime.Now - thought.DateCreated),
                 Backlinks = [],
