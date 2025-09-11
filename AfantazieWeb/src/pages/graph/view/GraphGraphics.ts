@@ -1,4 +1,4 @@
-import { Application, Color, Container, Graphics, TextStyle, Text, Assets, Sprite, Texture, LineStyle, State } from "pixi.js";
+import { Application, Color, Container, Graphics, TextStyle, Text, Assets, Sprite } from "pixi.js";
 import { ARROW_Z, NODES_Z, TEXT_Z } from "./zIndexes";
 import {
     BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE,
@@ -7,22 +7,21 @@ import {
     THOUGHT_BORDER_THICKNESS,
     UNHIGHLIGHTED_EDGE_ALPHA, UNHIGHLIGHTED_EDGE_WIDTH, ZOOM_TEXT_VISIBLE_THRESHOLD
 } from "../state_and_parameters/graphParameters";
-import { RenderedThought } from "../model/renderedThought";
+import { RenderedEdge, RenderedThought } from "../model/renderedThought";
 import { addDraggableViewport } from "./ViewportInitializer";
 import { XAndY } from "../model/xAndY";
 import tinycolor from "tinycolor2";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
 import { getThoughtsOnScreen } from "../simulation/thoughtsProvider";
 import { EdgeType, useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
-import { ThoughtColor, ThoughtShape } from "../model/thoughtShape";
+import { ThoughtShape } from "../model/thoughtShape";
 import { ExplorationMode } from "../simulation/modesManager";
 
-let lastZoom: number = -1;
+// let lastZoom: number = -1;
 // Threshold between clicking a node to open it and hoolding it to drag it around in ms
 const DRAG_TIME_THRESHOLD = 200;
 // const muffinSvg = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/muffin.svg');
 // const thoughtNode = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/icons/node.svg');
-const backdrop = await Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/backdrop.png');
 
 export const initGraphics = (
     app: Application, renderedThoughts: RenderedThought[],
@@ -52,40 +51,58 @@ export const initGraphics = (
 
     // zSortedContainer.sortChildren();
 
+    const initializeGraphicsForEdge = (edge: RenderedEdge) => {
+
+    }
+
     const initializeGraphicsForThought = (thought: RenderedThought) => {
-        const circle = new Graphics();
-        thought.graphics = circle;
+        if (thought.graphics) {
+            thought.graphics.clear();
+        }
+
+        const thoughtGraphics = thought.graphics
+            ? thought.graphics
+            : new Graphics();
+
+        thought.graphics = thoughtGraphics;
+
+        thoughtGraphics.clear();
+
+        drawThought(thought);
+//todo - draw edge using a sprite and then rotate/scale that sprite instead of drawing the edge again everytime
+
 
         //interactivity
-        circle.eventMode = 'static';
-        circle.cursor = 'pointer';
+        thoughtGraphics.eventMode = 'static';
+        thoughtGraphics.cursor = 'pointer';
 
         let holdStartTime = 0;
 
-        circle.on('globalpointermove', e => {
+        thoughtGraphics.on('globalpointermove', e => {
             if (thought.held) {
-                thought.position.x += e.movementX / initialViewport.zoom;
-                thought.position.y += e.movementY / initialViewport.zoom;
+                const zoom = useGraphStore.getState().viewport.zoom;
+                thought.position.x += e.movementX / zoom;
+                thought.position.y += e.movementY / zoom;
             }
         });
 
-        circle.on('pointerdown', () => {
+        thoughtGraphics.on('pointerdown', () => {
             thoughtGrabbed();
             thought.held = true;
             holdStartTime = performance.now();
         });
 
-        circle.on('pointerover', () => {
+        thoughtGraphics.on('pointerover', () => {
             thought.hovered = true;
         });
-        circle.on('pointerout', () => {
+        thoughtGraphics.on('pointerout', () => {
             thought.hovered = false;
         });
-        circle.on('pointerupoutside', () => {
+        thoughtGraphics.on('pointerupoutside', () => {
             thought.held = false;
             thought.hovered = false;
         });
-        circle.on('wheel', (e) => {
+        thoughtGraphics.on('wheel', (e) => {
             initialViewport.zoomByWheelDelta(-e.deltaY);
         });
 
@@ -93,13 +110,18 @@ export const initGraphics = (
         app.stage.on('pointerup', () => {
             if (thought.held && performance.now() - holdStartTime < DRAG_TIME_THRESHOLD) {
                 // setTimeout(() => thoughtClicked(thought.id), 30); //timeout to prevent overlay from registering the click too
+                const oldHighlightedThought = useGraphStore.getState().highlightedThought;
                 useGraphStore.getState().setHighlightedThought(thought);
+
+                useGraphStore.getState().pushThoughtsForRedraw(thought);
+                if (oldHighlightedThought)
+                    useGraphStore.getState().pushThoughtsForRedraw(oldHighlightedThought);
             }
             thought.held = false;
             initialViewport.dragged = false;
         });
 
-        nodeContainer.addChild(circle);
+        nodeContainer.addChild(thoughtGraphics);
 
         const style = new TextStyle({
             breakWords: false,
@@ -136,7 +158,8 @@ export const initGraphics = (
     let lastRenderTime = performance.now();
 
 
-    const backdropTexture = new Sprite(backdrop as Texture);
+    const backdropTexture = new Sprite();
+    Assets.load(import.meta.env.VITE_PUBLIC_FOLDER + '/backdrop.png').then(t => { backdropTexture.texture = t });
     backdropTexture.width = 100;
     backdropTexture.height = 100;
     backdropTexture.position.set(- backdropTexture.width / 2, - backdropTexture.height / 2);
@@ -195,7 +218,7 @@ export const initGraphics = (
 
 
 
-
+        // BACKDROP
         const sizeOnScreen = 27.75 * graphState.viewport.zoom;
         const onScreenCoors = graphState.viewport.toViewportCoordinates(
             { x: -41600, y: -41600 }
@@ -208,253 +231,35 @@ export const initGraphics = (
         const backdropOpacity = 1 - Math.min(1, Math.max(0, graphState.viewport.zoom - BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
             / (BACKDROP_ZOOM_THRESHOLD_HIDDEN - BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE));
 
-        backdropTexture.alpha = backdropOpacity;
+        backdropTexture.alpha = 0//backdropOpacity;
 
-        nodeContainer.alpha = 1 - backdropOpacity;
+        nodeContainer.alpha = 1// - backdropOpacity;
 
-        if (graphState.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
+        if (false)//graphState.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
             graphState.temporalRenderedThoughts.concat(graphState.neighborhoodThoughts)
                 .forEach(t => {
                     if (!onScreenThoughts.includes(t))
-                        t.graphics?.clear();
-            });
-        // nodes and edges
+                        t.graphics?.setTransform(0, 0, 0.01, 0.01);
+                });
+
+        const thoughtsToRedraw = graphState.popThoughtsForRedraw();
+        thoughtsToRedraw.forEach(t => {
+            initializeGraphicsForThought(t);
+        })
+
+        // render thoughts on screen
         onScreenThoughts.forEach(thought => {
 
-            const TimeAffectedRadius = (thought.radius * (1 - THOUGHT_BORDER_THICKNESS / 2))
-                * (thought.timeOnScreen < NEW_NODE_INVISIBLE_FOR ? 0 :
-                    Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES)
-                );
-            // if (thought.graphics === undefined) {
-            //     console.log('undefined id', thought.id);
-            // }
+            // move and scale the graphics based on viewport
+            if (thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR) {
+                if (thought.graphics === undefined)
+                    initializeGraphicsForThought(thought);
 
-            if (thought.graphics === undefined) {
-                initializeGraphicsForThought(thought);
-            }
-
-            // indicate that htere are neighbors not currently on screen
-            // const explorable = (thought.links.some(l => onScreenThoughts.filter(t => t.id === l).length === 0) || // any links or replies outside onscreen thoughts check 
-            // thought.backlinks.some(l => onScreenThoughts.filter(t => t.id === l).length === 0));
-
-            const explorable = false;
-
-            const circle = thought.graphics as Graphics;
-
-            // circle.clear();
-
-            // if the node is out of screen, don't draw it
-            const circleCoors = stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
-            if (circleCoors.x < -thought.radius * graphState.viewport.zoom || circleCoors.x > stateViewport.width + thought.radius * graphState.viewport.zoom
-                || circleCoors.y < -thought.radius * graphState.viewport.zoom || circleCoors.y > stateViewport.height + thought.radius * graphState.viewport.zoom) {
-                circle.clear();
-                return;
-            }
-            // console.log("last zoom: " , + lastZoom + " zoom: " + graphState.viewport.zoom);
-            if (lastZoom === graphState.viewport.zoom) {
-                // if (thought.id === 1) console.log(circle.transform.position.x);
                 const pos = graphState.viewport.toViewportCoordinates(thought.position);
-                circle.setTransform(pos.x, pos.y);
+                thought.graphics!.setTransform(pos.x, pos.y, graphState.viewport.zoom, graphState.viewport.zoom);
             }
-            // draw node
-            else if (thought.timeOnScreen > NEW_NODE_INVISIBLE_FOR && lastZoom !== graphState.viewport.zoom) {
-                circle.clear();
-                const opacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
-                const selectedColor = thought.selectedColor == ThoughtColor.None
-                    ? thought.authorColor
-                    : getSelectedColorHex(thought.selectedColor);
 
-                // pulsating color if the node is explorable
-                const pulsingColor = graphState.frame % 150 < 50 &&
-                    explorable
-                    ? tinycolor(selectedColor).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
-                    : selectedColor;
-                const thoughtLineStyle =
-                    thought.selectedColor === ThoughtColor.None
-                        ? { width: thought.radius * THOUGHT_BORDER_THICKNESS * stateViewport.zoom, color: tinycolor(thought.authorColor).toString(), alpha: opacity }
-                        : { width: thought.radius * THOUGHT_BORDER_THICKNESS * stateViewport.zoom, color: tinycolor(thought.authorColor).toString(), alpha: opacity };
-                // : { width: thought.radius * 0.1 * stateViewport.zoom, color: getSelectedColorHex(thought.selectedColor), alpha: opacity }
-                const thoughtFillStyle = { color: pulsingColor, alpha: opacity };
-
-
-                circle.beginFill(tinycolor(thoughtFillStyle.color).lighten(5).toString(), thoughtFillStyle.alpha);
-                circle.lineStyle(thoughtLineStyle);
-
-                if (circle.children.length == 0)
-                    switch (thought.shape) {
-                        case ThoughtShape.Circle:
-                            circle.drawCircle(0, 0, stateViewport.zoom * TimeAffectedRadius);
-                            break;
-                        case ThoughtShape.Square:
-                            circle.drawRoundedRect(
-                                - TimeAffectedRadius / 3 * 2 * stateViewport.zoom, - TimeAffectedRadius / 3 * 2 * stateViewport.zoom,
-                                TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius * 4 / 3 * stateViewport.zoom, TimeAffectedRadius / 3 * stateViewport.zoom
-                            );
-                            break;
-                        case ThoughtShape.UpTriangle:
-                            circle.moveTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
-                            circle.lineTo(0 - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 + stateViewport.zoom * TimeAffectedRadius / 2);
-                            circle.lineTo(0 + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 + stateViewport.zoom * TimeAffectedRadius / 2);
-                            circle.lineTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
-                            // circle.lineStyle(thoughtLineStyle.width / 2, thoughtLineStyle.color, thoughtLineStyle.alpha, 1);
-                            // circle.drawCircle(0, 0 - stateViewport.zoom * thought.radius, thoughtLineStyle.width / 4 );
-                            break;
-
-                        case ThoughtShape.DownTriangle:
-                            circle.moveTo(0, 0 + stateViewport.zoom * TimeAffectedRadius);
-                            circle.lineTo(0 - stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 - stateViewport.zoom * TimeAffectedRadius / 2);
-                            circle.lineTo(0 + stateViewport.zoom * TimeAffectedRadius * Math.sqrt(3) / 2, 0 - stateViewport.zoom * TimeAffectedRadius / 2);
-                            circle.lineTo(0, 0 + stateViewport.zoom * TimeAffectedRadius);
-                            break;
-
-                        case ThoughtShape.Diamond:
-                            circle.lineStyle();
-                            circle.endFill();
-                            // circle.moveTo(0 - thought.radius * 2 / 16 * stateViewport.zoom, 0 - stateViewport.zoom * (thought.radius * 14 / 16));
-                            circle.moveTo(0, 0 - stateViewport.zoom * TimeAffectedRadius);
-                            circle.arcTo(0 - stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                            circle.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
-                            circle.lineStyle(thoughtLineStyle);
-                            circle.arcTo(0, 0 + stateViewport.zoom * TimeAffectedRadius, 0 + stateViewport.zoom * TimeAffectedRadius, 0, TimeAffectedRadius / 3 * stateViewport.zoom);
-                            circle.arcTo(0 + stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 - stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                            circle.arcTo(0, 0 - stateViewport.zoom * TimeAffectedRadius, 0 - stateViewport.zoom * TimeAffectedRadius, 0, TimeAffectedRadius / 3 * stateViewport.zoom);
-                            circle.arcTo(0 - stateViewport.zoom * TimeAffectedRadius, 0, 0, 0 + stateViewport.zoom * TimeAffectedRadius, TimeAffectedRadius / 3 * stateViewport.zoom);
-                            break;
-                        case ThoughtShape.Cross:
-                            circle.lineStyle();
-                            circle.beginFill(thoughtLineStyle.color);
-                            const gridSize = TimeAffectedRadius / 7 * 3 * stateViewport.zoom;
-                            const smallerGridSize = gridSize * 0.5;
-
-                            circle.moveTo(0, 0 - gridSize);
-                            circle.lineTo(0 - gridSize, 0 - gridSize * 2);
-                            circle.lineTo(0 - gridSize * 2, 0 - gridSize);
-                            circle.lineTo(0 - gridSize, 0);
-                            circle.lineTo(0 - gridSize * 2, 0 + gridSize);
-                            circle.lineTo(0 - gridSize, 0 + gridSize * 2);
-                            circle.lineTo(0, 0 + gridSize);
-                            circle.lineTo(0 + gridSize, 0 + gridSize * 2);
-                            circle.lineTo(0 + gridSize * 2, 0 + gridSize);
-                            circle.lineTo(0 + gridSize, 0);
-                            circle.lineTo(0 + gridSize * 2, 0 - gridSize);
-                            circle.lineTo(0 + gridSize, 0 - gridSize * 2);
-                            circle.lineTo(0, 0 - gridSize);
-
-                            circle.endFill();
-                            circle.moveTo(0, 0 - smallerGridSize);
-                            circle.beginFill(thoughtFillStyle.color);
-                            circle.lineTo(0 - smallerGridSize, 0 - smallerGridSize * 2);
-                            circle.lineTo(0 - smallerGridSize * 2, 0 - smallerGridSize);
-                            circle.lineTo(0 - smallerGridSize, 0);
-                            circle.lineTo(0 - smallerGridSize * 2, 0 + smallerGridSize);
-                            circle.lineTo(0 - smallerGridSize, 0 + smallerGridSize * 2);
-                            circle.lineTo(0, 0 + smallerGridSize);
-                            circle.lineTo(0 + smallerGridSize, 0 + smallerGridSize * 2);
-                            circle.lineTo(0 + smallerGridSize * 2, 0 + smallerGridSize);
-                            circle.lineTo(0 + smallerGridSize, 0);
-                            circle.lineTo(0 + smallerGridSize * 2, 0 - smallerGridSize);
-                            circle.lineTo(0 + smallerGridSize, 0 - smallerGridSize * 2);
-                            circle.lineTo(0, 0 - smallerGridSize);
-
-                            break;
-                        default:
-                            circle.drawCircle(0, 0, stateViewport.zoom * TimeAffectedRadius);
-                            break;
-                    }
-                circle.endFill();
-
-
-
-                if (explorable) {
-                    circle.beginFill("black", 1);
-                    circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.authorColor).lighten(15).toString(), 1);
-                    circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
-                    circle.endFill();
-                } else {
-                    // const explorableLowestTimeOnScreen = onScreenThoughts
-                    //     .filter(t => thought.links.includes(t.id) || thought.backlinks.includes(t.id))
-                    //     .map(t => t.timeOnScreen)
-                    //     .reduce((min, cur) => Math.min(min, cur), Number.MAX_SAFE_INTEGER);
-
-                    // const blackDotOpacity = explorableLowestTimeOnScreen > NEW_NODE_INVISIBLE_FOR
-                    //     ? 0
-                    //     : Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
-
-                    // circle.beginFill("black", blackDotOpacity);
-                    // circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), blackDotOpacity);
-                    // circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
-                    // circle.endFill();
-                }
-
-                // muffins!
-
-                // (async () => {
-                //     const muffinTexture = new Sprite(muffinSvg as Texture);;
-                //     muffinTexture.width = (thought.radius * 2) * stateViewport.zoom;
-                //     muffinTexture.height = (thought.radius * 2) * stateViewport.zoom;
-                //     muffinTexture.position.set((circleCoors.x - muffinTexture.width / 2), (circleCoors.y - muffinTexture.height / 2));
-                //     muffinTexture.interactive = false;
-
-                //     circle.removeChildren();
-                //     circle.addChild(muffinTexture);
-                // })();
-
-                // texture approach
-                // (async () => {
-                //     if (circle.children.length > 0)
-                //         return;
-                //     const nodeTexture = new Sprite(thoughtNode as Texture);
-                //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
-                //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
-                //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
-                //     nodeTexture.interactive = false;
-
-                //     circle.removeChildren();
-                //     circle.addChild(nodeTexture);
-                // })();
-
-                //graphics approach
-                // (async () => {
-                //     if (circle.children.length > 0)
-                //         return;
-                //     const nodeTexture = new Sprite(thoughtNode as Texture);
-                //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
-                //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
-                //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
-                //     nodeTexture.interactive = false;
-
-                //     circle.removeChildren();
-                //     circle.addChild(nodeTexture);
-                // })();
-
-                // const scale = graphState.viewport.zoom * thought.radius / 2;
-                // circle.scale = { x: scale, y: scale };
-                circle.position = graphState.viewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
-
-                if (thought.highlighted) {
-                    circle.lineStyle(500 * stateViewport.zoom, thought.authorColor, 0.05);
-                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 400));
-
-                    circle.lineStyle(400 * stateViewport.zoom, thought.authorColor, 0.05);
-                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 350));
-
-                    circle.lineStyle(300 * stateViewport.zoom, thought.authorColor, 0.05);
-                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 300));
-
-                    circle.lineStyle(200 * stateViewport.zoom, thought.authorColor, 0.05);
-                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 250));
-
-                    circle.lineStyle(100 * stateViewport.zoom, thought.authorColor, 0.2);
-                    circle.drawCircle(0, 0, stateViewport.zoom * (TimeAffectedRadius + 200));
-                }
-                // if (thought.size <= 3) {
-                //     circle.lineStyle(0);
-                //     circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
-                //     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius + 8);
-                //     circle.endFill();
-                // }
-            }
-            
+            const graphControlsState = useGraphControlsStore.getState();
 
             const text = thought.text as Text;
             // console.log(graphState.viewport.zoom, ZOOM_TEXT_VISIBLE_THRESHOLD);
@@ -463,7 +268,7 @@ export const initGraphics = (
 
                 const textCoors = graphState.viewport.toViewportCoordinates({
                     x: thought.position.x,
-                    y: thought.position.y + TimeAffectedRadius
+                    y: thought.position.y + thought.radius
                 });
                 textCoors.y += (graphControlsState.titleOnHoverEnabled && graphState.viewport.zoom <= ZOOM_TEXT_VISIBLE_THRESHOLD ? 20 : 5);
                 textCoors.x -= text.width / 2;
@@ -474,76 +279,40 @@ export const initGraphics = (
                 textContainer.addChild(text);
             }
 
-            const highlightedThought = graphState.highlightedThought;
-
-            thought.links.forEach(referencedThoughtId => {
-                const referencedThought = onScreenThoughts.filter(t => t.id == referencedThoughtId)[0];
-                // handle dynamic edge appearance based on highlighted thought
-                if (referencedThought) {
-                    // const arrowColor = highlightedThought === null
-                    //     ? referencedThought.color
-                    //     : highlightedThought === thought || highlightedThought === referencedThought
-                    //         ? tinycolor(referencedThought.color).lighten(5).toString()
-                    //         : tinycolor(referencedThought.color).darken(10).toString();
-                    const arrowColor = referencedThought.authorColor;
-                    const arrowThickness = highlightedThought === null
-                        ? BASE_EDGE_WIDTH
-                        : highlightedThought === thought || highlightedThought === referencedThought
-                            ? HIGHLIGHTED_EDGE_WIDTH
-                            : UNHIGHLIGHTED_EDGE_WIDTH;
-                    const arrowAlpha = highlightedThought === null
-                        ? BASE_EDGE_ALPHA
-                        : highlightedThought === thought || highlightedThought === referencedThought
-                            ? HIGHLIGHTED_EDGE_ALPHA
-                            : UNHIGHLIGHTED_EDGE_ALPHA;
-
-                    const sourceOpacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
-                    const targetOpacity = referencedThought.timeOnScreen <= NEW_NODE_INVISIBLE_FOR
-                        ? 0
-                        : Math.min(1, (referencedThought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
-
-                    const edgeOpacity = Math.min(sourceOpacity, targetOpacity, arrowAlpha);
-                    draw_edge(
-                        nodeContainer,
-                        stateViewport.toViewportCoordinates({ x: referencedThought.position.x, y: referencedThought.position.y }),
-                        stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y }),
-                        arrowColor, stateViewport.zoom, thought.radius, arrowThickness, edgeOpacity);
-                }
-            });
             // Render virtual edges when in profile mode
-            if (graphControlsState.explorationMode === ExplorationMode.PROFILE)
-                thought.virtualLinks.forEach(referencedThoughtId => {
-                    const referencedThought = onScreenThoughts.filter(t => t.id == referencedThoughtId)[0];
-                    // handle dynamic edge appearance based on highlighted thought
-                    if (referencedThought) {
-                        // const arrowColor = highlightedThought === null
-                        //     ? referencedThought.color
-                        //     : highlightedThought === thought || highlightedThought === referencedThought
-                        //         ? tinycolor(referencedThought.color).lighten(5).toString()
-                        //         : tinycolor(referencedThought.color).darken(10).toString();
-                        // const arrowColor = referencedThought.color;
-                        const arrowThickness = UNHIGHLIGHTED_EDGE_WIDTH / 2;
-                        const arrowAlpha = UNHIGHLIGHTED_EDGE_ALPHA / 4;
+            // if (graphControlsState.explorationMode === ExplorationMode.PROFILE)
+            //     thought.virtualLinks.forEach(referencedThoughtId => {
+            //         const referencedThought = onScreenThoughts.filter(t => t.id == referencedThoughtId)[0];
+            //         // handle dynamic edge appearance based on highlighted thought
+            //         if (referencedThought) {
+            //             // const arrowColor = highlightedThought === null
+            //             //     ? referencedThought.color
+            //             //     : highlightedThought === thought || highlightedThought === referencedThought
+            //             //         ? tinycolor(referencedThought.color).lighten(5).toString()
+            //             //         : tinycolor(referencedThought.color).darken(10).toString();
+            //             // const arrowColor = referencedThought.color;
+            //             const arrowThickness = UNHIGHLIGHTED_EDGE_WIDTH / 2;
+            //             const arrowAlpha = UNHIGHLIGHTED_EDGE_ALPHA / 4;
 
-                        const sourceOpacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
-                        const targetOpacity = referencedThought.timeOnScreen <= NEW_NODE_INVISIBLE_FOR
-                            ? 0
-                            : Math.min(1, (referencedThought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+            //             const sourceOpacity = Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+            //             const targetOpacity = referencedThought.timeOnScreen <= NEW_NODE_INVISIBLE_FOR
+            //                 ? 0
+            //                 : Math.min(1, (referencedThought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
 
-                        const edgeOpacity = Math.min(sourceOpacity, targetOpacity, arrowAlpha);
-                        draw_edge(
-                            nodeContainer,
-                            stateViewport.toViewportCoordinates({ x: referencedThought.position.x, y: referencedThought.position.y }),
-                            stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y }),
-                            "#ffffff", stateViewport.zoom, thought.radius, arrowThickness, edgeOpacity);
-                    }
-                });
+            //             const edgeOpacity = Math.min(sourceOpacity, targetOpacity, arrowAlpha);
+            //             draw_edge(
+            //                 nodeContainer,
+            //                 stateViewport.toViewportCoordinates({ x: referencedThought.position.x, y: referencedThought.position.y }),
+            //                 stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y }),
+            //                 "#ffffff", stateViewport.zoom, thought.radius, arrowThickness, edgeOpacity);
+            //         }
+            //     });
         });
-        lastZoom = graphState.viewport.zoom;
+        // lastZoom = graphState.viewport.zoom;
 
         // boundaries
         nodeContainer.lineStyle(2, graphState.userSettings.color, 1);
-        if (!graphControlsState.noBorders) {
+        if (!graphControlsState.strongerPushForce) {
             // nodeContainer.drawRect(
             //     stateViewport.toViewportCoordinates({ x: 0, y: 0 }).x,
             //     stateViewport.toViewportCoordinates({ x: 0, y: 0 }).y,
@@ -618,7 +387,7 @@ const draw_edge = (
             const bezier2 = { x: x1 - ((x1 - arrowTipX) * 2 / 3), y: y1 - ((y1 - arrowTipY) * 2 / 3) };
             graphics.bezierCurveTo(bezier1.x, bezier1.y, bezier2.x, bezier2.y, arrowTipX, arrowTipY);
 
-            // simple arrows    
+            // simple arrows
 
 
             // Arrowhead properties
@@ -763,25 +532,243 @@ function drawFadingTaperedEdge(
     }
 }
 
-const getSelectedColorHex = (color: ThoughtColor) => {
-    switch (color) {
-        case ThoughtColor.None:
-            return "#000000";
-        case ThoughtColor.Red:
-            return "#ba4745";
-        case ThoughtColor.Orange:
-            return "#ba7f45";
-        case ThoughtColor.Yellow:
-            return "#b4ba45";
-        case ThoughtColor.Green:
-            return "#58ba45";
-        case ThoughtColor.Cyan:
-            return "#45b5ba";
-        case ThoughtColor.Blue:
-            return "#4547ba";
-        case ThoughtColor.Violet:
-            return "#b745ba";
-        case ThoughtColor.White:
-            return "#eeeeee ";
+const drawThought = (thought: RenderedThought) => {
+    const graphState = useGraphStore.getState();
+
+    const TimeAffectedRadius = thought.radius
+    //  * (1 - THOUGHT_BORDER_THICKNESS / 2))
+    //     * (thought.timeOnScreen < NEW_NODE_INVISIBLE_FOR ? 0 :
+    //         Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES)
+    //     );
+    // if (thought.graphics === undefined) {
+    //     console.log('undefined id', thought.id);
+    // }
+
+    if (thought.graphics === undefined) {
+        console.log("warning: attempted to render thought with unanitialized graphics")
+        return;
     }
+    const thoughtGraphics = thought.graphics!
+
+    // indicate that htere are neighbors not currently on screen
+
+    // circle.clear();
+    // const stateViewport = graphState.viewport;
+    // if the node is out of screen, don't draw it
+    // const circleCoors = stateViewport.toViewportCoordinates({ x: thought.position.x, y: thought.position.y });
+    // if (circleCoors.x < -thought.radius * graphState.viewport.zoom || circleCoors.x > stateViewport.width + thought.radius * graphState.viewport.zoom
+    //     || circleCoors.y < -thought.radius * graphState.viewport.zoom || circleCoors.y > stateViewport.height + thought.radius * graphState.viewport.zoom) {
+    //     circle.clear();
+    //     return;
+    // }
+    // console.log("last zoom: " , + lastZoom + " zoom: " + graphState.viewport.zoom);
+
+    // const onScreenThoughts = getThoughtsOnScreen()
+    //     .concat(graphState.fadeOutThoughts);
+
+    // const explorable = (thought.links.some(l => onScreenThoughts.filter(t => t.id === l).length === 0) || // any links or replies outside onscreen thoughts check
+    //     thought.backlinks.some(l => onScreenThoughts.filter(t => t.id === l).length === 0));
+    const explorable = false;
+
+    thoughtGraphics.clear();
+    const opacity = 1; //Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+
+    // pulsating color if the node is explorable
+    const pulsingColor = graphState.frame % 150 < 50 &&
+        explorable
+        ? tinycolor(thought.color).lighten(30 - (graphState.frame % 50) / 50 * 30).toString()
+        : thought.color;
+    const thoughtLineStyle = { width: thought.radius * THOUGHT_BORDER_THICKNESS, color: tinycolor(thought.color).toString(), alpha: opacity };
+
+    // : { width: thought.radius * 0.1 * stateViewport.zoom, color: getSelectedColorHex(thought.selectedColor), alpha: opacity }
+    const thoughtFillStyle = { color: pulsingColor, alpha: opacity };
+
+
+    thoughtGraphics.beginFill(tinycolor(thoughtFillStyle.color).lighten(5).toString(), thoughtFillStyle.alpha);
+    thoughtGraphics.lineStyle(thoughtLineStyle);
+
+    if (thoughtGraphics.children.length == 0)
+        switch (thought.shape) {
+            case ThoughtShape.Circle:
+                thoughtGraphics.drawCircle(0, 0, TimeAffectedRadius);
+                break;
+            case ThoughtShape.Square:
+                thoughtGraphics.drawRoundedRect(
+                    - TimeAffectedRadius / 3 * 2, - TimeAffectedRadius / 3 * 2,
+                    TimeAffectedRadius * 4 / 3, TimeAffectedRadius * 4 / 3, TimeAffectedRadius / 3
+                );
+                break;
+            case ThoughtShape.UpTriangle:
+                thoughtGraphics.moveTo(0, 0 - TimeAffectedRadius);
+                thoughtGraphics.lineTo(0 - TimeAffectedRadius * Math.sqrt(3) / 2, 0 + TimeAffectedRadius / 2);
+                thoughtGraphics.lineTo(0 + TimeAffectedRadius * Math.sqrt(3) / 2, 0 + TimeAffectedRadius / 2);
+                thoughtGraphics.lineTo(0, 0 - TimeAffectedRadius);
+                // circle.lineStyle(thoughtLineStyle.width / 2, thoughtLineStyle.color, thoughtLineStyle.alpha, 1);
+                // circle.drawCircle(0, 0 - thought.radius, thoughtLineStyle.width / 4 );
+                break;
+
+            case ThoughtShape.DownTriangle:
+                thoughtGraphics.moveTo(0, 0 + TimeAffectedRadius);
+                thoughtGraphics.lineTo(0 - TimeAffectedRadius * Math.sqrt(3) / 2, 0 - TimeAffectedRadius / 2);
+                thoughtGraphics.lineTo(0 + TimeAffectedRadius * Math.sqrt(3) / 2, 0 - TimeAffectedRadius / 2);
+                thoughtGraphics.lineTo(0, 0 + TimeAffectedRadius);
+                break;
+
+            case ThoughtShape.Diamond:
+                thoughtGraphics.lineStyle();
+                thoughtGraphics.endFill();
+                // circle.moveTo(0 - thought.radius * 2 / 16 , 0 - (thought.radius * 14 / 16));
+                thoughtGraphics.moveTo(0, 0 - TimeAffectedRadius);
+                thoughtGraphics.arcTo(0 - TimeAffectedRadius, 0, 0, 0 + TimeAffectedRadius, TimeAffectedRadius / 3);
+                thoughtGraphics.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
+                thoughtGraphics.lineStyle(thoughtLineStyle);
+                thoughtGraphics.arcTo(0, 0 + TimeAffectedRadius, 0 + TimeAffectedRadius, 0, TimeAffectedRadius / 3);
+                thoughtGraphics.arcTo(0 + TimeAffectedRadius, 0, 0, 0 - TimeAffectedRadius, TimeAffectedRadius / 3);
+                thoughtGraphics.arcTo(0, 0 - TimeAffectedRadius, 0 - TimeAffectedRadius, 0, TimeAffectedRadius / 3);
+                thoughtGraphics.arcTo(0 - TimeAffectedRadius, 0, 0, 0 + TimeAffectedRadius, TimeAffectedRadius / 3);
+                break;
+            case ThoughtShape.Cross:
+                thoughtGraphics.lineStyle();
+                thoughtGraphics.beginFill(thoughtLineStyle.color);
+                const gridSize = TimeAffectedRadius / 7 * 3;
+                const smallerGridSize = gridSize * 0.5;
+
+                thoughtGraphics.moveTo(0, 0 - gridSize);
+                thoughtGraphics.lineTo(0 - gridSize, 0 - gridSize * 2);
+                thoughtGraphics.lineTo(0 - gridSize * 2, 0 - gridSize);
+                thoughtGraphics.lineTo(0 - gridSize, 0);
+                thoughtGraphics.lineTo(0 - gridSize * 2, 0 + gridSize);
+                thoughtGraphics.lineTo(0 - gridSize, 0 + gridSize * 2);
+                thoughtGraphics.lineTo(0, 0 + gridSize);
+                thoughtGraphics.lineTo(0 + gridSize, 0 + gridSize * 2);
+                thoughtGraphics.lineTo(0 + gridSize * 2, 0 + gridSize);
+                thoughtGraphics.lineTo(0 + gridSize, 0);
+                thoughtGraphics.lineTo(0 + gridSize * 2, 0 - gridSize);
+                thoughtGraphics.lineTo(0 + gridSize, 0 - gridSize * 2);
+                thoughtGraphics.lineTo(0, 0 - gridSize);
+
+                thoughtGraphics.endFill();
+                thoughtGraphics.moveTo(0, 0 - smallerGridSize);
+                thoughtGraphics.beginFill(thoughtFillStyle.color);
+                thoughtGraphics.lineTo(0 - smallerGridSize, 0 - smallerGridSize * 2);
+                thoughtGraphics.lineTo(0 - smallerGridSize * 2, 0 - smallerGridSize);
+                thoughtGraphics.lineTo(0 - smallerGridSize, 0);
+                thoughtGraphics.lineTo(0 - smallerGridSize * 2, 0 + smallerGridSize);
+                thoughtGraphics.lineTo(0 - smallerGridSize, 0 + smallerGridSize * 2);
+                thoughtGraphics.lineTo(0, 0 + smallerGridSize);
+                thoughtGraphics.lineTo(0 + smallerGridSize, 0 + smallerGridSize * 2);
+                thoughtGraphics.lineTo(0 + smallerGridSize * 2, 0 + smallerGridSize);
+                thoughtGraphics.lineTo(0 + smallerGridSize, 0);
+                thoughtGraphics.lineTo(0 + smallerGridSize * 2, 0 - smallerGridSize);
+                thoughtGraphics.lineTo(0 + smallerGridSize, 0 - smallerGridSize * 2);
+                thoughtGraphics.lineTo(0, 0 - smallerGridSize);
+                break;
+
+            case ThoughtShape.Heart:
+                const r = TimeAffectedRadius;
+                const yOffset = TimeAffectedRadius * 0.3;
+                thoughtGraphics.beginFill(thoughtFillStyle.color, thoughtFillStyle.alpha);
+                thoughtGraphics.lineStyle(thoughtLineStyle);
+
+                thoughtGraphics.moveTo(0, r * 0.6 + yOffset);
+                thoughtGraphics.bezierCurveTo(-r * 1.7, r * -0.25 + yOffset, -r * 0.93, -r * 1.75 + yOffset, 0, -r * 0.8 + yOffset);
+                thoughtGraphics.bezierCurveTo(r * 0.93, -r * 1.75 + yOffset, r * 1.7, r * -0.25 + yOffset, 0, r * 0.6 + yOffset);
+
+                thoughtGraphics.endFill();
+                break;
+            default:
+                thoughtGraphics.drawCircle(0, 0, TimeAffectedRadius);
+                break;
+        }
+    thoughtGraphics.endFill();
+
+
+
+    // if (explorable) {
+    //     circle.beginFill("black", 1);
+    //     circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.authorColor).lighten(15).toString(), 1);
+    //     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
+    //     circle.endFill();
+    // } else {
+    //     // const explorableLowestTimeOnScreen = onScreenThoughts
+    //     //     .filter(t => thought.links.includes(t.id) || thought.backlinks.includes(t.id))
+    //     //     .map(t => t.timeOnScreen)
+    //     //     .reduce((min, cur) => Math.min(min, cur), Number.MAX_SAFE_INTEGER);
+
+    //     // const blackDotOpacity = explorableLowestTimeOnScreen > NEW_NODE_INVISIBLE_FOR
+    //     //     ? 0
+    //     //     : Math.min(1, (thought.timeOnScreen - NEW_NODE_INVISIBLE_FOR) / NEW_NODE_FADE_IN_FRAMES);
+
+    //     // circle.beginFill("black", blackDotOpacity);
+    //     // circle.lineStyle(thought.radius * 0.1 * stateViewport.zoom, tinycolor(thought.color).lighten(15).toString(), blackDotOpacity);
+    //     // circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * (TimeAffectedRadius * 0.5));
+    //     // circle.endFill();
+    // }
+
+    // muffins!
+
+    // (async () => {
+    //     const muffinTexture = new Sprite(muffinSvg as Texture);;
+    //     muffinTexture.width = (thought.radius * 2) * stateViewport.zoom;
+    //     muffinTexture.height = (thought.radius * 2) * stateViewport.zoom;
+    //     muffinTexture.position.set((circleCoors.x - muffinTexture.width / 2), (circleCoors.y - muffinTexture.height / 2));
+    //     muffinTexture.interactive = false;
+
+    //     circle.removeChildren();
+    //     circle.addChild(muffinTexture);
+    // })();
+
+    // texture approach
+    // (async () => {
+    //     if (circle.children.length > 0)
+    //         return;
+    //     const nodeTexture = new Sprite(thoughtNode as Texture);
+    //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
+    //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
+    //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
+    //     nodeTexture.interactive = false;
+
+    //     circle.removeChildren();
+    //     circle.addChild(nodeTexture);
+    // })();
+
+    //graphics approach
+    // (async () => {
+    //     if (circle.children.length > 0)
+    //         return;
+    //     const nodeTexture = new Sprite(thoughtNode as Texture);
+    //     nodeTexture.width = (thought.radius * 2) * stateViewport.zoom;
+    //     nodeTexture.height = (thought.radius * 2) * stateViewport.zoom;
+    //     nodeTexture.position.set(- nodeTexture.width / 2,  - nodeTexture.height / 2);
+    //     nodeTexture.interactive = false;
+
+    //     circle.removeChildren();
+    //     circle.addChild(nodeTexture);
+    // })();
+
+    // const scale = graphState.viewport.zoom * thought.radius / 2;
+    // circle.scale = { x: scale, y: scale };
+
+    if (thought.highlighted) {
+        thoughtGraphics.lineStyle(500, thought.color, 0.05);
+        thoughtGraphics.drawCircle(0, 0, (TimeAffectedRadius + 400));
+
+        thoughtGraphics.lineStyle(400, thought.color, 0.05);
+        thoughtGraphics.drawCircle(0, 0, (TimeAffectedRadius + 350));
+
+        thoughtGraphics.lineStyle(300, thought.color, 0.05);
+        thoughtGraphics.drawCircle(0, 0, (TimeAffectedRadius + 300));
+
+        thoughtGraphics.lineStyle(200, thought.color, 0.05);
+        thoughtGraphics.drawCircle(0, 0, (TimeAffectedRadius + 250));
+
+        thoughtGraphics.lineStyle(100, thought.color, 0.2);
+        thoughtGraphics.drawCircle(0, 0, (TimeAffectedRadius + 200));
+    }
+    // if (thought.size <= 3) {
+    //     circle.lineStyle(0);
+    //     circle.beginFill("#000000", 0.001);//this is here only to make the hit area bigger
+    //     circle.drawCircle(circleCoors.x, circleCoors.y, stateViewport.zoom * TimeAffectedRadius + 8);
+    //     circle.endFill();
+    // }
 }

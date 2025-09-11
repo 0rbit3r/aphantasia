@@ -54,7 +54,8 @@ Console.WriteLine(
 [11] - Update link format to brackets
 [12] - Randomize positions
 [13] - Run FDL
-[14] - Export Thought positions");
+[14] - Export Thought positions
+[15] - Import Thought positions");
 
 var choice = Console.ReadLine();
 if (!int.TryParse(choice, out var choiceInt))
@@ -124,7 +125,10 @@ else if (choiceInt == 14)
 {
     await PositionsExporter.ExportPositions(serviceProvider);
 }
-
+else if (choiceInt == 15)
+{
+    await PositionsImporter.ImportPositions(serviceProvider);
+}
 else
 {
     Console.WriteLine("Invalid choice");

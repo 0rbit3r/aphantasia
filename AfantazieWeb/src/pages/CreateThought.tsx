@@ -22,7 +22,8 @@ const SHAPES = [
     { id: 2, svg: '▲' },
     { id: 3, svg: '▼' },
     { id: 4, svg: '◆' },
-    { id: 5, svg: '🞭' }
+    { id: 5, svg: '🞭' },
+    { id: 6, svg: '❤' }
 ];
 
 
@@ -292,7 +293,7 @@ function CreateThought() {
                             thought={previewedThought}
                             previewMode={true}
                             clickedOnDate={() => { }}
-                            closePreview={() => setPreviewOverlayVisible(false)}
+                            closePreview={() => { setPreviewOverlayVisible(false); }}
                             clickedOnUser={() => { }}
                             links={previewedThoughtNeighborhood.filter(t => t.backlinks.includes(previewedThought.id))}
                             backlinks={previewedThoughtNeighborhood.filter(t => t.links.includes(previewedThought.id))}

@@ -1,7 +1,7 @@
 import { thoughtNodeDto } from "../../../api/dto/ThoughtDto";
 import { fetchNeighborhoodThoughts, fetchTemporalThoughts } from "../../../api/graphApiClient";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
-import { BASE_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, REFERENCE_RADIUS_MULTIPLIER, BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE } from "../state_and_parameters/graphParameters";
+import { BASE_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
 import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
 import { ExplorationMode, MM_SetHighlightedThoughtById } from "./modesManager";
@@ -13,9 +13,9 @@ export function getThoughtsOnScreen() {
 
   const thoughtsInTimeWindow = getThoughtsInTimeWindow();
 
-  let modeBasedList : RenderedThought[] = [];
-  if (state.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
-    return [];
+  let modeBasedList: RenderedThought[] = [];
+  // if (state.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
+  //   return [];
 
   switch (controlsState.explorationMode) {
     case ExplorationMode.TEMPORAL:
@@ -31,7 +31,7 @@ export function getThoughtsOnScreen() {
           .filter(t => state.neighborhoodThoughts.find(nt => nt.id === t.id) === undefined)
           .slice(0, controlsState.thoughtsOnScreenLimit - state.neighborhoodThoughts.length)
       ].sort((a, b) => a.id - b.id)
-        break;
+      break;
 
     case ExplorationMode.FREE:
       modeBasedList = thoughtsInTimeWindow;
@@ -41,14 +41,14 @@ export function getThoughtsOnScreen() {
   }
 
   const temp = modeBasedList.filter(t => {
-          const viewportPos = state.viewport.toViewportCoordinates({ x: t.position.x, y: t.position.y });
-          const width = state.viewport.width;
-          const height = state.viewport.height;
-          return viewportPos.x > -width / 4 && viewportPos.x < state.viewport.width + width / 4
-            && viewportPos.y > - height / 4 && viewportPos.y < state.viewport.height + height / 4
-        });
-// console.log(temp.length);
-        return temp;
+    const viewportPos = state.viewport.toViewportCoordinates({ x: t.position.x, y: t.position.y });
+    const width = state.viewport.width;
+    const height = state.viewport.height;
+    return viewportPos.x > -width / 4 && viewportPos.x < state.viewport.width + width / 4
+      && viewportPos.y > - height / 4 && viewportPos.y < state.viewport.height + height / 4
+  });
+  // console.log(temp.length);
+  return temp;
 }
 
 export function getThoughtsInTimeWindow() {
@@ -329,8 +329,9 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
     }
     return {
       id: t.id, title: t.title,
-      authorColor: t.authorColor,
-      radius: Math.log(t.size + 10) * 700 - 1610 + BASE_RADIUS,
+      color: t.color,
+      // radius: Math.log(t.size + 10) * 700 - 1610 + BASE_RADIUS,
+      radius: Math.log((t.size + 100) / 100) * 3000 + BASE_RADIUS,
       author: t.author,
       dateCreated: t.dateCreated,
       links: t.links, backlinks: t.backlinks,
@@ -338,6 +339,9 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
       held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, virtualLinks: [],
       shape: t.shape,
       selectedColor: 0
+      ,      renderedLinks: [],
+      renderedBacklinks: [],
+      renderedVirtualLinks: [],
       // Math.random() > 0.5
       // ? Math.floor(Math.random() * 8)
       // : 0 

@@ -28,6 +28,17 @@ namespace Afantazie.Presentation.Api.Hubs
         {
             var username = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
             _logger.LogInformation("{username} entered the chat.", username);
+            var color = (await _settings.GetColor(
+                            int.Parse(Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value ?? "0")))
+                            .Payload
+                            ?? "#ffffff";
+            _service.AddMessage(new ChatMessage
+            {
+                Color = color,
+                Message = $"{username} entered the chat.",
+                Sender = "Systém",
+                SentAt = DateTime.Now
+            });
 
             ConnectedIds.Add(Context.ConnectionId);
 
@@ -48,10 +59,10 @@ namespace Afantazie.Presentation.Api.Hubs
                 new MessageResponseDto
                 {
                     Sender = "Systém",
-                    
+
                     Message = ConnectedIds.Count > 1
-                    ? _localization.SomebodyIsHere
-                    : _localization.NooneIsHere,
+                        ? _localization.SomebodyIsHere
+                        : _localization.NooneIsHere,
                     Color = Colors.System,
                 });
 
@@ -64,6 +75,14 @@ namespace Afantazie.Presentation.Api.Hubs
 
             var username = Context.User?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
             _logger.LogInformation("{username} left the chat.", username);
+
+            _service.AddMessage(new ChatMessage
+            {
+                Color = Colors.System,
+                Message = $"{username} left the chat.",
+                Sender = "Systém",
+                SentAt = DateTime.Now
+            });
 
             await base.OnDisconnectedAsync(exception);
         }
@@ -102,7 +121,7 @@ namespace Afantazie.Presentation.Api.Hubs
                     Color = color,
                 });
 
-            _service.AddMessage(new ChatMessage { Message = message, Sender = username, Color = color, SentAt = DateTime.Now});
+            _service.AddMessage(new ChatMessage { Message = message, Sender = username, Color = color, SentAt = DateTime.Now });
         }
     }
 }

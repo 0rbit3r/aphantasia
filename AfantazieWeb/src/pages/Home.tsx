@@ -31,8 +31,8 @@ function Home() {
 
     return (
         <div className="content-container home-container">
+            <h2 className="quip">{Localization.Quips[Math.floor(Math.random() * Localization.Quips.length)]}</h2>
             <div className="online-users-counter" style={{color: userColor}}>Online: {onlineUsers}</div>
-            {/* <h2 className="quip">{Localization.Quips[Math.floor(Math.random() * Localization.Quips.length)]}</h2> */}
             {message &&
             <p className="center">
                 {message}

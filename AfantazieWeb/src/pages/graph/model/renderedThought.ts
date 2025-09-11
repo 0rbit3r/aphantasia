@@ -1,4 +1,4 @@
-import { Graphics, Text } from "pixi.js";
+import { Graphics, RenderTexture, Text } from "pixi.js";
 import { XAndY } from "./xAndY";
 import { ThoughtShape } from "./thoughtShape";
 
@@ -10,8 +10,7 @@ export interface RenderedThought {
   content?: string,
   radius: number,
   size: number,
-  authorColor: string,
-  selectedColor: number,
+  color: string,
   shape: ThoughtShape,
 
   graphics?: Graphics,
@@ -25,9 +24,20 @@ export interface RenderedThought {
   backlinks: number[],
   virtualLinks: number[],
 
+  renderedLinks: RenderedEdge[],
+  renderedBacklinks: RenderedEdge[],
+  renderedVirtualLinks: RenderedEdge[],
+
   position: XAndY,
   momentum: XAndY,
   forces: XAndY,
 
   timeOnScreen: number
+}
+
+export interface RenderedEdge {
+  sourceThought: RenderedThought;
+  targetThought: RenderedThought;
+
+  graphics?: Graphics;
 }

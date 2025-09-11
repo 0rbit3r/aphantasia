@@ -1,4 +1,4 @@
-import { ThoughtColor, ThoughtShape } from "../../pages/graph/model/thoughtShape";
+import { ThoughtShape } from "../../pages/graph/model/thoughtShape";
 
 export interface fullThoughtDto{
     id: number,
@@ -31,8 +31,7 @@ export interface thoughtNodeDto {
     size: number,
     author: string,
     dateCreated: string,
-    authorColor: string,
-    selectedColor: ThoughtColor,
+    color: string,
     shape: ThoughtShape,
     positionX: number,
     positionY: number,

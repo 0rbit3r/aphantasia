@@ -15,8 +15,8 @@ public static class PositionsExporter
         var positions = db.Thoughts.Select(t => new ThoughtPositionBackup
         {
             Id = t.Id,
-            X = t.PositionX ?? 0,
-            Y = t.PositionY ?? 0
+            X = t.PositionX,
+            Y = t.PositionY
         });
 
         var json = JsonSerializer.Serialize(positions);

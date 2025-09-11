@@ -1,4 +1,4 @@
-export const MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT = 100;
+export const MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT = 4000;
 
 // simulation container
 export const SIM_WIDTH = 30000;
@@ -87,7 +87,7 @@ export const BACKDROP_ZOOM_THRESHOLD_HIDDEN = 0.1;
 
 // zoom
 export const MAX_ZOOM = 5;
-export const MIN_ZOOM = 0.01;
+export const MIN_ZOOM = 0.004;
 export const INITIAL_ZOOM = 0.0129;
 // Titles are visible when the zoom is bigger than this value
 export const ZOOM_TEXT_VISIBLE_THRESHOLD = 0.2;
@@ -164,4 +164,8 @@ export const backlinksNumberForceDivisor = (bl: number) => {
 
 
 // MORE SET IN STONE OBSCURE PARAMETERS
-export const THOUGHT_BORDER_THICKNESS = 0.5;   
+
+export const THOUGHT_BORDER_THICKNESS = 0;
+
+// Rendered edge is rendered with this length and then scaled and rotated appropriately
+export const RENDERED_EDGE_DEFAULT_LENGTH = 100;

@@ -17,7 +17,7 @@ namespace Afantazie.Presentation.Model.Dto.Thought
 
         public string DateCreated { get; set; } = "";
 
-        public string AuthorColor { get; set; } = "";
+        public string Color { get; set; } = "";
 
         public byte Shape { get; set; } = 0;
 
