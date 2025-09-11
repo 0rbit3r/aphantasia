@@ -35,7 +35,7 @@ export class Viewport {
     public moveBy = (delta: XAndY) => {
         this.position.x -= delta.x;
         this.position.y -= delta.y;
-        if (!useGraphControlsStore.getState().noBorders) {
+        if (!useGraphControlsStore.getState().strongerPushForce) {
 
             if (this.position.x > GRAVITY_FREE_RADIUS)
                 this.position.x = GRAVITY_FREE_RADIUS;

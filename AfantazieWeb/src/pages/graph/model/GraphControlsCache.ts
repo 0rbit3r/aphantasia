@@ -3,7 +3,7 @@ export interface GraphControlsCache {
         gravityEnabled: boolean;
         titleOnHoverEnabled: boolean;
         upFlowEnabled: boolean;
-        noBorders: boolean;
+        strongerPushForce: boolean;
         showFpsEnabled: boolean;
         disableSimulation: boolean;
         ThoughtsOnScreenLimit: number;

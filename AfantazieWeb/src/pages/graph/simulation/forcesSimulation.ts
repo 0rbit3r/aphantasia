@@ -50,7 +50,7 @@ export const simulate_one_frame_of_FDL = () => {
         for (let i = 0; i < onScreenThoughts.length; i++) {
             const sourceThought = onScreenThoughts[i];
             handleOutOfBounds(sourceThought);
-            if (!graphControlsState.noBorders) {
+            if (!graphControlsState.strongerPushForce) {
                 // handleOutOfBorders(sourceThought);
 
                 //todo - here goes new gravity
@@ -194,7 +194,7 @@ export const push_unconnected = (sourceThought: RenderedThought, targetThought: 
     //     : pushForce(centerDistance);
     // const force = pushForce(centerDistance);
 
-    const modeDependentPushThresh = graphControlsState.noBorders
+    const modeDependentPushThresh = graphControlsState.strongerPushForce
         ? PUSH_THRESH * BORDERLESS_MODE_PUSH_THRESH_MULTIPLICATOR
         : PUSH_THRESH;
 

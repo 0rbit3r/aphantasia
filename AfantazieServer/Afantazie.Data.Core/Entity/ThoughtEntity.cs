@@ -26,9 +26,9 @@ namespace Afantazie.Data.Model.Entity
         public byte Shape { get; set; } = 0;
         // public byte Color { get; set; } = 0;
 
-        public double? PositionX { get; set; }
+        public double PositionX { get; set; }
 
-        public double? PositionY { get; set; }
+        public double PositionY { get; set; }
 
         public bool Pinned { get; set; } = false;
 

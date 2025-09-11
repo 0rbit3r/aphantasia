@@ -57,8 +57,8 @@ public class GraphLayoutService(
             Size = t.SizeMultiplier,
             ForcesX = 0,
             ForcesY = 0,
-            PositionX = t.PositionX ?? 0,
-            PositionY = t.PositionY ?? 0, //todo
+            PositionX = t.PositionX,
+            PositionY = t.PositionY,
             Radius = GetRadius(t.SizeMultiplier, opts),
         }).ToList();
 
@@ -111,8 +111,6 @@ public class GraphLayoutService(
             var x = center + (thought.PositionX - viewportX) * scale;
             var y = center - (thought.PositionY - viewportY) * scale;
 
-            if (x is null || y is null) continue;
-
             var radius = GetRadius(thought.SizeMultiplier, _fdlParams.CurrentValue) * _fdlParams.CurrentValue.Scale;
             var radiusold = (float)(_fdlParams.CurrentValue.BaseRadius
                 * Math.Pow(_fdlParams.CurrentValue.ReferenceRadiusMultiplier, thought.SizeMultiplier)
@@ -132,7 +130,6 @@ public class GraphLayoutService(
 
                 var targetX = center + (targetThought.PositionX - viewportX) * scale;
                 var targetY = center - (targetThought.PositionY - viewportY) * scale;
-                if (targetX is null || targetY is null) continue;
 
                 // Draw line between source and target
                 image.Mutate(ctx => ctx.DrawLine(
@@ -326,17 +323,14 @@ public class GraphLayoutService(
 
     private double GetBorderDistance(ThoughtNode thought1, ThoughtNode thought2)
     {
-        var x1 = thought1.PositionX;
-        var y1 = thought1.PositionY;
-        var x2 = thought2.PositionX;
-        var y2 = thought2.PositionY;
-        var centerDistance = Math.Sqrt(Math.Pow(Math.Abs(x1 - x2), 2) + Math.Pow(Math.Abs(y1 - y2), 2));
+        var centerDistance = GetCenterDistance(thought1, thought2);
         var borderDistance = centerDistance - thought1.Radius - thought2.Radius;
         // if (borderDistance > centerDistance) {
         //     return borderDistance - 
         // }
-
-        return borderDistance;
+        // if (double.IsNaN(borderDistance));
+        //     Console.WriteLine("GetBorderDistance!");
+        return borderDistance < 0.01 ? 0.01 : borderDistance;
     }
 
     private double GetCenterDistance(ThoughtNode thought1, ThoughtNode thought2)
@@ -346,16 +340,17 @@ public class GraphLayoutService(
         var x2 = thought2.PositionX;
         var y2 = thought2.PositionY;
 
-        var dist = Math.Sqrt(Math.Pow(Math.Abs(x1 - x2), 2) + Math.Pow(Math.Abs(y1 - y2), 2));
+        var dist = Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
 
         // prevents division by zero (?)
-        return dist == 0 ? 0.01 : dist;
+        return dist < 0.01 ? 0.01 : dist;
     }
 
     private int GetRadius(int repliesNum, FdlParametersOptions opts)
     {
         // return (int)Math.Min(opts.BaseRadius * Math.Pow(opts.ReferenceRadiusMultiplier, repliesNum), opts.MaxRadius);
-        return (int)(Math.Log(repliesNum + 10) * 700 -1610 + opts.BaseRadius);
+        // return (int)(Math.Log(repliesNum + 10) * 700 - 1610 + opts.BaseRadius);
+        return (int)(Math.Log(((double)repliesNum + 100) / 100) * 3000 + opts.BaseRadius);
     }
 
     /// <summary>
@@ -383,7 +378,6 @@ public class GraphLayoutService(
 
         double computed = opts.PullForce * (borderDist - idealDistance);
         double limited = Math.Max(-opts.MaxPullForce, Math.Min(opts.MaxPullForce, computed));
-
         double finalForce = Math.Sign(limited) < 0
             ? limited / opts.EdgeCompresibilityFactor
             : limited;
