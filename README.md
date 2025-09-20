@@ -53,9 +53,9 @@ The roadmap for the development is not clear-cut but will likely include:
 - [ ] Follow users / concepts / thoughts + Custom subscriptions-like graph feed
 - [ ] Scrollable home feeds
 - [ ] Back button should focus previously viewed thought
-- [ ] Email verification
 - [ ] Server-side layout
 - [ ] Pinned replies (this one is a maybe)
+- [ ] Email verification (this one too)
 
 ### Code and architecture
 - [ ] Refactor Frontend architecture and solidify its rules
@@ -77,10 +77,7 @@ I'm not against external usage of the API. If you want to have some fun with it,
 
 ## What's up with the name?
 
-Aphantasia the software has little to do with aphantasia the condition, although both relate to thought visualization.
-I just thought the name is cool and the domain was available.
-
-If you're confused see https://en.wikipedia.org/wiki/Aphantasia.
+see: https://aphantasia.io/graph/1299
 
 ## Contact
 

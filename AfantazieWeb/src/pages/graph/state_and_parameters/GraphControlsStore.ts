@@ -22,8 +22,8 @@ interface GraphControlsStore {
     showFpsEnabled: boolean;
     setShowFpsEnabled: (enabled: boolean) => void;
 
-    noBorders: boolean;
-    setNoBorders: (enabled: boolean) => void;
+    strongerPushForce: boolean;
+    setStrongerPushForce: (enabled: boolean) => void;
 
     disableSimulation: boolean;
     setDisableSimulation: (enabled: boolean) => void;
@@ -51,7 +51,7 @@ export const useGraphControlsStore = create<GraphControlsStore>((set, _) => ({
     gravityEnabled: false,
     setGravityEnabled: (enabled: boolean) => set({ gravityEnabled: enabled }),
 
-    titleOnHoverEnabled: false,
+    titleOnHoverEnabled: true,
     setTitleOnHoverEnabled: (enabled: boolean) => set({ titleOnHoverEnabled: enabled }),
 
     upFlowEnabled: false,
@@ -60,13 +60,13 @@ export const useGraphControlsStore = create<GraphControlsStore>((set, _) => ({
     explorationMode: ExplorationMode.TEMPORAL,
     setExplorationMode: (mode) => set({ explorationMode: mode }),
 
-    showFpsEnabled: false,
+    showFpsEnabled: true,
     setShowFpsEnabled: (enabled: boolean) => set({ showFpsEnabled: enabled}),
 
-    noBorders: false,
-    setNoBorders: (enabled: boolean) => set({ noBorders: enabled }),
+    strongerPushForce: false,
+    setStrongerPushForce: (enabled: boolean) => set({ strongerPushForce: enabled }),
 
-    disableSimulation: false,
+    disableSimulation: true,
     setDisableSimulation: (enabled: boolean) => set({ disableSimulation: enabled}),
     
     thoughtsOnScreenLimit: MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT,

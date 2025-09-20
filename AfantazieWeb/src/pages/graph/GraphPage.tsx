@@ -80,6 +80,8 @@ const GraphPage: React.FC = () => {
         setNeighborhoodThoughts([]);
 
 
+
+
         // set initial highlighted thought
         if (urlParameter) {
             setUrlQueryParameter(urlParameter);

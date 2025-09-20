@@ -54,7 +54,7 @@ interface GraphStore {
     userSettings: userSettingsDto;
     setUserSettings: (settings: userSettingsDto) => void;
 
-    viewedProfile: userProfileDto | null;	
+    viewedProfile: userProfileDto | null;
     setViewedProfile: (profile: userProfileDto) => void;
     clearViewedProfile: () => void;
 
@@ -64,6 +64,10 @@ interface GraphStore {
 
     hasUnreadNotifications: boolean;
     setHasUnreadNotifications: (value: boolean) => void;
+
+    pushThoughtsForRedraw: (...thought: RenderedThought[]) => void;
+    popThoughtsForRedraw: () => RenderedThought[];
+    thoughtsForRedraw: RenderedThought[];
 }
 export const useGraphStore = create<GraphStore>((set, get) => ({
     temporalRenderedThoughts: [],
@@ -114,6 +118,7 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
         thought.highlighted = true;
     },
     unsetHighlightedThought: () => {
+        if (get().highlightedThought) get().pushThoughtsForRedraw( get().highlightedThought!);
         const currentlyhighlighted = get().highlightedThought;
         if (currentlyhighlighted !== null)
             currentlyhighlighted.highlighted = false;
@@ -135,12 +140,22 @@ export const useGraphStore = create<GraphStore>((set, get) => ({
 
     viewedProfile: null,
     setViewedProfile: (profile) => set({ viewedProfile: profile }),
-    clearViewedProfile: () => set({ viewedProfile: null}),
+    clearViewedProfile: () => set({ viewedProfile: null }),
 
     viewedConcept: null,
-    setViewedConcept: (concept) => set({ viewedConcept: concept}),
-    clearViewedConcept: () => set({ viewedConcept: null}),
+    setViewedConcept: (concept) => set({ viewedConcept: concept }),
+    clearViewedConcept: () => set({ viewedConcept: null }),
 
     hasUnreadNotifications: false,
-    setHasUnreadNotifications: (value) => set({ hasUnreadNotifications: value}),
+    setHasUnreadNotifications: (value) => set({ hasUnreadNotifications: value }),
+
+    thoughtsForRedraw: [],
+    pushThoughtsForRedraw: (...thoughts: RenderedThought[]) => {
+        set({ thoughtsForRedraw: [...get().thoughtsForRedraw, ...thoughts] })
+    },
+    popThoughtsForRedraw: () => {
+        const thoughtsToReturn = get().thoughtsForRedraw.slice();
+        set({ thoughtsForRedraw: [] });
+        return thoughtsToReturn;
+    }
 }));

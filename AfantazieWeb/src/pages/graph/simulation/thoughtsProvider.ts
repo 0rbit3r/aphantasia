@@ -1,9 +1,8 @@
 import { thoughtNodeDto } from "../../../api/dto/ThoughtDto";
 import { fetchNeighborhoodThoughts, fetchTemporalThoughts } from "../../../api/graphApiClient";
 import { useGraphStore } from "../state_and_parameters/GraphStore";
-import { BASE_RADIUS, INITIAL_POSITIONS_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, REFERENCE_RADIUS_MULTIPLIER, SIM_HEIGHT, SIM_WIDTH } from "../state_and_parameters/graphParameters";
+import { BASE_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT, NEIGHBORHOOD_DEPTH as MAX_DEPTH, NEW_NODE_INVISIBLE_FOR, BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE } from "../state_and_parameters/graphParameters";
 import { RenderedThought } from "../model/renderedThought";
-import { ThoughtPositionCache } from "../model/thoughtPositionCache";
 import { useGraphControlsStore } from "../state_and_parameters/GraphControlsStore";
 import { ExplorationMode, MM_SetHighlightedThoughtById } from "./modesManager";
 
@@ -14,24 +13,42 @@ export function getThoughtsOnScreen() {
 
   const thoughtsInTimeWindow = getThoughtsInTimeWindow();
 
+  let modeBasedList: RenderedThought[] = [];
+  // if (state.viewport.zoom < BACKDROP_ZOOM_THRESHOLD_FULLY_VISIBLE)
+  //   return [];
+
   switch (controlsState.explorationMode) {
     case ExplorationMode.TEMPORAL:
-      return thoughtsInTimeWindow;
+      modeBasedList = thoughtsInTimeWindow;
+      break;
     case ExplorationMode.PROFILE:
-      return thoughtsInTimeWindow;
+      modeBasedList = thoughtsInTimeWindow;
+      break;
     case ExplorationMode.NEIGHBORHOOD:
-      return [
+      modeBasedList = [
         ...state.neighborhoodThoughts,
         ...thoughtsInTimeWindow
           .filter(t => state.neighborhoodThoughts.find(nt => nt.id === t.id) === undefined)
           .slice(0, controlsState.thoughtsOnScreenLimit - state.neighborhoodThoughts.length)
-      ].sort((a, b) => a.id - b.id);
+      ].sort((a, b) => a.id - b.id)
+      break;
 
     case ExplorationMode.FREE:
-      return thoughtsInTimeWindow;
+      modeBasedList = thoughtsInTimeWindow;
+      break;
     default:
-      return thoughtsInTimeWindow;
+      modeBasedList = thoughtsInTimeWindow;
   }
+
+  const temp = modeBasedList.filter(t => {
+    const viewportPos = state.viewport.toViewportCoordinates({ x: t.position.x, y: t.position.y });
+    const width = state.viewport.width;
+    const height = state.viewport.height;
+    return viewportPos.x > -width / 4 && viewportPos.x < state.viewport.width + width / 4
+      && viewportPos.y > - height / 4 && viewportPos.y < state.viewport.height + height / 4
+  });
+  // console.log(temp.length);
+  return temp;
 }
 
 export function getThoughtsInTimeWindow() {
@@ -288,10 +305,10 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
     return [];
   }
 
-  const storage = localStorage.getItem('thoughts-cache');
+  // const storage = localStorage.getItem('thoughts-cache');
   // console.log(storage);
 
-  const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
+  // const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
   const temporalThoughts = useGraphStore.getState().temporalRenderedThoughts;
   const neighborhoodThoughts = useGraphStore.getState().neighborhoodThoughts;
 
@@ -313,52 +330,49 @@ export const mapDtosToRenderedThoughts = (thoughtNodeDtos: thoughtNodeDto[]): Re
     return {
       id: t.id, title: t.title,
       color: t.color,
-      radius: Math.min(BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size), useGraphControlsStore.getState().maxRadius),
+      // radius: Math.log(t.size + 10) * 700 - 1610 + BASE_RADIUS,
+      radius: Math.log((t.size + 100) / 100) * 3000 + BASE_RADIUS,
       author: t.author,
       dateCreated: t.dateCreated,
       links: t.links, backlinks: t.backlinks,
-      position: { x: 0, y: 0 }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
+      position: { x: t.positionX, y: t.positionY }, momentum: { x: 0, y: 0 }, forces: { x: 0, y: 0 },
       held: false, highlighted: false, timeOnScreen: 0, size: t.size, hovered: false, virtualLinks: [],
-      shape: t.shape
-        // Math.random() > 0.5
-        //   ? Math.random() > 0.5
-        //     ? 0
-        //     : 1
-        //   : Math.random() > 0.5
-        //     ? Math.random() > 0.5
-        //       ? 2
-        //       : 3
-        //     : Math.random() > 0.5
-        //       ? 4
-        //       : 5
+      shape: t.shape,
+      selectedColor: 0
+      ,      renderedLinks: [],
+      renderedBacklinks: [],
+      renderedVirtualLinks: [],
+      // Math.random() > 0.5
+      // ? Math.floor(Math.random() * 8)
+      // : 0 
     }
   });
 
   //set position either by cache or by initial positions circle
-  let angle = 0;
+  // let angle = 0;
   // const graphState = useGraphStore.getState();
-  newThoughts.forEach(thought => {
-    if (thought.timeOnScreen === 0) {
+  // newThoughts.forEach(thought => {
+  //   if (thought.timeOnScreen === 0) {
 
-      const cached = cachedPositions.find(c => c.id === thought.id);
-      if (cached) {
-        thought.position = cached.position;
-      }
-      else {
-        //circular layout
-        thought.position.x = SIM_WIDTH / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
-        thought.position.y = SIM_HEIGHT / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
-        //random layout
-        // thought.position.x = graphState.viewport.position.x + Math.random() * graphState.viewport.width / graphState.viewport.zoom;
-        // thought.position.y =  graphState.viewport.position.y + Math.random() * graphState.viewport.height / graphState.viewport.zoom;
-        // circular layout in vierwport
-        // console.log(graphState.viewport);
-        // thought.position.x = graphState.viewport.position.x + graphState.viewport.width / graphState.viewport.zoom / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
-        // thought.position.y = graphState.viewport.position.y + graphState.viewport.height / graphState.viewport.zoom / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
-      }
-      angle += Math.PI * 2 / newThoughts.length;
-    }
-  });
+  //     const cached = cachedPositions.find(c => c.id === thought.id);
+  //     if (cached) {
+  //       thought.position = cached.position;
+  //     }
+  //     else {
+  //       //circular layout
+  //       thought.position.x = SIM_WIDTH / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
+  //       thought.position.y = SIM_HEIGHT / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
+  //       //random layout
+  //       // thought.position.x = graphState.viewport.position.x + Math.random() * graphState.viewport.width / graphState.viewport.zoom;
+  //       // thought.position.y =  graphState.viewport.position.y + Math.random() * graphState.viewport.height / graphState.viewport.zoom;
+  //       // circular layout in vierwport
+  //       // console.log(graphState.viewport);
+  //       // thought.position.x = graphState.viewport.position.x + graphState.viewport.width / graphState.viewport.zoom / 2 + Math.cos(angle) * INITIAL_POSITIONS_RADIUS;
+  //       // thought.position.y = graphState.viewport.position.y + graphState.viewport.height / graphState.viewport.zoom / 2 + Math.sin(angle) * INITIAL_POSITIONS_RADIUS;
+  //     }
+  //     angle += Math.PI * 2 / newThoughts.length;
+  //   }
+  // });
 
   return newThoughts;
 };

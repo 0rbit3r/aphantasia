@@ -5,4 +5,5 @@ export enum ThoughtShape {
     DownTriangle = 3,
     Diamond = 4,
     Cross = 5,
-} 
+    Heart = 6,
+}

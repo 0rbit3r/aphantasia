@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { RegisterRequest } from '../../api/dto/auth/RegisterRequest';
 import { registerUser } from '../../api/AuthApiClient';
-import { LocationState } from '../../interfaces/LocationState';
+import { MessageLocationState } from '../../interfaces/LocationState';
 import { Localization } from '../../locales/localization';
 
 
@@ -23,7 +23,7 @@ function Registration() {
             setValidationMessage(response.error ?? "<unknown error>");
         } else {
             setFormData({ username: '', email: '', password: '' });
-            navigate('/login', { state: { message: Localization.RegistrationSuccessful } as LocationState });
+            navigate('/login', { state: { message: Localization.RegistrationSuccessful } as MessageLocationState });
         }
     };
 

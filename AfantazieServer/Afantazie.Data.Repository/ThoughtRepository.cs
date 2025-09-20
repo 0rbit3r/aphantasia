@@ -1,4 +1,5 @@
-﻿using Afantazie.Core.Model;
+﻿using System.Runtime.InteropServices;
+using Afantazie.Core.Model;
 using Afantazie.Core.Model.Results;
 using Afantazie.Core.Model.Results.Errors;
 using Afantazie.Data.Interface.Repository;
@@ -78,14 +79,19 @@ namespace Afantazie.Data.Repository
                         Content = content,
                         AuthorId = authorId,
                         Shape = shape,
-                        DateCreated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+                        DateCreated = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)
                     };
 
                 var newEntity = db.Add(thoughtEntity);
                 await db.SaveChangesAsync();
 
+                double sumX = 0, sumY = 0;
                 foreach (var referenceId in references)
                 {
+                    var referencedThought = db.Thoughts.SingleOrDefault(t => t.Id == referenceId);
+                    sumX += referencedThought?.PositionX ?? 0;
+                    sumY += referencedThought?.PositionY ?? 0;
+
                     var referenceEntity = new ThoughtReferenceEntity
                     {
                         SourceId = newEntity.Entity.Id,
@@ -94,6 +100,27 @@ namespace Afantazie.Data.Repository
 
                     db.Add(referenceEntity);
                 }
+
+                var initialPosX = 0d;
+                var initialPosY = 0d;
+                var rand = new Random();
+                if (references.Any())
+                {
+                    initialPosX = sumX / references.Count();
+                    initialPosY = sumY / references.Count();
+                    initialPosX += (rand.NextDouble() - 0.5) * 100;
+                    initialPosY += (rand.NextDouble() - 0.5) * 100;
+                }
+                else
+                {
+                    initialPosX = (rand.NextDouble() - 0.5) * 500;
+                    initialPosY = (rand.NextDouble() - 0.5) * 500;
+                }
+
+
+                newEntity.Entity.PositionX = initialPosX;
+                newEntity.Entity.PositionY = initialPosY;
+
 
                 await db.SaveChangesAsync();
 
@@ -145,8 +172,8 @@ namespace Afantazie.Data.Repository
 
                 if (!string.IsNullOrEmpty(concept))
                 {
-                       query = query
-                        .Where(t => t.Concepts.Any(c => c.Tag == concept));
+                    query = query
+                     .Where(t => t.Concepts.Any(c => c.Tag == concept));
                 }
                 var list = await query
                     .Where(t => t.Id < id)
@@ -334,7 +361,10 @@ namespace Afantazie.Data.Repository
             using (var db = _contextProvider.GetDataContext())
             {
                 var thought = await db.Thoughts
-                    .Include(t => t.Links).ThenInclude(l => l.TargetThought)
+                    .Include(t => t.Links)
+                        .ThenInclude(l => l.TargetThought)
+                        .ThenInclude(tt => tt.Backlinks)
+                        .ThenInclude(ttt => ttt.SourceThought)
                     .Include(t => t.Backlinks)
                     .Include(t => t.Concepts)
                     .SingleOrDefaultAsync(t => t.Id == id);
@@ -346,8 +376,16 @@ namespace Afantazie.Data.Repository
                 }
 
                 // unbump referenced thoughts
-                foreach(var link in thought.Links)
+                foreach (var link in thought.Links)
                 {
+                    //check whether the thought is not from the same author
+                    if (link.TargetThought.AuthorId == thought.AuthorId)
+                        continue;
+                    //check whether I have other replies to the thought
+                    // (without this I could do bump once, add more replies and then shrink with every deletion.)
+                    if (link.TargetThought.Backlinks.Where(b => b.SourceThought.AuthorId == thought.AuthorId).Count() > 1)
+                        continue;
+
                     link.TargetThought.SizeMultiplier--;
                 }
 

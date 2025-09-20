@@ -116,6 +116,12 @@ namespace Afantazie.Data.Model.Migrations
                     b.Property<bool>("Pinned")
                         .HasColumnType("boolean");
 
+                    b.Property<double>("PositionX")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("PositionY")
+                        .HasColumnType("double precision");
+
                     b.Property<byte>("Shape")
                         .HasColumnType("smallint");
 

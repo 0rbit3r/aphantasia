@@ -16,6 +16,8 @@
     <ProjectReference Include="..\Afantazie.Core.Model\Afantazie.Core.Model.csproj" />
     <ProjectReference Include="..\Afantazie.Data.Repository.Users\Afantazie.Data.Interface.Repository.csproj" />
     <ProjectReference Include="..\Afantazie.Service.Interface.Thoughts\Afantazie.Service.Interface.Thoughts.csproj" />
+    <ProjectReference Include="..\Afantazie.Data.Core\Afantazie.Data.Model.csproj" />
+    <ProjectReference Include="..\Afantazie.Core.Configuration\Afantazie.Core.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

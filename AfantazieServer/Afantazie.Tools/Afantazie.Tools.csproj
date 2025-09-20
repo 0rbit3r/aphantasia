@@ -21,11 +21,14 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Afantazie.Service.GraphLayout/Afantazie.Service.GraphLayout.csproj" />
     <ProjectReference Include="..\Afantazie.Data.Repository\Afantazie.Data.Repository.csproj" />
-    <ProjectReference Include="..\Afantazie.Service.Interface.Thoughts\Afantazie.Service.Interface.Thoughts.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Thoughts\Afantazie.Service.Thoughts.csproj" />
+    <ProjectReference Include="..\Afantazie.Service.Interface.GraphLayout\Afantazie.Service.Interface.GraphLayout.csproj" />
   </ItemGroup>
 
 </Project>

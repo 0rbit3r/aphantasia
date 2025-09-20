@@ -19,6 +19,14 @@ namespace Afantazie.Core.Model
         public required DateTime DateCreated { get; set; }
 
         public string Color { get; set; } = "#ffffff";
+        public int Size { get; set; }
+
+        public ThoughtShape Shape { get; set; }
+
+        public double? PositionX { get; set; }
+        public double? PositionY { get; set; }
+
+        public bool IsPinned { get; set; } = false;
 
         public ICollection<ThoughtReference> Links { get; set; } = new List<ThoughtReference>();
 
@@ -26,11 +34,6 @@ namespace Afantazie.Core.Model
 
         public ICollection<Concept> Concepts { get; set; } = new List<Concept>();
 
-        public int Size { get; set; }
-
-        public ThoughtShape Shape { get; set; }
-
-        public bool IsPinned { get; set; } = false;
     }
 
     public enum ThoughtShape
@@ -41,5 +44,19 @@ namespace Afantazie.Core.Model
         ReversedTriangle = 3,
         Diamond = 4,
         Cross = 5,
+    }
+
+    public enum ThoughtColor
+    {
+        None = 0,
+        Red = 1,
+        Orange = 2,
+        Yellow = 3,
+        Green = 4,
+        Cyan = 5,
+        Blue = 6,
+        Violet = 7,
+
+        White = 8
     }
 }

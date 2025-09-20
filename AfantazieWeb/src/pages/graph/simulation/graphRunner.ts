@@ -1,9 +1,8 @@
 import { Application } from 'pixi.js';
 import { simulate_one_frame_of_FDL } from './forcesSimulation';
 import { initGraphics } from '../view/GraphGraphics';
-import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES, THOUGHTS_CACHE_FRAME, THOUGHTS_CACHE_SIZE } from '../state_and_parameters/graphParameters';
+import { NEW_NODE_INVISIBLE_FOR, SIMULATION_FRAMES } from '../state_and_parameters/graphParameters';
 import { useGraphStore } from '../state_and_parameters/GraphStore';
-import { ThoughtPositionCache } from '../model/thoughtPositionCache';
 import { handleTemporalThoughtsTimeShifting } from './thoughtsProvider';
 import { useGraphControlsStore } from '../state_and_parameters/GraphControlsStore';
 
@@ -27,37 +26,37 @@ export default function runGraph(app: Application) {
         const controlsState = useGraphControlsStore.getState();
 
         // cache thoughts
-        if (graphState.frame === THOUGHTS_CACHE_FRAME) {
-            // console.log('caching thoughts positions');
+        // if (graphState.frame === THOUGHTS_CACHE_FRAME) {
+        //     // console.log('caching thoughts positions');
 
-            const storage = localStorage.getItem('thoughts-cache'); //todo use set?
+        //     const storage = localStorage.getItem('thoughts-cache'); //todo use set?
 
-            const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
-            // console.log(graphState.allRenderedThoughts);
+        //     const cachedPositions: ThoughtPositionCache[] = storage ? JSON.parse(storage) : [];
+        //     // console.log(graphState.allRenderedThoughts);
 
-            const combinedThoughts = [
-                ...cachedPositions,
-                ...graphState.temporalRenderedThoughts,
-                ...graphState.neighborhoodThoughts
-            ];
+        //     const combinedThoughts = [
+        //         ...cachedPositions,
+        //         ...graphState.temporalRenderedThoughts,
+        //         ...graphState.neighborhoodThoughts
+        //     ];
 
-            // Use a Set to filter out duplicate thoughts by their id
-            const uniqueThoughts = Array.from(
-                new Map(
-                    combinedThoughts
-                        .sort((c1,c2) => c2.id - c1.id)
-                        .slice(0,THOUGHTS_CACHE_SIZE)
-                        .map(t => [t.id, t])
-                ).values()
-            );
+        //     // Use a Set to filter out duplicate thoughts by their id
+        //     const uniqueThoughts = Array.from(
+        //         new Map(
+        //             combinedThoughts
+        //                 .sort((c1,c2) => c2.id - c1.id)
+        //                 .slice(0,THOUGHTS_CACHE_SIZE)
+        //                 .map(t => [t.id, t])
+        //         ).values()
+        //     );
 
-            const thoughtsCache: ThoughtPositionCache[] = uniqueThoughts.map(t => ({
-                id: t.id,
-                position: t.position,
-            }));
+        //     const thoughtsCache: ThoughtPositionCache[] = uniqueThoughts.map(t => ({
+        //         id: t.id,
+        //         position: t.position,
+        //     }));
 
-            localStorage.setItem('thoughts-cache', JSON.stringify(thoughtsCache));
-        }
+        //     localStorage.setItem('thoughts-cache', JSON.stringify(thoughtsCache));
+        // }
 
         // handle zoom input from user
         const zoomingControl = graphState.zoomingControl;
@@ -85,12 +84,12 @@ export default function runGraph(app: Application) {
             const highlightedThought = graphState.highlightedThought;
             const viewport = graphState.viewport;
             if (highlightedThought !== null) {
-                const dx = viewport.position.x + viewport.width / 2 / viewport.zoom - highlightedThought.position.x;
-                const dy = viewport.position.y + viewport.height / 3 * 2 / viewport.zoom - highlightedThought.position.y;
+                const dx = viewport.position.x - highlightedThought.position.x;
+                const dy = viewport.position.y - highlightedThought.position.y;
                 // console.log(dx, dy, lockedOnHighlighted);
-                const threshold = 20;
+                const threshold = 10;
                 if (Math.abs(dx) > threshold && Math.abs(dy) > threshold) {
-                    graphState.viewport.moveBy({ x: (dx - threshold) / 100, y: (dy - threshold) / 100 });
+                    graphState.viewport.moveBy({ x: (dx - threshold) / 50, y: (dy - threshold) / 50 });
                 }
                 // const idealZoom = INITIAL_ZOOM - ((INITIAL_ZOOM) / (highlightedThought.radius / MAX_RADIUS));
                 // const dz = idealZoom - viewport.zoom;
