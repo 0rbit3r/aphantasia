@@ -127,7 +127,7 @@
     "TitleOnHoverLabel": "Názvy pod myší",
     "UpFlowLabel": "Tok nahoru",
     "ShowFPSLabel": "Zobrazit FPS",
-    "NoBordersLabel": "Vypnout okraje",
+    "StrongerPushForceLabel": "Silnější odpuzování",
     "DisableSimulationLabel": "Zastavit simulaci",
     "EdgesLengthLabel": "Délka hran:",
     "NodeSizeLabel": "Max. velikost uzlů:",

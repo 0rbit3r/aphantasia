@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { thoughtColoredTitleDto, fullThoughtDto, thoughtNodeDto } from '../api/dto/ThoughtDto';
 import { fetchThoughtTitles, postNewThought, fetchThought, fetchNeighborhoodThoughts } from '../api/graphApiClient';
-import { LocationState } from '../interfaces/LocationState';
+import { ThoughtReplyLocationState } from '../interfaces/LocationState';
 import { Localization } from '../locales/localization';
 import { LocalizedCreateThoughtHint } from '../locales/LocalizedCreateThoughtHint';
 import { ThoughtViewer } from '../components/ThoughtViewer';
@@ -22,7 +22,8 @@ const SHAPES = [
     { id: 2, svg: '▲' },
     { id: 3, svg: '▼' },
     { id: 4, svg: '◆' },
-    { id: 5, svg: '🞭' }
+    { id: 5, svg: '🞭' },
+    { id: 6, svg: '❤' }
 ];
 
 
@@ -62,10 +63,16 @@ function CreateThought() {
     }, []);
 
     useEffect(() => {
-        if (thoughtTitles.length > 0 && location.state && (location.state as LocationState).thoughtId) {
-            const id = (location.state as LocationState).thoughtId;
-            const thought = thoughtTitles.find(t => t.id === id);
-            setFormData({ ...formData, content: `${Localization.RepliesTo} [${id}][${thought?.title}];\n` });
+        if (location.state && (location.state as ThoughtReplyLocationState).thoughtId) {
+            const id = (location.state as ThoughtReplyLocationState).thoughtId;
+            const title = (location.state as ThoughtReplyLocationState).thoughtTitle;
+            const conceptTags =
+                (location.state as ThoughtReplyLocationState).conceptTags.length > 0
+                    ? (location.state as ThoughtReplyLocationState).conceptTags
+                        .reduce((prev, current) => `${prev}\n${current}`)
+                    : "";
+            console.log((location.state as ThoughtReplyLocationState).conceptTags);
+            setFormData({ ...formData, content: `${Localization.RepliesTo} [${id}][${title}];${conceptTags.length > 0 ? '\n\n\n' + conceptTags : '\n'}` })
         }
     }, [location, thoughtTitles]);
 
@@ -238,7 +245,7 @@ function CreateThought() {
             }
 
             const neighborhoodResponse = await fetchNeighborhoodThoughts(id, 1, 10);
-             //5 instead of 10 should be theoretically enought, but, just to be sure ^^^
+            //5 instead of 10 should be theoretically enought, but, just to be sure ^^^
             if (neighborhoodResponse.ok) {
                 setPreviewedThoughtNeighborhood(neighborhoodResponse.data![1]); //take the first layer only
             }
@@ -286,8 +293,8 @@ function CreateThought() {
                             thought={previewedThought}
                             previewMode={true}
                             clickedOnDate={() => { }}
-                            closePreview={() => setPreviewOverlayVisible(false)}
-                            clickedOnUser={() => {}}
+                            closePreview={() => { setPreviewOverlayVisible(false); }}
+                            clickedOnUser={() => { }}
                             links={previewedThoughtNeighborhood.filter(t => t.backlinks.includes(previewedThought.id))}
                             backlinks={previewedThoughtNeighborhood.filter(t => t.links.includes(previewedThought.id))}
                             setHighlightedThoughtId={() => { }}

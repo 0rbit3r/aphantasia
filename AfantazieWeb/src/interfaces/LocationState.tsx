@@ -1,4 +1,9 @@
-export interface LocationState {
+export interface MessageLocationState {
     message?: string;
-    thoughtId?: number;
+}
+
+export interface ThoughtReplyLocationState {
+    thoughtId: number;
+    thoughtTitle: string;
+    conceptTags: string[];
 }

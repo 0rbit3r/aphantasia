@@ -36,9 +36,9 @@ export const MM_SwitchToExplorationMode = (newMode: ExplorationMode, info: strin
                 let lastUserThoughtId = -1;
                 for (let i = 0; i < temporalThoughts.length; i++) {
                     if (temporalThoughts[i].author === response.data!.username) {
-                        if (lastUserThoughtId !== -1 && !temporalThoughts[i].links.includes(lastUserThoughtId)) {
-                            temporalThoughts[i].virtualLinks.push(lastUserThoughtId);
-                        }
+                        // if (lastUserThoughtId !== -1 && !temporalThoughts[i].links.includes(lastUserThoughtId)) {
+                        //     temporalThoughts[i].virtualLinks.push(lastUserThoughtId);
+                        // }
                         lastUserThoughtId = temporalThoughts[i].id;
                     }
                 }

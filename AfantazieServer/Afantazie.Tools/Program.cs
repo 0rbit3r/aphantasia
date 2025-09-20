@@ -5,11 +5,18 @@ using Afantazie.Data.Repository;
 using Afantazie.Tools;
 using Microsoft.Extensions.Configuration;
 using Afantazie.Data.Interface.Repository;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Afantazie.Service.Thoughts;
+using Microsoft.Extensions.Logging;
+using Afantazie.Service.GraphLayout;
 
 var services = new ServiceCollection();
 
-services.AddLogging();
+services.AddLogging(builder => {
+    builder.AddConsole().SetMinimumLevel(LogLevel.Debug);
+});
 services.AddDataModule();
+services.AddThoughtsModule();
 
 var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory()) // Ensure this is the correct path
@@ -17,6 +24,8 @@ var configuration = new ConfigurationBuilder()
             .Build();
 
 services.AddSingleton<IConfiguration>(configuration);
+
+services.RegisterGraphLayoutModule(configuration);
 
 Console.WriteLine(configuration.GetConnectionString("DefaultConnection"));
 
@@ -42,7 +51,11 @@ Console.WriteLine(
 [8]  - Retroactively compute sizes
 [9]  - Generate javascript cithep array for Cytoscape.js
 [10] - Import programming languages influences dataset
-[11] - Update link format to brackets");
+[11] - Update link format to brackets
+[12] - Randomize positions
+[13] - Run FDL
+[14] - Export Thought positions
+[15] - Import Thought positions");
 
 var choice = Console.ReadLine();
 if (!int.TryParse(choice, out var choiceInt))
@@ -99,6 +112,22 @@ else if (choiceInt == 10)
 else if (choiceInt == 11)
 {
     await LinkFormatUpdater.UpdateLinkFormat();
+}
+else if (choiceInt == 12)
+{
+    await ManualFDL.RandomizePositions(serviceProvider);
+}
+else if (choiceInt == 13)
+{
+    await ManualFDL.RunFDL(serviceProvider);
+}
+else if (choiceInt == 14)
+{
+    await PositionsExporter.ExportPositions(serviceProvider);
+}
+else if (choiceInt == 15)
+{
+    await PositionsImporter.ImportPositions(serviceProvider);
 }
 else
 {

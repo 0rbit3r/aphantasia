@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { fullThoughtDto, thoughtColoredTitleDto } from "../api/dto/ThoughtDto";
 import { useNavigate } from "react-router-dom";
-import { LocationState } from "../interfaces/LocationState";
+import { ThoughtReplyLocationState } from "../interfaces/LocationState";
 import { MediaContent } from "./MediaContent";
 import { getThoughtsOnScreen, HandleDeleteThought } from "../pages/graph/simulation/thoughtsProvider";
 import { useGraphControlsStore } from "../pages/graph/state_and_parameters/GraphControlsStore";
@@ -10,6 +10,7 @@ import tinycolor from "tinycolor2";
 import { ExplorationMode, MM_SwitchToExplorationMode } from "../pages/graph/simulation/modesManager";
 import { deleteThought } from "../api/graphApiClient";
 import { Localization } from "../locales/localization";
+import { CONCEPT_REGEX } from "../constants/thoughtContentRegexes";
 
 interface ThoughtViewerProps {
     thought: fullThoughtDto,
@@ -91,7 +92,7 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
             const thoughtTitle = parts[i + 2];
             const color = props.links.find(t => t.id == id)?.color || "#676767";
             result.push(<span
-                className= {props.links.find(t => t.id == id) ? 'in-text-thought-ref' : ''}
+                className={props.links.find(t => t.id == id) ? 'in-text-thought-ref' : ''}
                 style={{ color: color }}
                 key={'link' + i}
                 onClick={_ => handleLinkClick(id)}
@@ -105,12 +106,8 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
     }
 
     const renderContentWithConcepts = (text: string) => {
-        const parts = text.split(/(^|\s)(_[0-9a-zA-Z]+)(_[0-9a-zA-Z]+)?(_[0-9a-zA-Z]+)?/g);
+        const parts = text.split(CONCEPT_REGEX);
 
-        //Oh god... todo
-        // console.log("      splittedPartsInHashtags : ", parts);
-
-        // console.log("all : " , parts);
         const result = [];
         for (let i = 0; i < parts.length; i += 5) {
 
@@ -211,6 +208,27 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
         });
     }
 
+    const handleReplyButtonClick = () => {
+        if (props.thought !== null) {
+
+            const parts = props.thought.content.split(CONCEPT_REGEX);
+            const tags = [];
+            for (let i = 0; i < parts.length; i += 5) {
+                if (!parts[i + 2]) continue;
+                tags.push(parts[i + 2] + (parts[i + 3] ? parts[i + 3] : "") + (parts[i + 4] ? parts[i + 4] : ""));
+            }
+
+            navigate('/create-thought',
+                {
+                    state: {
+                        thoughtId: props.thought.id,
+                        thoughtTitle: props.thought.title,
+                        conceptTags: tags
+                    } as ThoughtReplyLocationState
+                });
+        }
+    }
+
     return (
         <>
             <div className="thought-viewer-container" style={{ borderColor: props.thought.color }}>
@@ -266,11 +284,7 @@ export const ThoughtViewer = (props: ThoughtViewerProps) => {
                         <>
                             <button
                                 className='thought-viewer-controls-button'
-                                onClick={() => {
-                                    if (props.thought !== null) {
-                                        navigate('/create-thought', { state: { thoughtId: props.thought.id } as LocationState });
-                                    }
-                                }}>
+                                onClick={handleReplyButtonClick}>
                                 <img draggable='false' src={PUBLIC_FOLDER + '/icons/reply.svg'}></img>
                             </button>
 

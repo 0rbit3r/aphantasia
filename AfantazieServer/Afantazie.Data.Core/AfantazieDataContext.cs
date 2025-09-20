@@ -22,6 +22,8 @@ public class AfantazieDataContext : DbContext
 
     public DbSet<NotificationEntity> Notifications { get; set; }
 
+    public DbSet<ChatMessageEntity> ChatMessages { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

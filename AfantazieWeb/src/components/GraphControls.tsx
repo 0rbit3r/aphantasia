@@ -5,7 +5,7 @@ import { Localization } from "../locales/localization";
 import { clearNeighborhoodThoughts, getThoughtsInTimeWindow, initializeTemporalThoughts } from "../pages/graph/simulation/thoughtsProvider";
 import { GraphControlsCache } from "../pages/graph/model/GraphControlsCache";
 import { ExplorationMode, MM_InitializeGraphMode, MM_SwitchToExplorationMode } from "../pages/graph/simulation/modesManager";
-import { BASE_RADIUS, DEFAULT_MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT as DEFAULT_MAX_THOUGHTS_ON_SCREEN, REFERENCE_RADIUS_MULTIPLIER} from "../pages/graph/state_and_parameters/graphParameters";
+import { DEFAULT_MAX_RADIUS, MAX_THOUGHTS_ON_SCREEN_FOR_LOGGED_OUT as DEFAULT_MAX_THOUGHTS_ON_SCREEN } from "../pages/graph/state_and_parameters/graphParameters";
 
 
 const PUBLIC_FOLDER = import.meta.env.VITE_PUBLIC_FOLDER;
@@ -21,8 +21,8 @@ const GraphControls = () => {
     const setGravityEnabled = useGraphControlsStore(state => state.setGravityEnabled);
     const edgeType = useGraphControlsStore(state => state.edgeType);
     const setEdgeType = useGraphControlsStore(state => state.setEdgeType);
-    const noBordersEnabled = useGraphControlsStore(state => state.noBorders);
-    const setNoBorders = useGraphControlsStore(state => state.setNoBorders);
+    const strongerPushForceEnabled = useGraphControlsStore(state => state.strongerPushForce);
+    const setStrongerPushForceEnabled = useGraphControlsStore(state => state.setStrongerPushForce);
     const upFlowEnabled = useGraphControlsStore(state => state.upFlowEnabled);
     const setUpFlowEnabled = useGraphControlsStore(state => state.setUpFlowEnabled);
     const titleOnHoverEnabled = useGraphControlsStore(state => state.titleOnHoverEnabled);
@@ -62,11 +62,11 @@ const GraphControls = () => {
     const handleResetDefaults = () => {
         setEdgeType(EdgeType.ARRROW);
         setGravityEnabled(false);
-        setTitleOnHoverEnabled(false);
+        setTitleOnHoverEnabled(true);
         setUpFlowEnabled(false);
-        setNoBorders(false);
-        setFpsEnabled(false);
-        setDisableSimulation(false);
+        setStrongerPushForceEnabled(false);
+        setFpsEnabled(true);
+        setDisableSimulation(true);
         setThoughtsOnScreenLimit(DEFAULT_MAX_THOUGHTS_ON_SCREEN);
         setVisibilityThresholdMultiplier(1.0);
         setEdgeLengthMultiplier(1.0);
@@ -138,34 +138,38 @@ const GraphControls = () => {
     }, [rewindMode]);
 
     useEffect(() => {
-        const storage = localStorage.getItem('settings-cache'); //todo use set?
-        const cachedSettings: GraphControlsCache = storage ? JSON.parse(storage) : [];
+        // const storage = localStorage.getItem('settings-cache'); //todo use set?
+        // const cachedSettings: GraphControlsCache = storage ? JSON.parse(storage) : [];
 
-        // console.log("cachedSettings: ", cachedSettings);
-        if (cachedSettings) {
-            if (cachedSettings.edgeType !== undefined)
-                setEdgeType(cachedSettings.edgeType);
-            if (cachedSettings.gravityEnabled !== undefined)
-                setGravityEnabled(cachedSettings.gravityEnabled);
-            if (cachedSettings.titleOnHoverEnabled !== undefined)
-                setTitleOnHoverEnabled(cachedSettings.titleOnHoverEnabled);
-            if (cachedSettings.upFlowEnabled !== undefined)
-                setUpFlowEnabled(cachedSettings.upFlowEnabled);
-            if (cachedSettings.noBorders !== undefined)
-                setNoBorders(cachedSettings.noBorders);
-            if (cachedSettings.showFpsEnabled !== undefined)
-                setFpsEnabled(cachedSettings.showFpsEnabled);
-            if (cachedSettings.disableSimulation !== undefined)
-                setDisableSimulation(cachedSettings.disableSimulation);
-            if (cachedSettings.ThoughtsOnScreenLimit !== undefined)
-                setThoughtsOnScreenLimit(cachedSettings.ThoughtsOnScreenLimit);
-            if (cachedSettings.titleVisibilityThresholdMultiplier !== undefined)
-                setVisibilityThresholdMultiplier(cachedSettings.titleVisibilityThresholdMultiplier);
-            if (cachedSettings.edgeLengthMultiplier !== undefined)
-                setEdgeLengthMultiplier(cachedSettings.edgeLengthMultiplier);
-            if (cachedSettings.maxRadius !== undefined)
-                setMaxRadius(cachedSettings.maxRadius);
-        }
+        handleResetDefaults();
+
+        // Until the wild west is over, dont cache settings - default settings will have to stabilize first
+
+        // // console.log("cachedSettings: ", cachedSettings);
+        // if (cachedSettings) {
+        //     if (cachedSettings.edgeType !== undefined)
+        //         setEdgeType(cachedSettings.edgeType);
+        //     if (cachedSettings.gravityEnabled !== undefined)
+        //         setGravityEnabled(cachedSettings.gravityEnabled);
+        //     if (cachedSettings.titleOnHoverEnabled !== undefined)
+        //         setTitleOnHoverEnabled(cachedSettings.titleOnHoverEnabled);
+        //     if (cachedSettings.upFlowEnabled !== undefined)
+        //         setUpFlowEnabled(cachedSettings.upFlowEnabled);
+        //     if (cachedSettings.strongerPushForce !== undefined)
+        //         setStrongerPushForceEnabled(cachedSettings.strongerPushForce);
+        //     if (cachedSettings.showFpsEnabled !== undefined)
+        //         setFpsEnabled(cachedSettings.showFpsEnabled);
+        //     if (cachedSettings.disableSimulation !== undefined)
+        //         setDisableSimulation(cachedSettings.disableSimulation);
+        //     if (cachedSettings.ThoughtsOnScreenLimit !== undefined)
+        //         setThoughtsOnScreenLimit(cachedSettings.ThoughtsOnScreenLimit);
+        //     if (cachedSettings.titleVisibilityThresholdMultiplier !== undefined)
+        //         setVisibilityThresholdMultiplier(cachedSettings.titleVisibilityThresholdMultiplier);
+        //     if (cachedSettings.edgeLengthMultiplier !== undefined)
+        //         setEdgeLengthMultiplier(cachedSettings.edgeLengthMultiplier);
+        //     if (cachedSettings.maxRadius !== undefined)
+        //         setMaxRadius(cachedSettings.maxRadius);
+        // }
     }, []);
 
     useEffect(() => {
@@ -180,7 +184,7 @@ const GraphControls = () => {
             gravityEnabled: gravityEnabled,
             titleOnHoverEnabled: titleOnHoverEnabled,
             upFlowEnabled: upFlowEnabled,
-            noBorders: noBordersEnabled,
+            strongerPushForce: strongerPushForceEnabled,
             showFpsEnabled: showFpsEnabled,
             disableSimulation: disableSimulation,
             ThoughtsOnScreenLimit: thoughtsOnScreenLimit,
@@ -190,7 +194,7 @@ const GraphControls = () => {
         };
         localStorage.setItem('settings-cache', JSON.stringify(settings));
     }, [edgeType, gravityEnabled, upFlowEnabled,
-        noBordersEnabled, titleOnHoverEnabled,
+        strongerPushForceEnabled, titleOnHoverEnabled,
         showFpsEnabled, disableSimulation, thoughtsOnScreenLimit,
         titleVisibilityThresholdMultiplier, edgeLengthMultiplier,
         maxRadius]);
@@ -198,7 +202,7 @@ const GraphControls = () => {
     // reset simulation frame
     useEffect(() => {
         setFrame(0);
-    }, [gravityEnabled, upFlowEnabled, noBordersEnabled, temporalControlsVisible,
+    }, [gravityEnabled, upFlowEnabled, strongerPushForceEnabled, temporalControlsVisible,
         disableSimulation, thoughtsOnScreenLimit, edgeLengthMultiplier]);
 
     // update date label on change of timeShift or exploration mode etc.
@@ -213,14 +217,14 @@ const GraphControls = () => {
             if (timeShift >= 0) {
                 setNewestDate(thoughtsInTimeWindow[thoughtsInTimeWindow.length - 1].dateCreated || "...");
             }
-            else{
-            setNewestDate(Localization.RightNow);
+            else {
+                setNewestDate(Localization.RightNow);
             }
         }
         else if (timeShift < 0) {
             setNewestDate(Localization.RightNow);
         }
-        
+
     }, [timeShift, explorationMode, temporalControlsVisible]);
 
     function gravityCheckboxChanged(e: ChangeEvent<HTMLInputElement>): void {
@@ -229,16 +233,17 @@ const GraphControls = () => {
 
     const handleSetMaxRadius = (value: number) => {
         setMaxRadius(value);
-        setFrame(0);
-        const graphState = useGraphStore.getState();
-        graphState.neighborhoodThoughts.forEach(
-            t => t.radius = Math.min(
-                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
-                value));
-        graphState.temporalRenderedThoughts.forEach(
-            t => t.radius = Math.min(
-                BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
-                value));
+        //todo -remove this
+        // setFrame(0);
+        // const graphState = useGraphStore.getState();
+        // graphState.neighborhoodThoughts.forEach(
+        //     t => t.radius = Math.min(
+        //         BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+        //         value));
+        // graphState.temporalRenderedThoughts.forEach(
+        //     t => t.radius = Math.min(
+        //         BASE_RADIUS * Math.pow(REFERENCE_RADIUS_MULTIPLIER, t.size),
+        //         value));
     };
 
     return (
@@ -262,6 +267,7 @@ const GraphControls = () => {
                         <option value={500}>500</option>
                         <option value={1000}>1000</option>
                         <option value={2000}>2000</option>
+                        <option value={4000}>4000</option>
                     </select>
                 </label>
                 <br />
@@ -313,8 +319,8 @@ const GraphControls = () => {
                 </label>
                 <br />
                 <label>
-                    <input className="settings-window-checkbox" type="checkbox" onChange={e => setNoBorders(e.target.checked)} checked={noBordersEnabled}></input>
-                    {Localization.NoBordersLabel}
+                    <input className="settings-window-checkbox" type="checkbox" onChange={e => setStrongerPushForceEnabled(e.target.checked)} checked={strongerPushForceEnabled}></input>
+                    {Localization.StrongerPushForceLabel}
                 </label>
                 <br />
                 <label>
@@ -324,9 +330,9 @@ const GraphControls = () => {
                 <br />
                 <label>
                     <input className="settings-window-checkbox" type="checkbox" onChange={e => setDisableFollowHighlightedThought(e.target.checked)}
-                    checked={disableFollowHighlightedThought}></input>
+                        checked={disableFollowHighlightedThought}></input>
                     {Localization.DisableFollowHighlighted}
-                    </label>
+                </label>
             </div>
 
             <div className={`temporal-section ${!temporalControlsVisible ? "settings-window-collapsed" : ""}`}>
@@ -386,7 +392,7 @@ const GraphControls = () => {
                     }
                 </button>
                 <button className='graph-controls-button'>
-                    {/* <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img> */}
+                    <img src={PUBLIC_FOLDER + "/icons/filter_white.svg"}></img>
                 </button>
                 <button className={`graph-controls-button ${settingsWindowVisible ? 'graph-controls-button-active' : ''}`}
                     onClick={() => handleMainButtonPress('settings')}>
