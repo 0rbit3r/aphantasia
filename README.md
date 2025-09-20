@@ -1,5 +1,7 @@
 # Aphantasia
 
+**NOTICE! :** Aphantasia is currently under construction and will not be available in the forseable future.
+
 An open-source social network for graph theory enthusiasts and a cozy mindful universe for everyone else.
 
 Official instance hosted at https://aphantasia.io
@@ -43,7 +45,7 @@ Use `npm run dev` to run the local webapp and Visual Studio to run the Backend S
 The roadmap for the development is not clear-cut but will likely include:
 
 ### Features
-- [ ] Pinch zoom
+- [x] Pinch zoom
 - [ ] Filtering (consolidate all thought endpoints into one with a good filter)
 - [ ] Extend Concepts functionality
     - [ ] Trending concepts log on home screen
@@ -53,14 +55,16 @@ The roadmap for the development is not clear-cut but will likely include:
 - [ ] Follow users / concepts / thoughts + Custom subscriptions-like graph feed
 - [ ] Scrollable home feeds
 - [ ] Back button should focus previously viewed thought
-- [ ] Server-side layout
+- [x] Server-side layout
 - [ ] Pinned replies (this one is a maybe)
 - [ ] Email verification (this one too)
 
 ### Code and architecture
-- [ ] Refactor Frontend architecture and solidify its rules
+- [x] Refactor Frontend architecture and solidify its rules
+    - Graph rendering part moved to Grafika engine (source code coming soon!)
 - [ ] Rafactor some disgusting lazy code in backend
-- [ ] Performance Optimization (Can we get to 60 FPS with 1000 thoughts on screen?)
+- [x] Performance Optimization (Can we get to 60 FPS with 1000 thoughts on screen?)
+    - Hell yeah we can! With simulaton off and overlay 60 FPS can be achieved even with 10k thoughts!
 - [ ] Add official code documentation
 - [ ] Add either Unit or Integration tests to backend
 - [ ] Add paging to places where it's currently missing
