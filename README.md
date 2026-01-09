@@ -3,6 +3,7 @@
 **NOTICE! :** Aphantasia alpha has been shut down, big thank you to all who participated and stay tuned for Aphantasia 2.0 Beta!
 
 Official instance has been and will be hosted at https://aphantasia.io
+
 Complementary youtube channel: https://www.youtube.com/@AphantasticChannel
 
 ## How it works
@@ -30,3 +31,4 @@ Use `npm run dev` to run the local webapp and Visual Studio to run the Backend S
 ## Contact
 
 You might get a hold of me at aphantastic[dot]channel[at]gmail[dot]com.
+
