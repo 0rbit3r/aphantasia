@@ -6,6 +6,8 @@ Official instance has been and will be hosted at https://aphantasia.io
 
 Complementary youtube channel: https://www.youtube.com/@AphantasticChannel
 
+![](inter-update%20selfie.gif)
+
 ## How it works
 
 Aphantasia is a virtual graph-based social space focused on exploration and association of colorful pieces of text called thoughts living in an explorable 2D space.
