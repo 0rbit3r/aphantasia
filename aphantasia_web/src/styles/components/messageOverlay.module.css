@@ -1,0 +1,20 @@
+.message_container_overlay {
+    text-align: center;
+    font-size: larger;
+    background-color: black;
+}
+
+/* todo - color scheme of validation messages and make
+        "shadow" under text to increase readibility */
+
+.red_message {
+    color: red;
+}
+
+.green_message {
+    color: green;
+}
+
+.yellow_message {
+    color: yellow;
+}

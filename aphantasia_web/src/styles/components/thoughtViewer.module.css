@@ -1,0 +1,37 @@
+.thought_viewer_container {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--context-banner-height));
+}
+
+.scrollable_container {
+    overflow-y: scroll;
+}
+
+.action_buttons_bar {
+    height: 2.4rem;
+    border: 1px solid white;
+    border-top: none;
+    display: flex;
+    justify-content: space-around;
+}
+
+.metadata_bar {
+    height: 2.4rem;
+    display: flex;
+    justify-content: space-between;
+
+    border: 1px solid white;
+    border-top: none;
+    padding: 8px;
+}
+
+.date {
+    color: #aaaaaa;
+}
+
+.author {
+    font-weight: bold;
+    cursor: pointer;
+}

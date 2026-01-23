@@ -1,0 +1,49 @@
+.application_container {
+    padding: 1px;
+    background-color: #0f0f0f;
+    height: 100dvh;
+    width: 100dvw;
+}
+
+.graph_container {
+    height: 100%;
+}
+
+.content_container {
+    height: 100%;
+    min-width: 29vw;
+}
+
+.top_bar {
+    height: var(--top-bar-height);
+    display: flex;
+}
+
+.top_bar_flex_child_first {
+    width: 66%;
+}
+
+.top_bar_flex_child_second {
+    flex:1;
+}
+
+.bottom_bar {
+    height: 5%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.menus_divider {
+    background-color: white;
+    width: 2px;
+    height: 75%;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.portrait_context_banner {
+    height: var(--context-banner-height);
+}

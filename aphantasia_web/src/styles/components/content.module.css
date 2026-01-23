@@ -1,0 +1,21 @@
+.content_container {
+  padding: 8px;
+  white-space: pre-wrap;
+  overflow: scroll;
+
+  border: 1px solid white;
+}
+
+.thought_ref {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.concept_ref {
+  cursor: pointer;
+  color: #e0e0e0;
+}
+
+strong {
+  font-weight: 100
+}

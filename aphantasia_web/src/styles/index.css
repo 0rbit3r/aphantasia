@@ -1,0 +1,31 @@
+@font-face {
+  font-family: "APL386";
+  src: local("APL386"),
+    url('./src/assets/fonts/APL386.ttf')
+}
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --color-background: #000000;
+  --color-background-secondary:  #222222;
+  --color-background-tertiary: #333333;
+  --color-text: #ececec;
+
+  --handlebar-thickness: 1.5rem;
+  --top-bar-height: 3rem;
+  --context-banner-height: 3rem;
+}
+
+body {
+  font-family: "APL386";
+  color: var(--color-text);
+
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+
+  background-color: var(--color-background);
+}

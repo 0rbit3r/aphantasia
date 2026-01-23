@@ -1,0 +1,36 @@
+.context_banner_container {
+    width: 100%;
+    min-width: 300px;
+    height: 100%;
+
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-background-primary);
+    margin: 0;
+    container-type: inline-size;
+    cursor: pointer;
+}
+
+.context_banner_container > * {
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+}
+
+.context_banner_container_align_left {
+  text-align: left;
+}
+
+.context_banner_container_align_left > * {
+  transform: translateX(calc(50% - 50cqw + 16px));
+}
+
+.context_banner_container h1 {
+    margin: 16px;
+    font-weight: bolder;
+    text-decoration: underline var(--color-background-secondary);
+    font-size: clamp(0.6rem, 5cqw, 1.1rem);
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+}

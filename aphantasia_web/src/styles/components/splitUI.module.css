@@ -1,0 +1,111 @@
+.split_ui_container {
+    width: 100%;
+    height: calc(100% - var(--top-bar-height));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.split_ui_container_land {
+    flex-direction: row;
+    height: 95%;
+}
+
+.first_subelement {
+    flex-shrink: 0;
+}
+
+.first_subelement_land {
+    height: 100%;
+}
+
+.second_subelement {
+    flex: 1;
+    overflow-y: hidden;
+}
+
+.second_subelement_land {
+}
+
+.handle_port {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    text-align: center;
+    width: 9em;
+    height: 0;
+    margin: auto;
+    transform: translateY(calc(-1px - var(--handlebar-thickness)));
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+}
+
+.handle_port::before {
+    content: "━━━";
+    font-weight: bold;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    z-index: 1000;
+
+    height: var(--handlebar-thickness);
+    inset: 0;
+    background: inherit;
+    z-index: -1;
+    background-color: var(--color-background-secondary);
+    border: 1px solid white;
+    border-bottom: none;
+}
+
+.handle_land {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    width: 0;
+    height: 9em;
+    margin: auto;
+    transform: translateX(4px);
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+}
+
+.handle_land::before {
+    content: "┃\A┃\A┃";
+    white-space: pre;
+    line-height: 1;
+    font-weight: bold;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+    z-index: 1000;
+    width: 1.3em;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid white
+}
+
+.handle_left {
+    margin-right: 0;
+    width: calc(50% - (var(--top-bar-height) + var(--handlebar-thickness)) / 2 - var(--handlebar-thickness) - 3px);
+}
+
+.handle_right {
+    margin-left: 0;
+    width: calc(50% - (var(--top-bar-height) + var(--handlebar-thickness)) / 2 - var(--handlebar-thickness) - 3px);
+}
+
+.handle_right::before {
+    content: "━━━━━━━";
+
+}
+
+.handle_left::before {
+    content: "━━━━━━━";
+}

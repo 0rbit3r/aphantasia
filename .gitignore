@@ -605,12 +605,3 @@ sketch
 # Additional files built by Visual Studio
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,csharp,dotnetcore,react
-
-DeploymentScripts/*
-/AfantazieServer/Afantazie.Data.Core/migrationsettings.json
-/AfantazieServer/Afantazie.Tools/appsettings.json
-Secondary_files/cytoscape.js-euler-master/cytoscape.js-euler-master
-/AfantazieServer/AfantazieServer/appsettings.Production.json
-/AfantazieServer/AfantazieServer/appsettings.Development.json
-/AfantazieServer/.vscode/
-AfantazieWeb/dist_backup/*

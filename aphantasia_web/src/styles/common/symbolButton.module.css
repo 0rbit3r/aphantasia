@@ -1,0 +1,10 @@
+.button {
+    background: rgba(0, 0, 0, 0) ;
+    height: 100%;
+    border: none;
+}
+
+.button > img {
+    height: 100%;
+    cursor: pointer;
+}
