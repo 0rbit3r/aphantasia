@@ -1,6 +1,6 @@
-import type { Concept } from "./concept";
-import type { Thought } from "./thought";
-import type { User } from "./User";
+import type { Concept } from "../model/dto/concept";
+import type { Thought } from "../model/dto/thought";
+import type { User } from "../model/dto/user";
 
 export function isThought(obj: unknown): obj is Thought {
   return (

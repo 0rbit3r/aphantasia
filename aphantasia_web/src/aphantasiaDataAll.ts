@@ -1,3 +1,17 @@
+import type { Data } from "../../../grafika/dist/api/dataTypes";
+
+export const aphantasiaTimesFour = () => {
+  const data: Data = { nodes: downloadedAphantasiaAll.nodes.slice(), edges: downloadedAphantasiaAll.edges.slice() };
+  data.nodes?.push(...downloadedAphantasiaAll.nodes.map(n => ({ ...n, id: n.id + '_1', x: n.x + 60000 })));
+  data.edges?.push(...downloadedAphantasiaAll.edges.map(e => ({ ...e, sourceId: e.sourceId + '_1', targetId: e.targetId + '_1' })));
+  data.nodes?.push(...downloadedAphantasiaAll.nodes.map(n => ({ ...n, id: n.id + '_2', x: n.x + 60000, y: n.y + 60000 })));
+  data.edges?.push(...downloadedAphantasiaAll.edges.map(e => ({ ...e, sourceId: e.sourceId + '_2', targetId: e.targetId + '_2' })));
+  data.nodes?.push(...downloadedAphantasiaAll.nodes.map(n => ({ ...n, id: n.id + '_3', y: n.y + 60000 })));
+  data.edges?.push(...downloadedAphantasiaAll.edges.map(e => ({ ...e, sourceId: e.sourceId + '_3', targetId: e.targetId + '_3' })));
+
+  return data;
+}
+
 export const downloadedAphantasiaAll = {
   "nodes": [
     {

@@ -1,8 +1,8 @@
 import { createEffect, createSignal, useContext } from 'solid-js';
 import { AphantasiaStoreContext } from '../contexts/aphantasiaStoreContext';
 import css from '../styles/components/contextBanner.module.css';
-import { isThought } from '../model/isTypeOf';
-import type { Thought } from '../model/thought';
+import { isThought } from '../utility/isTypeOf';
+import type { Thought } from '../model/dto/thought';
 import { getCurrentExpState } from '../stateManager/getCurrentExpState';
 import { ScreenOrientation } from '../contexts/screenOrientationContext';
 

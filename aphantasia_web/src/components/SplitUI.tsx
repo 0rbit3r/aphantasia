@@ -136,7 +136,7 @@ const portrait_ratios = {
 }
 
 const releaseThresholdsPortrait = {
-  top: 0.35,
+  top: 0.2,
   bottom: 0.65
 }
 

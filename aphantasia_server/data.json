@@ -1,0 +1,426 @@
+{
+  "nodes": [
+    {
+      "id": "AfantazieServer",
+      "color": "#941FC2",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Interface.Authentication",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.Auth",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Core.Model",
+      "color": "#F15F25",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Data.Model",
+      "color": "#3498DB",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Data.Repository",
+      "color": "#3498DB",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Presentation.Api",
+      "color": "#F5C70F",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Presentation.Model",
+      "color": "#F5C70F",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Core.Localization",
+      "color": "#F15F25",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Interface.UserSettings",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.UserSettings",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Interface.Thoughts",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.Thoughts",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Services.Interface.Chat",
+      "color": "#ffb6b6",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.Chat",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.SiteActivity",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Interface.SiteActivity",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Tools",
+      "color": "#7D37FF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Core.Constants",
+      "color": "#F15F25",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Profiles",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Afantazie.Service.Interface.Profiles",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.Interface.GraphLayout",
+      "color": "#b5efeb",
+      "shape": 4
+    },
+    {
+      "id": "Afantazie.Service.GraphLayout",
+      "color": "#0ACBBF",
+      "shape": 0
+    }
+  ],
+  "edges": [
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.GraphLayout",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Core.Localization",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Data.Repository",
+      "color": "#3498DB"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Presentation.Api",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.Auth",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.Interface.Authentication",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.Profiles",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.SiteActivity",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.Thoughts",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.Chat",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "AfantazieServer",
+      "targetId": "Afantazie.Service.UserSettings",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.Authentication",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Auth",
+      "targetId": "Afantazie.Core.Localization",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Auth",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Auth",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Service.Auth",
+      "targetId": "Afantazie.Service.Interface.Authentication",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Core.Model",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Core.Model",
+      "targetId": "Afantazie.Core.Localization",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Data.Model",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Data.Interface.Repository",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Data.Repository",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Data.Repository",
+      "targetId": "Afantazie.Core.Localization",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Data.Repository",
+      "targetId": "Afantazie.Data.Model",
+      "color": "#3498DB"
+    },
+    {
+      "sourceId": "Afantazie.Data.Repository",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Core.Localization",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Presentation.Model",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Service.Interface.Authentication",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Service.Interface.Profiles",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Service.Interface.SiteActivity",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Service.Interface.Thoughts",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Service.Interface.UserSettings",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Api",
+      "targetId": "Afantazie.Services.Interface.Chat",
+      "color": "#ffb6b6"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Model",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Presentation.Model",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Core.Localization",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.UserSettings",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.UserSettings",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.UserSettings",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Service.UserSettings",
+      "targetId": "Afantazie.Service.Interface.UserSettings",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.Thoughts",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Thoughts",
+      "targetId": "Afantazie.Core.Constants",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Thoughts",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Thoughts",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Service.Thoughts",
+      "targetId": "Afantazie.Service.Interface.Thoughts",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Service.Thoughts",
+      "targetId": "Afantazie.Data.Model",
+      "color": "#3498DB"
+    },
+    {
+      "sourceId": "Afantazie.Services.Interface.Chat",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Chat",
+      "targetId": "Afantazie.Services.Interface.Chat",
+      "color": "#ffb6b6"
+    },
+    {
+      "sourceId": "Afantazie.Service.SiteActivity",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Service.SiteActivity",
+      "targetId": "Afantazie.Service.Interface.SiteActivity",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.SiteActivity",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Tools",
+      "targetId": "Afantazie.Service.GraphLayout",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Afantazie.Tools",
+      "targetId": "Afantazie.Data.Repository",
+      "color": "#3498DB"
+    },
+    {
+      "sourceId": "Afantazie.Tools",
+      "targetId": "Afantazie.Service.Thoughts",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Afantazie.Tools",
+      "targetId": "Afantazie.Service.Interface.GraphLayout",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Service.Profiles",
+      "targetId": "Afantazie.Data.Interface.Repository",
+      "color": "#c2e0f4"
+    },
+    {
+      "sourceId": "Afantazie.Service.Profiles",
+      "targetId": "Afantazie.Service.Interface.Profiles",
+      "color": "#b5efeb"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.Profiles",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.Interface.GraphLayout",
+      "targetId": "Afantazie.Core.Model",
+      "color": "#F15F25"
+    },
+    {
+      "sourceId": "Afantazie.Service.GraphLayout",
+      "targetId": "Afantazie.Data.Model",
+      "color": "#3498DB"
+    },
+    {
+      "sourceId": "Afantazie.Service.GraphLayout",
+      "targetId": "Afantazie.Service.Interface.GraphLayout",
+      "color": "#b5efeb"
+    }
+  ]
+}

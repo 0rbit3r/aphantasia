@@ -1,12 +1,12 @@
 import type { ConceptLight } from "./concept";
-import type { UserLight } from "./User";
+import type { UserLight } from "./user";
 
 export interface Thought {
     id: string;
     title: string;
     date: string;
     shape: number;
-    size: number;
+    size: number
 
     author: UserLight;
     content: string;
@@ -20,17 +20,16 @@ export interface ThoughtLight {
     id: string;
     title: string;
     date: string;
-    shape: number;
     size: number;
-    
     author: UserLight;
 }
 
-export interface ThoughNode {
+export interface ThoughtNode {
     id: string;
     title: string;
-    date: string;
     shape: number;
-    size: number; 
+    size: number;
     color: string;
+    x: number;
+    y: number;
 }

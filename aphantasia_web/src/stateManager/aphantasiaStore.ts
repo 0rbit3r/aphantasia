@@ -1,10 +1,9 @@
 import { createStore, type SetStoreFunction } from "solid-js/store";
-import type { GrafikaInstance } from "../../../grafika/dist/api/controlTypes";
+import type { GrafikaInstance } from "grafika";
 import type { SplitLayout } from "../components/SplitUI";
-import type { Thought } from "../model/thought";
-import type { Concept } from "../model/concept";
-import type { User } from "../model/User";
-import { createEffect } from "solid-js";
+import type { Thought } from "../model/dto/thought";
+import type { Concept } from "../model/dto/concept";
+import type { User } from "../model/dto/user";
 import type { ExplorationStateDescriptor } from "../model/explorationMode";
 
 export interface AphantasiaStore {

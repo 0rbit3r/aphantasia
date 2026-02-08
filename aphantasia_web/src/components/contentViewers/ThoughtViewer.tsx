@@ -6,8 +6,8 @@ import bookmarkIcon from '../../assets/icons/bookmark.png';
 import trashIcon from '../../assets/icons/trash.png';
 import paperPlaneIcon from '../../assets/icons/paper_plane.png';
 import { AphantasiaStoreContext } from "../../contexts/aphantasiaStoreContext";
-import { isThought } from "../../model/isTypeOf";
-import type { Thought } from "../../model/thought";
+import { isThought } from "../../utility/isTypeOf";
+import type { Thought } from "../../model/dto/thought";
 
 
 export interface ThoughtViewerProps {

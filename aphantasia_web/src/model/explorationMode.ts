@@ -7,8 +7,7 @@ export interface ExplorationStateDescriptor {
 export type ModeType =
 'home' |
 'explore' |
-'concepts' |
-''
+'concepts' 
 
 export function parsePath(path: string): ExplorationStateDescriptor {
     const splitPath = path.split('/');

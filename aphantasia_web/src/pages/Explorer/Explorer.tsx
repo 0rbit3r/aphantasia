@@ -1,4 +1,4 @@
-import { downloadedAphantasiaAll } from "../../aphantasia";
+import { aphantasiaTimesFour, downloadedAphantasiaAll } from "../../aphantasiaDataAll";
 import { HolisticUI } from "../../components/HolisticUI";
 import { addGrafika, EdgeType, type GrafikaSettings, type ProxyNode } from "grafika";
 import { AphantasiaStoreContext } from "../../contexts/aphantasiaStoreContext";
@@ -6,10 +6,17 @@ import { useContext } from "solid-js";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import type { AphantasiaStoreGetAndSet } from "../../stateManager/aphantasiaStore";
-import type { ExplorationStateDescriptor } from "../../model/explorationMode";
+import type { ExplorationStateDescriptor } from "../../model/explorationMode"; 
+import data from '../../data.json';
 
 export interface ExplorerProps {
+
+
     loadData: (store: AphantasiaStoreGetAndSet, state: ExplorationStateDescriptor) => void;
+
+
+    // here is where to resume - load data will just implement 
+
 }
 
 export const Explorer = (_props: ExplorerProps) => {
@@ -30,21 +37,16 @@ export const Explorer = (_props: ExplorerProps) => {
         });
     };
 
-
     return <HolisticUI store={store} onGrafikaRef={handleGrafikaRef}></HolisticUI>;
 }
 
 const grafikaSettings: GrafikaSettings = {
     data: downloadedAphantasiaAll,
-    // {
-    //   nodes: [
-    //     { id: "0", text: Locale.HelloExplorer, blinkEffect: true, x: 0, y: 400 }]
-    // },
     graphics: {
         antialiasing: false,
         backgroundColor: '#000000',
         initialZoom: 1 / 180,
-        floatingNodes: true,
+        // floatingNodes: true,
         defaultEdgeColor: "source",
         defaultEdgeAlpha: 0.6,
         colorfulText: true,
@@ -63,12 +65,12 @@ const grafikaSettings: GrafikaSettings = {
             scale: 8,
             url: "generic_space.jpg"
         },
-        // overlay: {
-        //     scale: 28,
-        //     startDisappearingAt: 1 / 60,
-        //     disappearCompletelyAt: 1 / 30,
-        //     url: "overlay.png"
-        // }
+        overlay: {
+            scale: 28,
+            startDisappearingAt: 1 / 60,
+            disappearCompletelyAt: 1 / 30,
+            url: "overlay.png"
+        }
     },
     simulation: { defaultEdgeLength: 100, pushThreshold: 1000 },
     debug: { showFps: true }

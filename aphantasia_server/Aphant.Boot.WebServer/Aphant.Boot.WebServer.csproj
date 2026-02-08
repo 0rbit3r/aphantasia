@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="10.0.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+  </ItemGroup>
+
+  <!-- <ItemGroup> -->
+    <!-- <ProjectReference Include="../Aphantasia.Service.GraphLayout/Aphantasia.Service.GraphLayout.csproj" />
+    <ProjectReference Include="..\Aphantasia.Core.Localization\Aphantasia.Core.Localization.csproj" />
+    <ProjectReference Include="..\Aphantasia.Data.Repository\Aphantasia.Data.Repository.csproj" />
+    <ProjectReference Include="..\Aphantasia.Presentation.Api\Aphantasia.Presentation.Api.csproj" />
+    <ProjectReference Include="..\Aphantasia.Service.Authentication\Aphantasia.Service.Auth.csproj" />
+    <ProjectReference Include="..\Aphantasia.Service.Interface.Authentication\Aphantasia.Service.Interface.Authentication.csproj" />
+    <ProjectReference Include="..\Aphantasia.Service.Profiles\Aphantasia.Service.Profiles.csproj" />
+    <ProjectReference Include="..\Aphantasia.Service.SiteActivity\Aphantasia.Service.SiteActivity.csproj" />
+    <ProjectReference Include="..\Aphantasia.Service.Thoughts\Aphantasia.Service.Thoughts.csproj" />
+    <ProjectReference Include="..\Aphantasia.Services.Chat\Aphantasia.Service.Chat.csproj" />
+    <ProjectReference Include="..\Aphantasia.Services.UserSettings\Aphantasia.Service.UserSettings.csproj" />
+    <ProjectReference Include="..\Aphantasia.Services.GraphLayout\Aphantasia.Service.GraphLayout.csproj" /> -->
+  <!-- </ItemGroup> -->
+
+  <ItemGroup>
+    <Content Update="appsettings.Production.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.ProdTemplate.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aphant.Client.WebApi\Aphant.Client.WebApi.csproj" />
+    <ProjectReference Include="..\Aphant.Impl.Database.Repo\Aphant.Impl.Database.Repo.csproj" />
+    <ProjectReference Include="..\Aphant.Impl.Logic\Aphant.Impl.Logic.csproj" />
+    <ProjectReference Include="..\Aphant.Impl.Auth\Aphant.Impl.Auth.csproj" />
+  </ItemGroup>
+
+</Project>

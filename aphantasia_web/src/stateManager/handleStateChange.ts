@@ -1,4 +1,4 @@
-import { fetchThought } from "../api/fetchThought_legacy";
+import { fetchThought } from "../api/fetchThought";
 import { type ExplorationStateDescriptor } from "../model/explorationMode";
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
 import { disposeCurrentState } from "./disposeCurrentState";
