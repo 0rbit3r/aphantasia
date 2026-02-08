@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 using Aphant.Core.Dto;
 using Aphant.Core.Interface;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +8,20 @@ namespace Aphant.Client.WebApi.Controllers
     [ApiController]
     public class AuthController(
         IAuthService authService
-    ): ApiControllerBase
+    ) : ApiControllerBase
     {
         [HttpPost("register")]
-        public async Task<ActionResult> RegisterAsync([FromBody] RegisterRequest body)
+        public async Task<ActionResult> Register([FromBody] RegisterRequest body)
         {
-            Console.WriteLine(body.Username);
-            var result = await authService.RegisterAsync(body.Username, body.Password, body.Email);
-            if (result.IsSuccess)
-                return Ok();
-            Console.WriteLine(result.Error!.Message);
-            return ResponseFromError(result.Error!);
+            var result = await authService.Register(body.Username, body.Password, body.Email);
+            return ResponseFromResult(result);
+        }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login([FromBody] LogInRequest body)
+        {
+            var result = await authService.LogIn(body.usernameOrEmail, body.Password);
+            return ResponseFromResult(result);
         }
     }
 }

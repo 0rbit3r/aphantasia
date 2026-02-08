@@ -18,13 +18,13 @@ namespace Aphant.Core.Dto.Results
             return this;
         }
 
-        public static Error General(string? message) => new Error(ErrorCode.General, message);
+        public static Error General(string? message = null) => new Error(ErrorCode.General, message);
 
-        public static Error BadRequest(string? message) => new Error(ErrorCode.BadRequest, message);
+        public static Error BadRequest(string? message = null) => new Error(ErrorCode.BadRequest, message);
 
-        public static Error Unauthorized(string? message) => new Error(ErrorCode.Unauthorized, message);
+        public static Error Unauthorized(string? message = null) => new Error(ErrorCode.Unauthorized, message);
 
-        public static Error NotFound(string? message) => new Error(ErrorCode.NotFound, message);
+        public static Error NotFound(string? message = null) => new Error(ErrorCode.NotFound, message);
 
         public static Error ExceptionThrown(Exception e) => new Error(ErrorCode.General, e.ToString());
     }

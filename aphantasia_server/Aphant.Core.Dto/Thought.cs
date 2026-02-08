@@ -9,11 +9,11 @@ public class Thought
     public required string Content { get; set; }
     public required string Date { get; set; }
     public int Size { get; set; }
+    public int BookmarkedCount { get; set; }
     public ThoughtShape Shape { get; set; }
     public ICollection<ThoughtLight> Links { get; set; } = new List<ThoughtLight>();
     public ICollection<ThoughtLight> Replies { get; set; } = new List<ThoughtLight>();
     public ICollection<ConceptLight> Concepts { get; set; } = new List<ConceptLight>();
-
 }
 
 // Lighter thought dto for replies, links, scollers etc.

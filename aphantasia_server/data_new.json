@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "Aphant.Boot.WebServer",
+      "color": "#FF0E0E",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Client.WebApi",
+      "color": "#941FC2",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Core.Dto",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Core.Interface",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Core.Database",
+      "color": "#0ACBBF",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Impl.DbRepository",
+      "color": "#F5C70F",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Impl.Logic",
+      "color": "#F5C70F",
+      "shape": 0
+    },
+    {
+      "id": "Aphant.Impl.Auth",
+      "color": "#F5C70F",
+      "shape": 0
+    }
+  ],
+  "edges": [
+    {
+      "sourceId": "Aphant.Boot.WebServer",
+      "targetId": "Aphant.Client.WebApi",
+      "color": "#941FC2"
+    },
+    {
+      "sourceId": "Aphant.Boot.WebServer",
+      "targetId": "Aphant.Impl.DbRepository",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "Aphant.Boot.WebServer",
+      "targetId": "Aphant.Impl.Logic",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "Aphant.Boot.WebServer",
+      "targetId": "Aphant.Impl.Auth",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "Aphant.Client.WebApi",
+      "targetId": "Aphant.Core.Interface",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Core.Interface",
+      "targetId": "Aphant.Core.Dto",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.DbRepository",
+      "targetId": "Aphant.Core.Database",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.DbRepository",
+      "targetId": "Aphant.Core.Interface",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Logic",
+      "targetId": "Aphant.Core.Interface",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Auth",
+      "targetId": "Aphant.Core.Interface",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Auth",
+      "targetId": "Aphant.Core.Database",
+      "color": "#0ACBBF"
+    }
+  ]
+}

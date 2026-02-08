@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Core.Dto", "Aphant.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Core.Interface", "Aphant.Core.Interface\Aphant.Core.Interface.csproj", "{B34BD2E7-F5A9-4F86-B12B-9BD48B98C9FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Impl.Database", "Aphant.Impl.Database\Aphant.Impl.Database.csproj", "{43287D68-DA32-417A-B5CE-EC6A509BBF6B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Core.Database", "Aphant.Core.Database\Aphant.Core.Database.csproj", "{43287D68-DA32-417A-B5CE-EC6A509BBF6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Impl.Database.Repo", "Aphant.Impl.Database.Repo\Aphant.Impl.Database.Repo.csproj", "{F9CD5642-61CA-4844-8E0A-034BDA1D2E07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Impl.DbRepository", "Aphant.Impl.DbRepository\Aphant.Impl.DbRepository.csproj", "{F9CD5642-61CA-4844-8E0A-034BDA1D2E07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Impl.Logic", "Aphant.Impl.Logic\Aphant.Impl.Logic.csproj", "{F98F8F2D-9F09-4D74-9CCA-C4AD725F04AE}"
 EndProject

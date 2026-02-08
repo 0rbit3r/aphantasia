@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Aphant.Core.Dto\Aphant.Core.Dto.csproj" />
     <ProjectReference Include="..\Aphant.Core.Interface\Aphant.Core.Interface.csproj" />
   </ItemGroup>
 </Project>

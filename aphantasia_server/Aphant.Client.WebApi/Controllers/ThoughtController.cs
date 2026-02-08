@@ -1,5 +1,6 @@
 ﻿using Aphant.Core.Dto;
 using Aphant.Core.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aphant.Client.WebApi.Controllers
@@ -12,12 +13,11 @@ namespace Aphant.Client.WebApi.Controllers
     ): ApiControllerBase
     {
         [HttpGet("{id}")]
-        public async Task<ActionResult<Thought>> GetThoughtById(Guid id)
+        [Authorize]
+        public async Task<ActionResult<Thought>> GetThoughtById([FromRoute] Guid id)
         {
-            
-            return Ok(await thoughtRepo.GetThoughtAsync(id));
+            return ResponseFromResult(await thoughtRepo.GetThoughtAsync(id));
         }
-
         // [HttpPost]
         // public async Task<ActionResult<Thought>> CreateThought([FromBody] CreateThoughtRequest body)
         // {

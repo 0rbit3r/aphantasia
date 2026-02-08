@@ -5,9 +5,9 @@ namespace Aphant.Core.Interface;
 
 public interface IAuthService
 {
-    public Task<Result> RegisterAsync(string username, string password, string? email);
+    public Task<Result> Register(string username, string password, string? email);
 
-    public Task<Result> Login(string usernameOrEmail, string password);
+    public Task<Result<string>> LogIn(string usernameOrEmail, string password);
 
     public Task<Result> LogOut(Guid user);
 

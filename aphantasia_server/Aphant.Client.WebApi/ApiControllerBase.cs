@@ -13,14 +13,30 @@ namespace Aphant.Client.WebApi
             ? id
             : null;
 
-        protected ActionResult ResponseFromError(Error error)
+
+        protected ActionResult ResponseFromResult(Result result)
         {
+            if (result.IsSuccess) return Ok(result);
+            var error = result.Error!;
             switch (error.Code)
             {
-                case ErrorCode.Unauthorized: return Unauthorized(error.Message);
-                case ErrorCode.BadRequest: return BadRequest(error.Message);
-                case ErrorCode.NotFound: return NotFound(error.Message);
-                default: return Problem(error.Message);
+                case ErrorCode.Unauthorized: return Unauthorized(result);
+                case ErrorCode.BadRequest: return BadRequest(result);
+                case ErrorCode.NotFound: return NotFound(result);
+                default: return StatusCode(500, result);
+            }
+        }
+
+        protected ActionResult<T> ResponseFromResult<T>(Result<T> result)
+        {
+            if (result.IsSuccess) return Ok(result);
+            var error = result.Error!;
+            switch (error.Code)
+            {
+                case ErrorCode.Unauthorized: return Unauthorized(result);
+                case ErrorCode.BadRequest: return BadRequest(result);
+                case ErrorCode.NotFound: return NotFound(result);
+                default: return StatusCode(500, result);
             }
         }
     }

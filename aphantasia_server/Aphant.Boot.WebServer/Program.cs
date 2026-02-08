@@ -1,6 +1,7 @@
 using Aphant.Client.WebApi;
-using Aphant.Impl.Database.Repo;
+using Aphant.Impl.DbRepository;
 using Aphant.Impl.Logic;
+using Aphant.Core.Database;
 using Serilog;
 using Aphant.Impl.Auth;
 
@@ -46,7 +47,7 @@ builder.Services.RegisterWebApiModule();
 builder.Services.RegisterDbRepositoryModule();
 builder.Services.RegisterLogicModule();
 builder.Services.RegisterDatabaseAccessModule(builder.Configuration);
-builder.Services.RegisterAuthorizationModule();
+builder.Services.RegisterAuthorizationModule(builder.Configuration);
 // builder.Services.AddChatModule();
 
 // builder.Services.AddSiteActivityModule();

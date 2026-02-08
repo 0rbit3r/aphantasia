@@ -22,36 +22,17 @@ def get_namespace_parts(project_name):
     return parts
 
 
-def is_interface(project_name):
-    """Check if project is an interface based on naming convention."""
-    parts = get_namespace_parts(project_name)
-    return 'Interface' in parts or 'Interfaces' in parts
-
-
 def get_vibrant_color(namespace_part):
     """Generate a vibrant color from a namespace part."""
     # Predefined vibrant colors palette
     vibrant_colors = [
         "#FF0E0E",  # Red
-        "#0ACBBF",  # Teal
-        "#0EBDE4",  # Blue
-        "#F15F25",  # Light Salmon
-        "#15F7BE",  # Mint
-        "#F5C70F",  # Yellow
-        "#29C649",  # Green
-        "#7D37FF",  # Purple
-        "#E72734",  # Pink
-        "#2074D4",  # Ocean Blue
-        "#F39C12",  # Orange
-        "#DA3522",  # Bright Red
         "#941FC2",  # Violet
-        "#1BB999",  # Turquoise
-        "#3498DB",  # Dodger Blue
-        "#D26F18",  # Carrot
-        "#2ECC71",  # Emerald
-        "#F1C40F",  # Sun Yellow
-        "#E91E63",  # Magenta
-        "#00BCD4",  # Cyan
+        "#0ACBBF",  # Teal
+        "#F5C70F",  # Yellow
+        "#F15F25",  # Light Salmon
+        "#29C649",  # Green
+        "#2074D4",  # Ocean Blue
     ]
     
     # Hash to get consistent index
@@ -60,24 +41,6 @@ def get_vibrant_color(namespace_part):
     color_index = hash_int % len(vibrant_colors)
     
     return vibrant_colors[color_index]
-
-
-def lighten_color(hex_color, factor=0.4):
-    """Lighten a hex color significantly by blending with white."""
-    # Remove # if present
-    hex_color = hex_color.lstrip('#')
-    
-    # Convert to RGB
-    r = int(hex_color[0:2], 16)
-    g = int(hex_color[2:4], 16)
-    b = int(hex_color[4:6], 16)
-    
-    # Blend more with white for more whitish appearance
-    r = int(r + (255 - r) * factor)
-    g = int(g + (255 - g) * factor)
-    b = int(b + (255 - b) * factor)
-    
-    return f"#{r:02x}{g:02x}{b:02x}"
 
 
 def get_node_color(project_name, namespace_colors):
@@ -95,10 +58,6 @@ def get_node_color(project_name, namespace_colors):
         namespace_colors[namespace_key] = get_vibrant_color(namespace_key)
     
     base_color = namespace_colors[namespace_key]
-    
-    # If it's an interface, lighten the color significantly
-    if is_interface(project_name):
-        return lighten_color(base_color, 0.7)
     
     return base_color
 
@@ -163,15 +122,38 @@ def build_dependency_graph(sln_path):
     # Create a mapping of project path to project name
     path_to_name = {proj['path']: proj['name'] for proj in projects}
     
-    # Track namespace colors for consistency
+    # Predefined vibrant colors palette
+    vibrant_colors = [
+        "#FF0E0E",  # Red
+        "#941FC2",  # Violet
+        "#0ACBBF",  # Teal
+        "#F5C70F",  # Yellow
+        "#F15F25",  # Light Salmon
+        "#29C649",  # Green
+        "#2074D4",  # Ocean Blue
+    ]
+    
+    # Collect all unique namespaces first
+    unique_namespaces = set()
+    for proj in projects:
+        parts = get_namespace_parts(proj['name'])
+        namespace_key = parts[1] if len(parts) >= 2 else (parts[0] if parts else 'Default')
+        unique_namespaces.add(namespace_key)
+    
+    # Sort for deterministic assignment
+    sorted_namespaces = sorted(unique_namespaces)
+    
+    # Assign colors sequentially, cycling if needed
     namespace_colors = {}
+    for i, namespace in enumerate(sorted_namespaces):
+        namespace_colors[namespace] = vibrant_colors[i % len(vibrant_colors)]
     
     # Build nodes with colors and shapes
     nodes = []
     for proj in projects:
         project_name = proj['name']
         color = get_node_color(project_name, namespace_colors)
-        shape = 4 if is_interface(project_name) else 0
+        shape = 0
         
         nodes.append({
             'id': project_name,
