@@ -1,17 +1,16 @@
-﻿using Aphant.Core.Database;
-using Aphant.Core.Dto.Results;
-using Aphant.Core.Interface;
+﻿using Aphant.Core.Dto.Results;
+using Aphant.Core.Contract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Aphant.Core.Contract.Data;
 
 namespace Aphant.Impl.Auth;
 
 internal partial class AuthService(
-    ILogger<AuthService> _log, 
-    AphantasiaDataContext _db, 
+    ILogger<AuthService> _log,
     IConfiguration _config,
-    IDataService _dataService)
-: IAuthService
+    IUserDataContract _userData)
+: IAuthContract
 {
     public Task<Result> Authenticate(string token, Guid user)
     {

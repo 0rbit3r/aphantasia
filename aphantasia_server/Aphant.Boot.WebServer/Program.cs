@@ -1,9 +1,10 @@
 using Aphant.Client.WebApi;
-using Aphant.Impl.DbRepository;
+using Aphant.Impl.Database.Repo;
 using Aphant.Impl.Logic;
-using Aphant.Core.Database;
+using Aphant.Impl.Database;
 using Serilog;
 using Aphant.Impl.Auth;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,38 +45,21 @@ builder.Services.AddSignalR(opts =>
 
 // // Add modules
 builder.Services.RegisterWebApiModule();
-builder.Services.RegisterDbRepositoryModule();
+builder.Services.RegisterDbRepositoryModule(builder.Configuration);
 builder.Services.RegisterLogicModule();
-builder.Services.RegisterDatabaseAccessModule(builder.Configuration);
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
-// builder.Services.AddChatModule();
 
-// builder.Services.AddSiteActivityModule();
+builder.Services.AddDbContext<AphantasiaDataContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// builder.Services.AddThoughtsModule();
-
-// builder.Services.AddProfilesModule();
-
-// builder.Services.AddDataModule();
-
-// builder.Services.AddAuthenticationModule(builder.Configuration);
-
-// builder.Services.AddUserSettingsModule();
 
 builder.Services.AddSerilog();
-
-// builder.Services.RegisterGraphLayoutModule(builder.Configuration);
-
-// EntityMappingConfiguration.ConfigureEntityMapping();
-// DtoMappingConfiguration.ConfigureDtoMapping();
 
 var app = builder.Build();
 
 app.Logger.LogInformation("Aplication built with language {language}", builder.Configuration.GetValue<string>("ApplicationLanguage"));
 
 //app.UseHttpsRedirection();
-
-//app.UseWebSockets();
 
 app.UseCors(allowSpecificOrigins);
 

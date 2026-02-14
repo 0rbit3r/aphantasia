@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Aphant.Client.WebApi\Aphant.Client.WebApi.csproj" />
-    <ProjectReference Include="..\Aphant.Impl.DbRepository\Aphant.Impl.DbRepository.csproj" />
+    <ProjectReference Include="..\Aphant.Impl.Database.Repo\Aphant.Impl.Database.Repo.csproj" />
     <ProjectReference Include="..\Aphant.Impl.Logic\Aphant.Impl.Logic.csproj" />
     <ProjectReference Include="..\Aphant.Impl.Auth\Aphant.Impl.Auth.csproj" />
   </ItemGroup>

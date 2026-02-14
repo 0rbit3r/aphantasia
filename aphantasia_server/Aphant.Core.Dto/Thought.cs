@@ -1,29 +1,47 @@
-﻿namespace Aphant.Core.Dto;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Aphant.Core.Dto;
 
 // Full thought will all information available
 public class Thought
 {
     public Guid Id { get; set; }
     public required string Title { get; set; }
-    public required UserLight Author { get; set; }
+    public required string Color { get; set; }
+    public required UserColorName Author { get; set; }
     public required string Content { get; set; }
     public required string Date { get; set; }
+    public int? EpochId { get; set; }
     public int Size { get; set; }
     public int BookmarkedCount { get; set; }
     public ThoughtShape Shape { get; set; }
-    public ICollection<ThoughtLight> Links { get; set; } = new List<ThoughtLight>();
-    public ICollection<ThoughtLight> Replies { get; set; } = new List<ThoughtLight>();
+    public ICollection<ThoughtTitle> Links { get; set; } = new List<ThoughtTitle>();
+    public ICollection<ThoughtTitle> Replies { get; set; } = new List<ThoughtTitle>();
     public ICollection<ConceptLight> Concepts { get; set; } = new List<ConceptLight>();
 }
 
-// Lighter thought dto for replies, links, scollers etc.
+// Lighter version that doesn't require joins in DB
 public class ThoughtLight
 {
     public Guid Id { get; set; }
     public required string Title { get; set; }
-    public ThoughtShape Shape { get; set; }
+    public required string Color { get; set; }
+    public Guid AuthorId { get; set; }
+    public required string Date { get; set; }
+    public int? EpochId { get; set; }
     public int Size { get; set; }
-    public required UserLight Author { get; set; }
+    public ThoughtShape Shape { get; set; }
+}
+
+
+
+// Lightest thought dto for replies, links, scollers etc.  - only key identyfying information
+public class ThoughtTitle
+{
+    public Guid Id { get; set; }
+    public required string Title { get; set; }
+    public required string Color { get; set; }
+    public ThoughtShape Shape { get; set; }
 }
 
 // Used for nodes in the graph
@@ -34,7 +52,7 @@ public class ThoughtNode
     public ThoughtShape Shape { get; set; }
     public int Size { get; set; }
     public string Color { get; set; } = "#ffffff";
-    public double x { get; set; }
-    public double y { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
 
 }

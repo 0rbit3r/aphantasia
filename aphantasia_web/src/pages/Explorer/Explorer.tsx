@@ -45,11 +45,6 @@ const grafikaSettings: GrafikaSettings = {
     data: {
   "nodes": [
     {
-      "id": "Aphant.Boot.WebServer",
-      "color": "#FF0E0E",
-      "shape": 0
-    },
-    {
       "id": "Aphant.Client.WebApi",
       "color": "#941FC2",
       "shape": 0
@@ -60,17 +55,17 @@ const grafikaSettings: GrafikaSettings = {
       "shape": 0
     },
     {
-      "id": "Aphant.Core.Interface",
+      "id": "Aphant.Core.Contract",
       "color": "#0ACBBF",
       "shape": 0
     },
     {
-      "id": "Aphant.Core.Database",
-      "color": "#0ACBBF",
+      "id": "Aphant.Impl.Database",
+      "color": "#F5C70F",
       "shape": 0
     },
     {
-      "id": "Aphant.Impl.DbRepository",
+      "id": "Aphant.Impl.Database.Repo",
       "color": "#F5C70F",
       "shape": 0
     },
@@ -83,9 +78,49 @@ const grafikaSettings: GrafikaSettings = {
       "id": "Aphant.Impl.Auth",
       "color": "#F5C70F",
       "shape": 0
+    },
+    {
+      "id": "Aphant.Boot.WebServer",
+      "color": "#FF0E0E",
+      "shape": 0
     }
   ],
   "edges": [
+    {
+      "sourceId": "Aphant.Client.WebApi",
+      "targetId": "Aphant.Core.Contract",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Core.Contract",
+      "targetId": "Aphant.Core.Dto",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Database",
+      "targetId": "Aphant.Core.Dto",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Database.Repo",
+      "targetId": "Aphant.Impl.Database",
+      "color": "#F5C70F"
+    },
+    {
+      "sourceId": "Aphant.Impl.Database.Repo",
+      "targetId": "Aphant.Core.Contract",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Logic",
+      "targetId": "Aphant.Core.Contract",
+      "color": "#0ACBBF"
+    },
+    {
+      "sourceId": "Aphant.Impl.Auth",
+      "targetId": "Aphant.Core.Contract",
+      "color": "#0ACBBF"
+    },
     {
       "sourceId": "Aphant.Boot.WebServer",
       "targetId": "Aphant.Client.WebApi",
@@ -93,7 +128,7 @@ const grafikaSettings: GrafikaSettings = {
     },
     {
       "sourceId": "Aphant.Boot.WebServer",
-      "targetId": "Aphant.Impl.DbRepository",
+      "targetId": "Aphant.Impl.Database.Repo",
       "color": "#F5C70F"
     },
     {
@@ -105,41 +140,6 @@ const grafikaSettings: GrafikaSettings = {
       "sourceId": "Aphant.Boot.WebServer",
       "targetId": "Aphant.Impl.Auth",
       "color": "#F5C70F"
-    },
-    {
-      "sourceId": "Aphant.Client.WebApi",
-      "targetId": "Aphant.Core.Interface",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Core.Interface",
-      "targetId": "Aphant.Core.Dto",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Impl.DbRepository",
-      "targetId": "Aphant.Core.Database",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Impl.DbRepository",
-      "targetId": "Aphant.Core.Interface",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Impl.Logic",
-      "targetId": "Aphant.Core.Interface",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Impl.Auth",
-      "targetId": "Aphant.Core.Interface",
-      "color": "#0ACBBF"
-    },
-    {
-      "sourceId": "Aphant.Impl.Auth",
-      "targetId": "Aphant.Core.Database",
-      "color": "#0ACBBF"
     }
   ]
 }
@@ -176,6 +176,6 @@ const grafikaSettings: GrafikaSettings = {
             url: "overlay.png"
         }
     },
-    simulation: { defaultEdgeLength: 300, pushThreshold: 1000 },
+    simulation: { defaultEdgeLength: 300, pushThreshold: 3000 },
     debug: { showFps: true }
 }

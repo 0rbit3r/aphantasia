@@ -6,13 +6,10 @@ namespace Aphant.Client.WebApi
 {
     public class ApiControllerBase : ControllerBase
     {
-        protected string? Username
-            => User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-        protected int? UserId
-            => int.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id)
+        protected Guid? UserId
+            => Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id)
             ? id
             : null;
-
 
         protected ActionResult ResponseFromResult(Result result)
         {

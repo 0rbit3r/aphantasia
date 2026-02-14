@@ -1,5 +1,5 @@
 using Aphant.Core.Dto;
-using Aphant.Core.Interface;
+using Aphant.Core.Contract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aphant.Client.WebApi.Controllers
@@ -7,7 +7,7 @@ namespace Aphant.Client.WebApi.Controllers
     [Route("auth")]
     [ApiController]
     public class AuthController(
-        IAuthService authService
+        IAuthContract authService
     ) : ApiControllerBase
     {
         [HttpPost("register")]

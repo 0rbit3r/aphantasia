@@ -1,13 +1,12 @@
 using System.Text.RegularExpressions;
 using Aphant.Core.Dto.Results;
-using Aphant.Core.Interface;
+using Aphant.Core.Contract;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
-using Aphant.Core.Dto;
 
 namespace Aphant.Impl.Auth;
 
-internal partial class AuthService : IAuthService
+internal partial class AuthService : IAuthContract
 {
     public async Task<Result> Register(string username, string password, string? email)
     {
@@ -56,7 +55,7 @@ internal partial class AuthService : IAuthService
         var hasher = new PasswordHasher<string>(); 
         var hashedPass = hasher.HashPassword(username, password);
 
-        var result = await _dataService. InsertUser(username, hashedPass, "Newbie explorer", DateTime.UtcNow, email?.ToLower(), "#e0e0e0");
+        var result = await _userData. InsertUser(username, hashedPass, "Newbie explorer", DateTime.UtcNow, email?.ToLower(), "#e0e0e0");
 
         if (result.IsSuccess)
         {

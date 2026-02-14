@@ -1,4 +1,4 @@
-using Aphant.Core.Interface;
+using Aphant.Core.Contract;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ public static class RegisterModule
 {
     public static void RegisterAuthorizationModule(this IServiceCollection services, IConfiguration config)
     {
-        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuthContract, AuthService>();
 
         // Todo - think about whether this really belongs here or if it is more of a WebApi's responsibility
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

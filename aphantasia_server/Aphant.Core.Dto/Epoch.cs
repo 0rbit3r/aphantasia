@@ -8,7 +8,7 @@ public class Epoch
 
     public required string Color { get; set; }
      
-    public required List<ThoughtLight> Thoughts { get; set; }
+    public required List<ThoughtTitle> Thoughts { get; set; }
 }
 
 public class EpochLight
