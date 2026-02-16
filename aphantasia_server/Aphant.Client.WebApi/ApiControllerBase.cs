@@ -24,7 +24,7 @@ namespace Aphant.Client.WebApi
             }
         }
 
-        protected ActionResult<T> ResponseFromResult<T>(Result<T> result)
+        protected ActionResult<Result<T>> ResponseFromResult<T>(Result<T> result)
         {
             if (result.IsSuccess) return Ok(result);
             var error = result.Error!;

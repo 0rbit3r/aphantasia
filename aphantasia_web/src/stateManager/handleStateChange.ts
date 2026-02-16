@@ -19,7 +19,7 @@ export const handleStateChange = (store: AphantasiaStoreGetAndSet,
                     store.set('contextDataLoading', false);
                     store.set('contextData', thought);
                 }).catch(e => {
-                    console.log('failed to fetch thought: ', e );
+                    console.log('failed to fetch thought: ', e);
                     store.set('contextData', undefined);
                 });
             const proxyNodeToHighlight = store.get.grafika.getData().nodes.find(n => n.id === newState.focus)
@@ -33,6 +33,7 @@ export const handleStateChange = (store: AphantasiaStoreGetAndSet,
             store.set('contextData', undefined);
             store.set('splitUiLayout', 'graph');
         }
+        return;
     }
 }
 

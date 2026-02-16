@@ -15,14 +15,4 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         _log = log;
         _thoughtData = thoughtData;
     }
-
-     public Task<Result<int>> HandleThoughtBump(Guid bumpedId, Guid bumperId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Result<int>> HandleThoughtDebump(Guid debumpedId)
-    {
-        throw new NotImplementedException();
-    }
 }

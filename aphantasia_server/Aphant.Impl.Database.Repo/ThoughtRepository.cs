@@ -25,6 +25,7 @@ internal class ThoughtRepository(
         {
             var thought = await _db.Thoughts
                 .Select(ThoughtMapper.ToDtoFullExpr)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (thought is null) return Error.NotFound();

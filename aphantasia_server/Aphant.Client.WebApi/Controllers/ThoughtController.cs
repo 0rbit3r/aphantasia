@@ -15,14 +15,14 @@ namespace Aphant.Client.WebApi.Controllers
     ) : ApiControllerBase
     {
         [HttpGet("{id}")]
-        public async Task<ActionResult<Thought>> GetThoughtById([FromRoute] Guid id)
+        public async Task<ActionResult<Result<Thought>>> GetThoughtById([FromRoute] Guid id)
         {
             return ResponseFromResult(await _thoughtData.GetThoughtById(id));
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Guid>> PostThought([FromBody] CreateThoughtRequest body)
+        public async Task<ActionResult<Result<Guid>>> PostThought([FromBody] CreateThoughtRequest body)
         {
             if (UserId is null) return ResponseFromResult(Error.Unauthorized("Invalid token"));
 

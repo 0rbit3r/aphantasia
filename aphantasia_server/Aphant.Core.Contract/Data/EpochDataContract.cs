@@ -5,5 +5,5 @@ namespace Aphant.Core.Contract.Data;
 
 public interface IEpochDataContract
 {
-    Task<Result<Epoch>> GetEpochAsync(int id);
+    Task<Result<Epoch>> GetEpochAsync(int? id);
 }

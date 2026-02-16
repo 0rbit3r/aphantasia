@@ -1,8 +1,8 @@
-import { createSignal, createEffect, type JSX, Show, useContext, onMount } from "solid-js";
+import { createSignal, createEffect, type JSX, Show, useContext } from "solid-js";
 import css from '../styles/components/splitUI.module.css';
 import { ScreenOrientation } from '../contexts/screenOrientationContext';
 import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
-import { getCurrentExpState } from "../stateManager/getCurrentExpState";
+import { AuthContext } from "../contexts/authContext";
 
 export type SplitLayout = "graph" | "content" | "half";
 
@@ -13,6 +13,7 @@ interface SplitViewProps {
 
 export default function SplitUI(props: SplitViewProps) {
   const screenOrientation = useContext(ScreenOrientation);
+  const authContext = useContext(AuthContext);
   const store = useContext(AphantasiaStoreContext)!;
 
   const [handleHeld, setHandleHeld] = createSignal(false);
@@ -92,7 +93,15 @@ export default function SplitUI(props: SplitViewProps) {
       onPointerDown={handleHandleGrab}
       onPointerMove={handleHandleDrag}
       onPointerUp={handleHandleRelease}
-    ></div>
+    >
+      <div
+        style={{ ['border-color']: authContext.getAuthorizedUser()?.color }}
+        classList={{
+          [css.handle_child_port]: !screenOrientation.isLandscape(),
+          [css.handle_child_land]: screenOrientation.isLandscape(),
+          [css.handle_child_left]: !screenOrientation.isLandscape()
+        }} />
+    </div>
     <Show when={!screenOrientation.isLandscape()}>
       <div classList={{
         [css.handle_port]: !screenOrientation.isLandscape(),
@@ -102,7 +111,12 @@ export default function SplitUI(props: SplitViewProps) {
         onPointerDown={handleHandleGrab}
         onPointerMove={handleHandleDrag}
         onPointerUp={handleHandleRelease}
-      ></div>
+      > <div style={{ ['border-color']: authContext.getAuthorizedUser()?.color }}
+        classList={{
+          [css.handle_child_port]: !screenOrientation.isLandscape(),
+          [css.handle_child_land]: screenOrientation.isLandscape(),
+          [css.handle_child_right]: true
+        }} /></div>
     </Show>
 
 

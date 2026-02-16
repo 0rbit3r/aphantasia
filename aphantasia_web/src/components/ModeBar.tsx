@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, Show } from "solid-js";
+import { createSignal, onCleanup, Show, useContext } from "solid-js";
 
 import css from '../styles/components/modeBar.module.css';
 import { SymbolButton } from "./SymbolButton";
@@ -9,6 +9,7 @@ import bigGraphIcon from '../assets/icons/big_graph.png';
 import notificationsIcon from '../assets/icons/bell.png';
 import type { AphantasiaStoreGetAndSet } from "../stateManager/aphantasiaStore";
 import { navigateBack, navigateForward } from "../stateManager/backAndForward";
+import { AuthContext } from "../contexts/authContext";
 
 
 interface ModeBarProps {
@@ -17,6 +18,8 @@ interface ModeBarProps {
 }
 
 export default function ModeBar(props: ModeBarProps) {
+  const authContext = useContext(AuthContext);
+
   //fullscreen
   const [isFullscreen, setFullScreen] = createSignal(false);
   const handleFullScreenButton = () => {
@@ -32,10 +35,18 @@ export default function ModeBar(props: ModeBarProps) {
     if (isFullscreen()) closeFullscreen();
   });
 
-  return <div class={css.mode_bar_container}>
-    <SymbolButton action={() => {navigateBack(props.store)}} img={<img src={backIcon} />} />
-    <SymbolButton action={() => {navigateForward(props.store)}} img={<img src={forwardIcon} />} />
-    <div class={css.big_middle_button}>
+  return <div     style={{
+        ['border-bottom']: '2px solid '+ (authContext.getAuthorizedUser()?.color ?? 'white')
+      }}
+  class={css.mode_bar_container}>
+    <SymbolButton action={() => { navigateBack(props.store) }} img={<img src={backIcon} />} />
+    <SymbolButton action={() => { navigateForward(props.store) }} img={<img src={forwardIcon} />} />
+    <div class={css.big_middle_button}
+    style={{
+        ['border-bottom']: '2px solid '+ (authContext.getAuthorizedUser()?.color ?? 'white'),
+        ['border-right']: '2px solid '+ (authContext.getAuthorizedUser()?.color ?? 'white'), 
+        ['border-left']: '2px solid '+ (authContext.getAuthorizedUser()?.color ?? 'white')
+      }}>
       <SymbolButton action={() => { }} img={<img src={bigGraphIcon}></img>} />
     </div>
     <SymbolButton action={() => { }} img={<img src={notificationsIcon}></img>} />

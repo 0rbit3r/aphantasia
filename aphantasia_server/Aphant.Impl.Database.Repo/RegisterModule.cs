@@ -11,5 +11,6 @@ public static class RegisterModule
     {
         services.AddScoped<IThoughtDataContract, ThoughtRepository>();
         services.AddScoped<IUserDataContract, UserRepository>();
+        services.AddScoped<IEpochDataContract, EpochRepository>();
     }
 }

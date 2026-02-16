@@ -8,4 +8,5 @@ public enum ThoughtShape
     ReversedTriangle = 3,
     Diamond = 4,
     Cross = 5,
+    Heart = 6
 }

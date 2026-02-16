@@ -24,6 +24,7 @@ builder.Services.AddCors(options =>
             builder
             .SetIsOriginAllowed(_ => true)
             .WithOrigins(
+                "http://192.168.20.49:5173", 
                 "http://localhost:4200", "http://localhost:5173",
                 "https://aphantasia.cz", "https://www.aphantasia.cz",
                 "https://aphantasia.io", "https://www.aphantasia.io"//todo rework this

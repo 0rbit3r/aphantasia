@@ -32,7 +32,7 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         explorationIndex: 0,
         explorationHistory: [{mode: 'home'}],
         splitUiLayout: 'graph',
-        grafika: null!, //todo - this smells,
+        grafika: null!, //todo - this smells...
         contextDataLoading: false
     });
 

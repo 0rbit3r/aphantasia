@@ -28,7 +28,7 @@ namespace Aphant.Impl.Auth
                 issuer: null,
                 audience: null,
                 claims: [
-                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                    new Claim("id", id.ToString()),
                 ],
                 expires: DateTime.UtcNow.AddHours(24 * 3),
                 signingCredentials: credentials

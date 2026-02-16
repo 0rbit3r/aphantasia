@@ -1,5 +1,6 @@
+import type { NodeShape } from "grafika";
 import type { ConceptLight } from "./concept";
-import type { UserLight } from "./user";
+import type { UserLight } from "./user"
 
 export interface Thought {
     id: string;
@@ -11,17 +12,30 @@ export interface Thought {
     author: UserLight;
     content: string;
     
-    links: ThoughtLight[];
-    replies: ThoughtLight[];
+    links: ThoughtTitle[];
+    replies: ThoughtTitle[];
     concepts: ConceptLight[];
 }
 
 export interface ThoughtLight {
     id: string;
     title: string;
+    color: string;
+    AuthorId: string;
     date: string;
+    EpochId: string;
     size: number;
     author: UserLight;
+    epochId: number;
+    shape: NodeShape;
+}
+
+export interface ThoughtTitle {
+
+     id: string;
+     title: string;
+     color: string;
+     shape: NodeShape;
 }
 
 export interface ThoughtNode {
@@ -32,4 +46,6 @@ export interface ThoughtNode {
     color: string;
     x: number;
     y: number;
+    links: string[];
+    replies:string[];
 }

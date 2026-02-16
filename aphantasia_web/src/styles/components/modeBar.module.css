@@ -14,7 +14,4 @@
     height: calc(100% + var(--handlebar-thickness));
 
     background-color: var(--color-background-secondary);
-
-    border: 1px solid white;
-    border-top: none;
 }

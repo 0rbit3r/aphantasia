@@ -1,5 +1,3 @@
-import { isThought } from "../utility/isTypeOf";
-import type { Thought } from "../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore";
 import { getCurrentExpState } from "./getCurrentExpState";
 
