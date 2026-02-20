@@ -27,7 +27,7 @@ export default function ContextBanner() {
       setText((store.get.contextData as Thought).title);
       setColor((store.get.contextData as Thought).author.color);
     }
-    if (store.get.contextData === undefined && getCurrentExpState(store).mode === 'home'){
+    if (store.get.contextData === undefined && getCurrentExpState(store).mode === 'epochs'){
       setText('Aphantasia');
       setColor('#cccccc');
     }
@@ -41,7 +41,7 @@ export default function ContextBanner() {
     <h1 style={{ color: color() }} onClick={() => {
       if (isThought(store.get.contextData))
         store.get.grafika.focusOn({ id: (store.get.contextData as Thought)?.id ?? '' });
-      if (store.get.contextData === undefined && getCurrentExpState(store).mode === 'home')
+      if (store.get.contextData === undefined && getCurrentExpState(store).mode === 'epochs')
         store.get.grafika.focusOn('all');
     }}>
       {text()}

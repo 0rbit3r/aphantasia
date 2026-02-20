@@ -4,7 +4,7 @@ import { ScreenOrientation } from '../contexts/screenOrientationContext';
 import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
 import { AuthContext } from "../contexts/authContext";
 
-export type SplitLayout = "graph" | "content" | "half";
+export type SplitLayout = "graph" | "content" | "half" | "hidden";
 
 interface SplitViewProps {
   first: JSX.Element;
@@ -85,7 +85,7 @@ export default function SplitUI(props: SplitViewProps) {
           transition: handleHeld() ? "none" : "height 0.65s ease"
         }}>
       {props.first}</div>
-    <div classList={{
+    <Show when={store.get.splitUiLayout!="hidden"}><div classList={{
       [css.handle_port]: !screenOrientation.isLandscape(),
       [css.handle_land]: screenOrientation.isLandscape(),
       [css.handle_left]: !screenOrientation.isLandscape()
@@ -102,6 +102,7 @@ export default function SplitUI(props: SplitViewProps) {
           [css.handle_child_left]: !screenOrientation.isLandscape()
         }} />
     </div>
+    </Show>
     <Show when={!screenOrientation.isLandscape()}>
       <div classList={{
         [css.handle_port]: !screenOrientation.isLandscape(),
@@ -128,25 +129,26 @@ export default function SplitUI(props: SplitViewProps) {
 }
 
 
-const convertForcedLayoutToRatio = (layout: "graph" | "content" | "half", isLandscape: boolean) => {
+const convertForcedLayoutToRatio = (layout: SplitLayout, isLandscape: boolean) => {
+
   if (isLandscape) {
-    return layout === "graph"
-      ? landscape_ratios.graph
-      : layout === "content"
-        ? landscape_ratios.extended
-        : landscape_ratios.middle
+    return landscape_ratios[layout]
   }
-  return layout === "graph"
-    ? portrait_ratios.graph
-    : layout === "content"
-      ? portrait_ratios.content
-      : portrait_ratios.middle
+  return portrait_ratios[layout]
 }
 
 const portrait_ratios = {
   content: "calc(var(--handlebar-thickness) * 2)",
-  middle: "50%",
-  graph: "calc(100% - var(--context-banner-height))"
+  half: "50%",
+  graph: "calc(100% - var(--context-banner-height) - var(--top-bar-height))",
+  hidden: "130%"
+}
+
+const landscape_ratios = {
+  graph: "0",
+  half: "33%",
+  content: "66%",
+  hidden: "0%"
 }
 
 const releaseThresholdsPortrait = {
@@ -159,8 +161,3 @@ const releaseThresholdsLandscape = {
   right: 0.6
 }
 
-const landscape_ratios = {
-  graph: "0",
-  middle: "33%",
-  extended: "66%",
-}

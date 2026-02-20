@@ -6,6 +6,7 @@ import SplitUI from "./SplitUI";
 import ContextBanner from "./ContextBanner";
 import type { AphantasiaStoreGetAndSet } from "../stateManager/aphantasiaStore";
 import { ScreenOrientation } from '../contexts/screenOrientationContext';
+import { ModeMenu } from "./ModeMenu";
 
 
 export interface HolisticUIProps {
@@ -19,27 +20,24 @@ export interface HolisticUIProps {
 export function HolisticUI({ store, onGrafikaRef }: HolisticUIProps) {
     const screenOrientation = useContext(ScreenOrientation);
 
-    const contextBanner = () => (<ContextBanner/>);
-    const modeBar = () => (<ModeBar store={store}></ModeBar>);
+    const contextBanner = () => (<ContextBanner />);
+    const modeBar = () => (<ModeBar></ModeBar>);
 
     const graphPart = <div class={css.graph_container} >
-        <div ref={onGrafikaRef} style={{ height: '100%' }} />
-        <div class={css.messageOverlayContainer}>
-            {/* <MessageOverlay text='Not enough cookies!' color='yellow' /> */}
-        </div>
-        {/* Could not initialize graph view. Make sure your browser supports and allows Javascript and WebGL. */}
+        <div ref={onGrafikaRef} class={css.grafika_container} />
+        {store.get.modeMenuOpen && <ModeMenu />}
     </div>;
 
     const contentPart = <div class={css.content_container}>
         <Show when={!screenOrientation.isLandscape()}>
             <div class={css.portrait_context_banner}>{contextBanner()}</div>
         </Show>
-        <ThoughtViewer/>
+        <ThoughtViewer />
     </div>
 
     return (
         <div class={css.application_container}>
-            <div class={css.top_bar}>
+            <div class={`${css.top_bar} ${store.get.splitUiLayout === 'hidden' ? css.top_bar_hidden : ''}`}>
                 <Show when={screenOrientation.isLandscape()}>
                     <div class={css.top_bar_flex_child_first}>{contextBanner()}</div>
                 </Show>

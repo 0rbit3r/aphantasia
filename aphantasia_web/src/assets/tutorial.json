@@ -1,0 +1,59 @@
+{
+    "nodes": [
+        {
+            "id": "hello_explorer",
+            "text": "Hello explorer",
+            "hollowEffect": true,
+            "timeToLiveFrom": -50,
+            "color": "#eeeeee"
+        },
+        {
+            "id": "join",
+            "text": "Join",
+            "hollowEffect": true,
+            "timeToLiveFrom": -50,
+            "color": "#27b909ff"
+        },
+        {
+            "id": "login",
+            "text": "Log in",
+            "hollowEffect": true,
+            "color": "#f5841b",
+            "timeToLiveFrom": -30
+        },
+        {
+            "id": "about",
+            "text": "About",
+            "hollowEffect": true,
+            "color": "#583bffff",
+            "timeToLiveFrom": -60
+        },
+        {
+            "id":"terms_and_conditions",
+            "text": "About",
+            "hollowEffect": true,
+            "color": "#583bffff"
+        }
+    ],
+    "edges": [
+        {
+            "sourceId": "join",
+            "targetId": "hello_explorer",
+            "type": 4
+        },
+        {
+            "sourceId": "login",
+            "targetId": "hello_explorer",
+            "type": 4
+        },
+        {
+            "sourceId": "about",
+            "targetId": "hello_explorer",
+            "type": 4
+        },
+                {
+            "sourceId": "about",
+            "targetId": "terms_and_conditions"
+        }
+    ]
+}

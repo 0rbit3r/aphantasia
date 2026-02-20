@@ -1,0 +1,30 @@
+.mode_menu_container {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.75);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.buttons_container{
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    left: 5%;
+    right: 5%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.button_container {
+    margin: 8px;
+    max-height: 80px;
+    max-width: 80px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid white;
+    text-align: center;
+}

@@ -1,5 +1,5 @@
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
-import { handleStateChange } from "./handleStateChange";
+import { handleStateChange } from "./stateChangeHandlers/handleStateChange_";
 
 export const navigateBack = (store: AphantasiaStoreGetAndSet) => {
     if (store.get.explorationIndex < 1) return;

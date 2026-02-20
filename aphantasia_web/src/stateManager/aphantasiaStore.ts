@@ -12,14 +12,12 @@ export interface AphantasiaStore {
     // this array holds history of browsing 
     explorationHistory: ExplorationStateDescriptor[];
     // this points to the current exploration state in the array above
-    explorationIndex: number;
-    
-
-    contextData?: Thought | Concept | User;
+    explorationIndex: number;    contextData?: Thought | Concept | User;
 
     contextDataLoading: boolean;
-
     splitUiLayout: SplitLayout;
+    modeMenuOpen: boolean;
+
 }
 
 export interface AphantasiaStoreGetAndSet {
@@ -27,13 +25,15 @@ export interface AphantasiaStoreGetAndSet {
     set: SetStoreFunction<AphantasiaStore>
 }
 
+
 export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
     const [getStore, setStore] = createStore<AphantasiaStore>({
         explorationIndex: 0,
-        explorationHistory: [{mode: 'home'}],
+        explorationHistory: [],
         splitUiLayout: 'graph',
         grafika: null!, //todo - this smells...
-        contextDataLoading: false
+        contextDataLoading: false,
+        modeMenuOpen: false
     });
 
     return { get: getStore, set: setStore};

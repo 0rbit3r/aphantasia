@@ -28,7 +28,7 @@ public class AppContainer<T> : IDisposable
         builder.Services.RegisterLogicModule();
         builder.Services.AddSerilog();
 
-        var connString = builder.Configuration.GetConnectionString("DefaultConnection")?.Replace("{{id}}", typeof(T).Name);
+        var connString = configuration.GetConnectionString("DefaultConnection")?.Replace("{{id}}", typeof(T).Name);
 
         builder.Services.AddDbContext<AphantasiaDataContext>(options =>
             options.UseNpgsql(connString));

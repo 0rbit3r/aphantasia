@@ -17,6 +17,14 @@
   --handlebar-thickness: 1.5rem;
   --top-bar-height: 3rem;
   --context-banner-height: 3rem;
+
+  --z-graph: 0;
+  --z-mode-menu: 10;
+  --z-mode-bar: 20;
+  --z-mode-bar-middle-button: 21;
+  --z-handle: 30;
+  --z-content: 40;
+  --z-context-banner: 50;
 }
 
 body {

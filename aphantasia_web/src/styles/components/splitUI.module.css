@@ -1,6 +1,6 @@
 .split_ui_container {
     width: 100%;
-    height: calc(100% - var(--top-bar-height));
+    height: 100%;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -8,10 +8,11 @@
 
 .split_ui_container_land {
     flex-direction: row;
-    height: 95%;
+    height: 100%;
 }
 
 .first_subelement {
+    position: relative;
     flex-shrink: 0;
 }
 
@@ -25,6 +26,7 @@
 }
 
 .second_subelement_land {
+    position: relative;
 }
 
 .handle_port {
@@ -39,6 +41,7 @@
     cursor: pointer;
     user-select: none;
     touch-action: none;
+    z-index: var(--z-handle);
 }
 
 .handle_child_port {
@@ -70,6 +73,7 @@
     cursor: pointer;
     user-select: none;
     touch-action: none;
+    z-index: 20;
 }
 
 .handle_child_land {

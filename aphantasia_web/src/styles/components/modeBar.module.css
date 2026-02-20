@@ -5,12 +5,12 @@
 
     display: flex;
     justify-content: space-around;
-    
-    border-bottom: 1px solid white;
+
+    z-index: var(--z-mode-bar);
 }
 
-.big_middle_button{
-    z-index: 500;
+.big_middle_button {
+    z-index: var(--z-mode-bar-middle-button);
     height: calc(100% + var(--handlebar-thickness));
 
     background-color: var(--color-background-secondary);
