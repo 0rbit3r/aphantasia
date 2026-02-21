@@ -45,7 +45,7 @@
 }
 
 .handle_child_port {
-    content: "━━━";
+    /* content: "━━━"; */
     font-weight: bold;
     position: absolute;
     cursor: pointer;
@@ -77,7 +77,7 @@
 }
 
 .handle_child_land {
-    content: "┃\A┃\A┃";
+    /* content: "┃\A┃\A┃"; */
     white-space: pre;
     line-height: 1;
     font-weight: bold;
@@ -103,13 +103,4 @@
 .handle_right {
     margin-left: 0;
     width: calc(50% - (var(--top-bar-height) + var(--handlebar-thickness)) / 2 - var(--handlebar-thickness) - 3px);
-}
-
-.handle_right::before {
-    content: "━━━━━━━";
-
-}
-
-.handle_left::before {
-    content: "━━━━━━━";
 }

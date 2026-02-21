@@ -11,7 +11,7 @@ export interface Thought {
 
     author: UserLight;
     content: string;
-    
+
     links: ThoughtTitle[];
     replies: ThoughtTitle[];
     concepts: ConceptLight[];
@@ -32,10 +32,10 @@ export interface ThoughtLight {
 
 export interface ThoughtTitle {
 
-     id: string;
-     title: string;
-     color: string;
-     shape: NodeShape;
+    id: string;
+    title: string;
+    color: string;
+    shape: NodeShape;
 }
 
 export interface ThoughtNode {
@@ -47,5 +47,5 @@ export interface ThoughtNode {
     x: number;
     y: number;
     links: string[];
-    replies:string[];
+    replies: string[];
 }

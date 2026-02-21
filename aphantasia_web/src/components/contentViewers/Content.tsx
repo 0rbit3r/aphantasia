@@ -39,7 +39,7 @@ const renderContentWithThoughtLinks = (props: ContentProps) => {
             class={css.thought_ref}
             style={{ color: color }}
             onClick={_ => props.onThoughtLinkClick && props.onThoughtLinkClick(id, false)}
-            onMouseDown={e => props.onThoughtLinkClick && props.onThoughtLinkClick(id, true)}
+            onMouseDown={_ => props.onThoughtLinkClick && props.onThoughtLinkClick(id, true)}
 
         >
             {thoughtTitle}

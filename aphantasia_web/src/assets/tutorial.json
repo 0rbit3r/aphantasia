@@ -1,59 +1,166 @@
 {
-    "nodes": [
-        {
-            "id": "hello_explorer",
-            "text": "Hello explorer",
-            "hollowEffect": true,
-            "timeToLiveFrom": -50,
-            "color": "#eeeeee"
-        },
-        {
-            "id": "join",
-            "text": "Join",
-            "hollowEffect": true,
-            "timeToLiveFrom": -50,
-            "color": "#27b909ff"
-        },
-        {
-            "id": "login",
-            "text": "Log in",
-            "hollowEffect": true,
-            "color": "#f5841b",
-            "timeToLiveFrom": -30
-        },
-        {
-            "id": "about",
-            "text": "About",
-            "hollowEffect": true,
-            "color": "#583bffff",
-            "timeToLiveFrom": -60
-        },
-        {
-            "id":"terms_and_conditions",
-            "text": "About",
-            "hollowEffect": true,
-            "color": "#583bffff"
-        }
-    ],
-    "edges": [
-        {
-            "sourceId": "join",
-            "targetId": "hello_explorer",
-            "type": 4
-        },
-        {
-            "sourceId": "login",
-            "targetId": "hello_explorer",
-            "type": 4
-        },
-        {
-            "sourceId": "about",
-            "targetId": "hello_explorer",
-            "type": 4
-        },
-                {
-            "sourceId": "about",
-            "targetId": "terms_and_conditions"
-        }
-    ]
+  "nodes": [
+    {
+      "id": "about",
+      "text": "About",
+      "color": "#583bff",
+      "content": "[hello_explorer][TODO_DELETE]\n\nClick on either of the links below to learn more.\n\n- [privacy_policy][Our privacy policy]\n\n- [cookies][How we use cookies]\n\n- [the_project][More information about the project]\n",
+      "authorName": "Blu",
+      "date": "2026-02-21 02:36"
+    },
+    {
+      "id": "cookies",
+      "text": "Cookies",
+      "color": "#583bff",
+      "content": "Aphantasia uses strictly functional cookies for:\n- Persistent login\n- Persistent settings (such as graph size)\n\nWe use no third party cookies or services.",
+      "authorName": "Blu",
+      "date": "2026-02-20 22:41"
+    },
+    {
+      "id": "privacy_policy",
+      "text": "Privacy policy",
+      "color": "#583bff",
+      "content": "We store following data:\n- Account data (registered users only)\n\t- Username\n\t- Password hash\n\t- Email (if provided)\n\t- User settings\n\t- Any created content\n- Technical logs related to hosting - notably:\n\t- IP address\n\t- Date and time of requests\n\t- Browser/client type\n\nAccount information is kept as long as the account exists.\n\nAccess **logs are stored for up to one month** since creation, after which they are discarded.\n\n**Collected data is not** and will not be **sold to third parties** nor will it be used for tasks unrelated to development, maintenance or promotion of the website.\n\nNote however, that any **content that you create is public** and therefore free for anyone to use as they see fit.",
+      "authorName": "Blu",
+      "date": "2026-02-20 22:40"
+    },
+    {
+      "id": "the_project",
+      "text": "The project",
+      "color": "#583bff",
+      "content": "Aphantasia is a one-developer project that aims to create a self-hosted social space focused on humans and what they have to say.\n\nIf you want to hear me talk about it (and do a bunch of other graph-related stuff) **check out my youtube channel**:\nhttps://www.youtube.com/@AphantasticChannel\n\n\n**The code is open source** and can be found here:\n\nAphantasia: https://github.com/0rbit3r/aphantasia\n\t(front end and backend)\n\nGrafika: https://github.com/0rbit3r/grafika\n\t(a javascript graph library powering Aphantasia)\n",
+      "authorName": "Blu",
+      "date": "2026-02-21 02:35"
+    },
+    {
+      "id": "congrats!",
+      "text": "Congrats!",
+      "color": "#27b909",
+      "content": "You are now ready to dive in.\n",
+      "authorName": "Green",
+      "date": "2026-02-21 03:32"
+    },
+    {
+      "id": "join",
+      "text": "Join",
+      "color": "#27b909",
+      "content": "[hello_explorer][TODO_DELETE]\n\n**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles to continue**.",
+      "authorName": "Green",
+      "date": "2026-02-20 23:28"
+    },
+    {
+      "id": "links_and_replies",
+      "text": "Links and Replies",
+      "color": "#27b909",
+      "content": "Let's explore a few more ways to navigate around.\n\nThe underlined text down there is called a **link**.\n\n**Links can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **mention** what you've talked about\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\nAnd the rectangles way down below, those are **replies**.\n\n**Reply is just the opposite end of link.**\n\n[thoughts][Go back to Thoughts]",
+      "authorName": "Green",
+      "date": "2026-02-21 03:22"
+    },
+    {
+      "id": "non-linearity",
+      "text": "Non-linearity",
+      "color": "#27b909",
+      "content": "A consequences of the [rules_of_links][Rules of links] and the key to mastering [reading_the_graph][Reading the graph] is __non linearity__.\n\nTake a look at this thought in the graph view - since it links two thoughts at once, it can be arrived to from two different directions.\n\nWhen you get to exploring Aphantasia, you will see this pattern everywhere - **thoughts reply, continue or expand** on other thoughts, **sometimes all at once**.\n\nThoughts that reply to more than one thought are called **associations**.",
+      "authorName": "Green",
+      "date": "2026-02-21 13:03"
+    },
+    {
+      "id": "reading_the_graph",
+      "text": "Reading the graph",
+      "color": "#27b909",
+      "content": "The colorful animation you hopefully see is called a **graph view**.\n\nNow, notice that in the graph view the links are asymmetric - the replied thought is always at the wide base of a connection while the linking thought gets the narrow end.\n\nIn other words, if you imagine the link to be an **arrow**, it **will always point towards the future**.\n\n[links_and_replies][Go back to Links and Replies!]",
+      "authorName": "Green",
+      "date": "2026-02-21 12:54"
+    },
+    {
+      "id": "rules_of_links",
+      "text": "Rules of links",
+      "color": "#27b909",
+      "content": "There are two:\n1) Links can only ever point backwards in time\n2) Every thought contains no more than 3 links\n\n[links_and_replies][Go back to Links and Replies]",
+      "authorName": "Green",
+      "date": "2026-02-21 03:00"
+    },
+    {
+      "id": "thoughts",
+      "text": "Thoughts",
+      "color": "#27b909",
+      "content": " [join][Go back to Join]\n\n**The building block of Aphantasia is a thought**.\n\nA thought, just like a comment or a forum post, is just **some piece of text** written by some user.",
+      "authorName": "Green",
+      "date": "2026-02-21 03:02"
+    },
+    {
+      "id": "log_in",
+      "text": "Log in",
+      "color": "#f5841b",
+      "content": "[hello_explorer][Go back]\n\n`Login form will be here`",
+      "authorName": "Orange",
+      "date": "2026-02-20 22:22"
+    },
+    {
+      "id": "register",
+      "text": "Register",
+      "color": "#f5841b",
+      "content": "",
+      "authorName": "Orange",
+      "date": "2026-02-21 03:31"
+    },
+    {
+      "id": "hello_explorer",
+      "text": "Hello explorer",
+      "color": "#cccccc",
+      "content": "",
+      "authorName": "White",
+      "date": "2026-02-20 22:20"
+    }
+  ],
+  "edges": [
+    {
+      "targetId": "about",
+      "sourceId": "hello_explorer"
+    },
+    {
+      "targetId": "about",
+      "sourceId": "privacy_policy"
+    },
+    {
+      "targetId": "about",
+      "sourceId": "cookies"
+    },
+    {
+      "targetId": "about",
+      "sourceId": "the_project"
+    },
+    {
+      "targetId": "join",
+      "sourceId": "hello_explorer"
+    },
+    {
+      "targetId": "links_and_replies",
+      "sourceId": "thoughts"
+    },
+    {
+      "targetId": "non-linearity",
+      "sourceId": "rules_of_links"
+    },
+    {
+      "targetId": "non-linearity",
+      "sourceId": "reading_the_graph"
+    },
+    {
+      "targetId": "reading_the_graph",
+      "sourceId": "links_and_replies"
+    },
+    {
+      "targetId": "rules_of_links",
+      "sourceId": "links_and_replies"
+    },
+    {
+      "targetId": "thoughts",
+      "sourceId": "join"
+    },
+    {
+      "targetId": "log_in",
+      "sourceId": "hello_explorer"
+    }
+  ]
 }

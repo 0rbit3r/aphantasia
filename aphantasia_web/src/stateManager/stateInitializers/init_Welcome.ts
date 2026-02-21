@@ -1,4 +1,4 @@
-import { EdgeType, NodeShape, type Data, type GrafikaInstance, type ProxyNode } from "grafika";
+import { EdgeType, type Data, type GrafikaInstance, type ProxyNode } from "grafika";
 import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { getCurrentExpState } from "../getCurrentExpState";
@@ -40,7 +40,7 @@ export const initWelcomeGrafikaSettings = {
     debug: { showFps: true },
     data: {
         nodes: [tutorialJson.nodes.find(n => n.id === "hello_explorer")!],
-        edges: []
+        edges: tutorialJson.edges
     } satisfies Data,
 };
 

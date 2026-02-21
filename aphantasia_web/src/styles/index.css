@@ -1,7 +1,6 @@
 @font-face {
   font-family: "APL386";
-  src: local("APL386"),
-    url('./src/assets/fonts/APL386.ttf')
+  src: local("APL386"), url('/APL386.ttf'), format('truetype');
 }
 
 * {

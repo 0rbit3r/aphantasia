@@ -1,5 +1,3 @@
-import { createEffect, createSignal, type JSX } from "solid-js";
-
 import css from '../styles/components/messageOverlay.module.css';
 
 type MessageOverlayColor = "red" | "green" | "yellow";
