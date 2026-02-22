@@ -1,4 +1,4 @@
-import { EdgeType, type Data, type GrafikaInstance, type ProxyNode } from "grafika";
+import { EdgeType, type GrafikaInstance, type GrafikaSettings, type ProxyNode } from "grafika";
 import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { getCurrentExpState } from "../getCurrentExpState";
@@ -8,9 +8,9 @@ import tutorialJson from '../../assets/tutorial.json';
 export const initWelcomeGrafikaSettings = {
     graphics: {
         antialiasing: false,
-        backgroundColor: '#000000',
+        backgroundColor: '#020202',
         initialZoom: 1 / 10,
-        // floatingNodes: true,
+        floatingNodes: true,
         defaultEdgeColor: "source",
         defaultEdgeAlpha: 0.6,
         colorfulText: true,
@@ -36,13 +36,13 @@ export const initWelcomeGrafikaSettings = {
         //     url: "overlay.png"
         // }
     },
-    simulation: { defaultEdgeLength: 300, pushThreshold: 3000 },
+    simulation: { defaultEdgeLength: 100, pushThreshold: 1500 },
     debug: { showFps: true },
     data: {
         nodes: [tutorialJson.nodes.find(n => n.id === "hello_explorer")!],
         edges: tutorialJson.edges
-    } satisfies Data,
-};
+    }
+} satisfies GrafikaSettings;
 
 
 export const initWelcomeState = (grafika: GrafikaInstance, store: AphantasiaStoreGetAndSet) => {

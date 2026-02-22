@@ -12,16 +12,36 @@
     text-align: center;
 }
 
-.hidden {
-    opacity: 0;
-}
-
 .quip {
     text-align: center;
     white-space: pre-wrap;
-    font-size: 0.9rem;
+    font-size: 1rem;
     left: 50%;
     top: 15%;
     max-width: 90vw;
     z-index: 100;
+    transform: rotate(-0.003turn);
+    color: #bbd0bb;
+    font-weight:bolder;
+}
+
+.version_container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 1s ease-in;
+}
+
+.version {
+    text-align: right;
+    text-anchor: end;
+    margin: 8px;
+    margin-right: 32px;
+    color: var(--color-text-subtle)
+}
+
+.hidden {
+    opacity: 0;
 }

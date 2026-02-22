@@ -64,7 +64,8 @@ export default function SplitUI(props: SplitViewProps) {
 
   return <div classList={{
     [css.split_ui_container]: true,
-    [css.split_ui_container_land]: screenOrientation.isLandscape()
+    [css.split_ui_container_land]: screenOrientation.isLandscape(),
+    [css.split_ui_container_welcome]: store.get.splitUiLayout === 'hidden'
   }}>
     <div classList={{
       [css.first_subelement]: true,
@@ -140,7 +141,7 @@ const convertForcedLayoutToRatio = (layout: SplitLayout, isLandscape: boolean) =
 const portrait_ratios = {
   content: "calc(var(--handlebar-thickness) * 2)",
   half: "50%",
-  graph: "calc(100% - var(--context-banner-height) - var(--top-bar-height))",
+  graph: "calc(100% - var(--context-banner-height))",
   hidden: "130%"
 }
 

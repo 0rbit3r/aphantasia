@@ -1,0 +1,23 @@
+.horizontal_scroller_container {
+    border: 1px solid white;
+    height: 3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: scroll;
+    text-wrap-mode: nowrap;
+    background-color: var(--color-background-tertiary);
+}
+
+.reply_box {
+    margin: 8px;
+    padding: 4px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.no_replies {
+    margin: 8px;
+    padding: 4px;
+    color: var(--color-text-subtle)
+}

@@ -2,25 +2,34 @@
     margin: 2px;
     display: flex;
     flex-direction: column;
-    height: calc(100% - var(--context-banner-height));
+    height: calc(100% - var(--context-banner-height) - 4px);
 }
 
-.scrollable_container {
+.content_container {
     overflow-y: scroll;
+    border: 1px solid white;
+    flex: 1;
 }
 
 .action_buttons_bar {
-    height: 2.4rem;
+    height: var(--action-buttons-bar);
     border: 1px solid white;
     border-top: none;
     display: flex;
     justify-content: space-around;
+
+    transition: height 1s ease;
+}
+
+.action_buttons_bar_collapsed {
+    height: 0;
 }
 
 .metadata_bar {
-    height: 2.4rem;
+    height: var(--metadata-bar-height);
     display: flex;
     justify-content: space-between;
+    background-color: var(--color-background-secondary);
 
     border: 1px solid white;
     border-top: none;

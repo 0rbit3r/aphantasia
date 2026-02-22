@@ -9,13 +9,17 @@
 
 :root {
   --color-background: #000000;
-  --color-background-secondary:  #222222;
+  --color-background-secondary: #222222;
   --color-background-tertiary: #333333;
   --color-text: #ececec;
+  --color-text-subtle: #ababab;
 
   --handlebar-thickness: 1.5rem;
   --top-bar-height: 3rem;
   --context-banner-height: 3rem;
+  --action-buttons-bar: 2.4rem;
+  --metadata-bar-height: 2.4rem;
+
 
   --z-graph: 0;
   --z-mode-menu: 10;

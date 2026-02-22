@@ -115,7 +115,7 @@ const renderContentWithBold = (props: ContentProps) => {
     const result = [];
     for (let i = 0; i < parts.length; i += 2) {
         result.push(renderContentWitthItalics({ ...props, text: parts[i]}));
-        result.push(<strong style={{ color: props.color }}>{parts[i + 1]}</strong>);
+        result.push(<strong style={{ color: props.color, "font-weight": "bolder" }}>{parts[i + 1]}</strong>);
     }
     return result;
 }

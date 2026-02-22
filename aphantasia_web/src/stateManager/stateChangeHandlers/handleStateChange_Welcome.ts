@@ -48,11 +48,13 @@ export const handleStateChange_Welcome = (store: AphantasiaStoreGetAndSet,
             title: focusedThought.text,
             author: { id: "username", username: focusedThought.authorName, color: focusedThought.color },
             concepts: [],
-            shape: 0, //focusedNode.shape as NodeShape,
+            shape: 0,
             links: tutorialData.nodes
                 .filter(n => tutorialData.edges.find(e => e.sourceId === n.id && e.targetId === focusedThought.id))
                 .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
-            replies: [],
+            replies: tutorialData.nodes
+                .filter(n => tutorialData.edges.find(e => e.targetId === n.id && e.sourceId === focusedThought.id))
+                .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
             size: 0,
         } satisfies Thought)
         const proxyNodeToHighlight = grafikaData.nodes.find(n => n.id === newState.focus)
