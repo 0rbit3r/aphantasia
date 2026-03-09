@@ -1,4 +1,3 @@
-import { createEffect } from "solid-js";
 import css from "../../styles/components/content.module.css"
 
 export interface ContentProps {
@@ -17,10 +16,6 @@ export const Content = (props: ContentProps) => {
 }
 
 const renderContentWithThoughtLinks = (props: ContentProps) => {
-    createEffect(()=> {
-
-        console.log(props.thoughtColors);
-    })
     // thought links first
     const parts = props.text.split(/\[(.*?)\]\[(.*?)\]/g);//TODO!!! rules for the id part
     //console.log("splittedPartsInLinks : ", parts);

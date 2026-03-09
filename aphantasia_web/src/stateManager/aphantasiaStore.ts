@@ -5,6 +5,7 @@ import type { Thought } from "../model/dto/thought";
 import type { Concept } from "../model/dto/concept";
 import type { User } from "../model/dto/user";
 import type { ExplorationStateDescriptor } from "../model/explorationMode";
+import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -14,12 +15,11 @@ export interface AphantasiaStore {
     // this points to the current exploration state in the array above
     explorationIndex: number;
     
-    contextData?: Thought | Concept | User;
+    contextData?: Thought | Concept | User | ThoughtInMaking;
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;
     modeMenuOpen: boolean;
-    
 }
 
 export interface AphantasiaStoreGetAndSet {
@@ -33,7 +33,7 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         explorationIndex: 0,
         explorationHistory: [],
         splitUiLayout: 'graph',
-        grafika: null!, //todo - this smells...
+        grafika: null!,
         contextDataLoading: false,
         modeMenuOpen: false
     });

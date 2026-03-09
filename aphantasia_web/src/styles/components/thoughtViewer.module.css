@@ -5,8 +5,12 @@
     height: calc(100% - var(--context-banner-height) - 4px);
 }
 
+.thought_viewer_container_land {
+    height: calc(100% - 4px);
+}
+
 .content_container {
-    overflow-y: scroll;
+    overflow-y: auto;
     border: 1px solid white;
     flex: 1;
 }

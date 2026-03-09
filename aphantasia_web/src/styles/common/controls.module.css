@@ -1,0 +1,16 @@
+input {
+    border-radius: 0;
+    background-color: var(--color-background-secondary);
+    border: 1px solid white;
+}
+
+textarea {
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 0;
+    background-color: var(--color-background-secondary);
+}
+
+select {
+    border-radius: 0;
+    background-color: var(--color-background-secondary);
+}

@@ -17,7 +17,7 @@ export const LogoAndQuip = (props: { hide: boolean }) => {
     return <>
         <Show when={!hidden()}>
             <div class={`${css.version_container} ${faded() ? css.hidden : ''}`}>
-                <div class={css.version}>{__APP_VERSION__} - Public Beta</div>
+                <div class={css.version}>{__APP_VERSION__} - Dev Preview</div>
             </div>
         </Show>
         <Show when={!hidden()}>

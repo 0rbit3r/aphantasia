@@ -7,8 +7,11 @@ export interface ExplorationStateDescriptor {
 export type ModeType =
     'epochs' |
     'welcome' |
+    'welcome_create'|
     'explore' |
-    'concepts'
+    'create' |
+    'concepts' |
+    'inbox'
 
 // TODO: think about the difference between the internal exp state and the external one (ie. url path)
 // Question - do we even need an internal path representation?
@@ -30,14 +33,7 @@ export function parsePathToExplorationState(path: string, loggedIn: boolean): Ex
 
 
 export function expStateAsPath(state: ExplorationStateDescriptor) {
-    const firstPart = state.mode === 'welcome' || state.mode === 'explore'
-        ? ':' + state.mode
-        : state.mode;
-
-    const secondPart = state.focus
-        ? '/' + state.focus
-        : '';
-
-    return firstPart + secondPart;
+    if (state.mode === 'welcome') return "/";
+    return "/" + state.focus;
 }
 

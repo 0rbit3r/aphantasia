@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Created with SVG-edit - https://github.com/SVG-Edit/svgedit-->
+
+ <g class="layer" display="inline">
+  <title>Layer 1</title>
+  <polyline fill="none" fill-opacity="null" id="svg_3" opacity="0.5" points="124.26778787374495,124.26778003573418 " stroke="#ffffff" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="null" stroke-opacity="null" stroke-width="29"/>
+  <circle cx="200.42" cy="200" fill="none" fill-opacity="null" id="svg_8" r="101.18" stroke="#ffffff" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="null" stroke-opacity="null" stroke-width="21"/>
+  <circle cx="200.42" cy="200" fill="none" fill-opacity="null" id="svg_9" r="66.85" stroke="#d6d6d6" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="null" stroke-width="50"/>
+  <circle cx="200" cy="200" fill="none" fill-opacity="null" id="svg_10" r="50.73" stroke="#ffffff" stroke-dasharray="null" stroke-linecap="round" stroke-linejoin="null" stroke-width="21" transform="matrix(1, 0, 0, 1, 0, 0)"/>
+ </g>
+</svg>

@@ -1,23 +1,24 @@
-import { createSignal, onCleanup, Show, useContext } from "solid-js";
+import { createSignal, onCleanup, useContext } from "solid-js";
 import css from '../styles/components/modeBar.module.css';
 import { SymbolButton } from "./SymbolButton";
-import fullscreenIcon from '../assets/icons/fullscreen.png';
-import backIcon from '../assets/icons/go_back.png';
-import forwardIcon from '../assets/icons/go_forward.png';
-import bigGraphIcon from '../assets/icons/big_graph.png';
-import notificationsIcon from '../assets/icons/bell.png';
+import fullscreenIcon from '../assets/icons/fullscreen.svg';
+import backIcon from '../assets/icons/go_back.svg';
+import forwardIcon from '../assets/icons/go_forward.svg';
 import appleIcon from '../assets/icons/apple.svg'
 import { navigateBack, navigateForward } from "../stateManager/backAndForward";
 import { AuthContext } from "../contexts/authContext";
-import { isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureBecauseAppleJustDecidedToMakeMeScreamOneDay as isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureAndExtraCssForEverySingleElementBecauseiOSJustDecidedToMakeMeScreamOneDay } from "../utility/getOperatingSystem";
+import { isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureBecauseAppleJustDecidedToMakeMeScreamOneDay as isAppleGodHelpUs } from "../utility/getOperatingSystem";
 import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
+import homeIcon from '../assets/icons/home.svg';
+import epochIcon from '../assets/icons/galaxy.svg';
+import exploreIcon from '../assets/icons/bead.svg';
+import createIcon from '../assets/icons/create_thought.svg';
+import conceptsIcon from '../assets/icons/concepts.png';
+import nothing from '../assets/icons/nothing.svg';
+import envelopeIcon from '../assets/icons/envelope.svg';
+import { getCurrentExpState } from "../stateManager/getCurrentExpState";
 
-
-interface ModeBarProps {
-  fullscreenButtonEnabled?: boolean;
-}
-
-export default function ModeBar(props: ModeBarProps) {
+export default function ModeBar() {
   const authContext = useContext(AuthContext);
   const store = useContext(AphantasiaStoreContext)!;
 
@@ -36,33 +37,48 @@ export default function ModeBar(props: ModeBarProps) {
     if (isFullscreen()) closeFullscreen();
   });
 
-  return <>
-    
-      <div class={css.mode_bar_container} style={{
-        ['border-bottom']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
-      }}>
+  const images = {
+    epochs: epochIcon,
+    welcome: homeIcon,
+    welcome_create: createIcon,
+    explore: exploreIcon,
+    create: createIcon,
+    concepts: conceptsIcon,
+    inbox: envelopeIcon
+  };
 
-        <SymbolButton action={() => { navigateBack(store) }} img={<img src={backIcon} />} />
-        <SymbolButton action={() => { navigateForward(store) }} img={<img src={forwardIcon} />} />
-        <div class={css.big_middle_button}
-          style={{
-            ['border-bottom']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white'),
-            ['border-right']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white'),
-            ['border-left']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
-          }}>
-          <SymbolButton
-            action={() => { store.set('modeMenuOpen', !store.get.modeMenuOpen) }}
-            img={<img src={bigGraphIcon}></img>} />
-        </div>
-        <SymbolButton action={() => { }} img={<img src={notificationsIcon}></img>} />
-        <Show when={props.fullscreenButtonEnabled || (props.fullscreenButtonEnabled === undefined)}>
-          <SymbolButton action={handleFullScreenButton}
-            img={<img src={
-              isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureAndExtraCssForEverySingleElementBecauseiOSJustDecidedToMakeMeScreamOneDay()
-                ? appleIcon
-                : fullscreenIcon}></img>} />
-        </Show>
+  return <>
+    <div class={css.mode_bar_container} style={{
+      ['border-bottom']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
+    }}>
+
+      <SymbolButton action={() => { navigateBack(store) }} img={backIcon}
+        dim={store.get.explorationIndex === 0} />
+      <SymbolButton action={() => { navigateForward(store) }} img={forwardIcon}
+        dim={store.get.explorationIndex === store.get.explorationHistory.length - 1} />
+      <div class={css.big_middle_button}
+        style={{
+          ['border-bottom']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white'),
+          ['border-right']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white'),
+          ['border-left']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
+        }}>
+        <SymbolButton
+          action={() => { store.set('modeMenuOpen', !store.get.modeMenuOpen); store.set('splitUiLayout', 'graph'); }}
+          img={store.get.modeMenuOpen
+            ? nothing
+            : images[getCurrentExpState(store).mode]} />
       </div>
+      <SymbolButton action={() => { }} img={envelopeIcon}
+        dim={getCurrentExpState(store).mode !== 'inbox'} />
+      <SymbolButton action={handleFullScreenButton}
+        img={
+          isAppleGodHelpUs()
+            ? appleIcon
+            : fullscreenIcon}
+        dim={!isFullscreen()}
+      />
+
+    </div>
   </>
 }
 

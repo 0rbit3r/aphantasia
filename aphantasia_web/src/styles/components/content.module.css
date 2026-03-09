@@ -1,7 +1,7 @@
 .content_container {
   padding: 8px;
   white-space: pre-wrap;
-  overflow: scroll;
+  overflow: auto;
 
   z-index: var(--z-content);
 }

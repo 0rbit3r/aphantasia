@@ -1,100 +1,348 @@
 {
   "nodes": [
     {
+      "id": "3_axioms_of_links",
+      "text": "3 axioms of links",
+      "color": "#5d52f2",
+      "content": "[links_and_replies][Go back to \"Links and Replies\"]\n\nThere are three rules for creating links:\n\n1) **Linked thoughts must exist** \n       (at least at the time of creation)\n2) **Links can only ever point backwards in time**\n      (how can you link to something that doesn't exist?)\n3) **A thought can have anything from 0 to 3 links**\n      (but it can get more replies than you can count!)",
+      "authorName": "Blu",
+      "date": "2026-02-24 20:15"
+    },
+    {
       "id": "about",
       "text": "About",
-      "color": "#583bff",
-      "content": "[hello_explorer][TODO_DELETE]\n\nClick on either of the links below to learn more.\n\n- [privacy_policy][Our privacy policy]\n\n- [cookies][How we use cookies]\n\n- [the_project][More information about the project]\n",
+      "color": "#5d52f2",
+      "content": "Click on either of the links below to learn more.\n\n- [the_project][More information about the project]\n\n- [cookies_and_privacy_policy][Our privacy policy]\n\n- [contact][Contact]\n\n\n\n  [hello_explorer][Go back to the beginning]\n",
       "authorName": "Blu",
-      "date": "2026-02-21 02:36"
+      "date": "2026-02-28 01:34"
     },
     {
-      "id": "cookies",
-      "text": "Cookies",
-      "color": "#583bff",
-      "content": "Aphantasia uses strictly functional cookies for:\n- Persistent login\n- Persistent settings (such as graph size)\n\nWe use no third party cookies or services.",
+      "id": "age_requirement",
+      "text": "Age requirement",
+      "color": "#5d52f2",
+      "content": "\nTo continue, you must be at least 13 years of age.\n\n   [yes][I am 13 years or older]\n   \n   [no][I am not yet old enough]\n   \n\n\n[almost_there!][Back to \"Almost there!\"]",
       "authorName": "Blu",
-      "date": "2026-02-20 22:41"
+      "date": "2026-02-26 01:44"
     },
     {
-      "id": "privacy_policy",
-      "text": "Privacy policy",
-      "color": "#583bff",
-      "content": "We store following data:\n- Account data (registered users only)\n\t- Username\n\t- Password hash\n\t- Email (if provided)\n\t- User settings\n\t- Any created content \n- Technical logs related to hosting - notably:\n\t- IP address\n\t- Date and time of requests\n\t- Browser/client type\n\nAccount information is kept as long as the account exists.\n\nAccess **logs are stored for up to one month** since creation, after which they are discarded.\n\n**Collected data is not** and will not be **sold to third parties** nor will it be used for tasks unrelated to development, maintenance or promotion of the website.\n\nNote however, that any **content that you create is public** and therefore free for anyone to use as they see fit.",
+      "id": "be_respectful",
+      "text": "Be respectful",
+      "color": "#5d52f2",
+      "content": "\n \n When we disagree, that is grounds for a discussion, not animosity.",
       "authorName": "Blu",
-      "date": "2026-02-21 19:49"
+      "date": "2026-02-26 00:46"
+    },
+    {
+      "id": "be_yourself",
+      "text": "Be yourself",
+      "color": "#5d52f2",
+      "content": "If you are here, there is something human about you - put some of that in here - your projects, your day, share what you find interesting, criticise what you deem worthy of a critique.\n\nJust don't waste time and space on aimless arguing, troll feeding, culture wars crap and, please, don't use AI to generate thoughts.",
+      "authorName": "Blu",
+      "date": "2026-02-26 18:45"
+    },
+    {
+      "id": "code_of_conduct",
+      "text": "Code of conduct",
+      "color": "#5d52f2",
+      "content": "Aphantasia has three rules:\n\n[be_yourself][1) Be yourself]\n\n[be_respectful][2) Be respectful]\n\n[use_your_head][3) Use your head]\n\n\n[yes][Back to \"Yes\"]",
+      "authorName": "Blu",
+      "date": "2026-02-26 01:45"
+    },
+    {
+      "id": "collected_data",
+      "text": "Collected data",
+      "color": "#5d52f2",
+      "content": "We store the following:\n- Account data (registered users only)\n\t- **Username**\n\t- **Password hash**\n\t- **Email** (if provided)\n\t- **User settings**\n\t- Any created **content**\n- Technical logs related to hosting - notably:\n\t- **IP address**\n\t- **Date and time of requests**\n\t- **Operating system**\n\t- **Browser/client type**\n\nAccess **logs are stored for up to one month** since creation, after which they are **deleted**.",
+      "authorName": "Blu",
+      "date": "2026-03-01 00:03"
+    },
+    {
+      "id": "contact",
+      "text": "Contact",
+      "color": "#5d52f2",
+      "content": "For any Aphantasia-related needs send us a mail to:\n\naphantastic[dot]channel[at]gmail[dot]com",
+      "authorName": "Blu",
+      "date": "2026-02-26 01:04"
+    },
+    {
+      "id": "cookies_and_privacy_policy",
+      "text": "Cookies and Privacy policy",
+      "color": "#5d52f2",
+      "content": "   **Cookies**\n\nThis website uses **strictly functional cookies** for:\n- Persistent login\n- Persistent settings (such as graph size)\n\nWe use **no third party cookies or services**.\n \n  **Your data**\n\n**Collected data is not** and will not be **sold to third parties** nor will it be used for tasks unrelated to development, maintenance or promotion of the website.\n\nNote however, that any **content that you create is public** and therefore free for anyone to use as they see fit.\n\n[collected_data][Click here to see which data we collect]\n\n  **Account deletion**\n  \nUsers can delete their account immediately and permanently from the main menu.\n\nHowever, any content reproduced by others (mentions, quotes, replies...) will remain intact.\n\n",
+      "authorName": "Blu",
+      "date": "2026-03-01 00:05"
+    },
+    {
+      "id": "no",
+      "text": "No",
+      "color": "#5d52f2",
+      "content": "Then you may not enter.\n\nPlease, close this page and go about your usual business.",
+      "authorName": "Blu",
+      "date": "2026-02-24 20:07"
     },
     {
       "id": "the_project",
       "text": "The project",
-      "color": "#583bff",
-      "content": "Aphantasia is a one-developer project that aims to create a self-hosted social space focused on humans and what they have to say.\n\nIf you want to hear me talk about it (and do a bunch of other graph-related stuff) **check out my youtube channel**:\nhttps://www.youtube.com/@AphantasticChannel\n\n\n**The code is open source** and can be found here:\n\nAphantasia: https://github.com/0rbit3r/aphantasia\n\t(front end and backend)\n\nGrafika: https://github.com/0rbit3r/grafika\n\t(a javascript graph library powering Aphantasia)\n",
+      "color": "#5d52f2",
+      "content": "Aphantasia is a project aiming to create a self-hosted social space focused on humans and what they have to say.\n\n**The code is open source** and can be found here:\nhttps://github.com/0rbit3r/aphantasia\n  (server and web app)\nhttps://github.com/0rbit3r/grafika\n  (a Javascript library powering Aphantasia's graph view)\n  \n  \nAccompanying youtube channel:\nhttps://www.youtube.com/@AphantasticChannel",
       "authorName": "Blu",
-      "date": "2026-02-21 02:35"
+      "date": "2026-03-01 00:06"
     },
     {
-      "id": "3_axioms_of_links",
-      "text": "3 axioms of links",
-      "color": "#27b909",
-      "content": "[links_and_replies][Go back to \"Links and Replies\"]\n\nThere are three rules for creating links:\n\n1) **Linked thoughts must exist** \n       (at least at the time of creation)\n2) **Links can only ever point backwards in time**\n      (how can you link to something that doesn't exist?)\n3) **Every thought contains no more than 3 links**\n      (because 2 is not enough and 4 is too many)",
-      "authorName": "Green",
-      "date": "2026-02-22 16:26"
+      "id": "use_your_head",
+      "text": "Use your head",
+      "color": "#5d52f2",
+      "content": "This place is 13+.\n\nAs such, please try to act in ways, that promote a safe environment \n\nIf you rather have it spelled out:\n__porn, gore, violence, spam, propaganda, racism, sexism__... did I miss any?\n          ...**don't belong on Aphantasia**.\n\nJust **use your head** and you will be fine. You're a smart cookie. \n\n**I believe in you;-)**",
+      "authorName": "Blu",
+      "date": "2026-03-01 00:08"
+    },
+    {
+      "id": "yes",
+      "text": "Yes",
+      "color": "#5d52f2",
+      "content": "Then you may continue.",
+      "authorName": "Blu",
+      "date": "2026-02-24 20:07"
+    },
+    {
+      "id": "link_adder",
+      "text": "Link Adder",
+      "color": "#00AC78",
+      "content": "Link adder is just an overlay that will support the following ways of adding a thought to your content:\n\n[link_from_graph][Link From Graph]\n[from_bookmarks][From Bookmarks]",
+      "authorName": "Dev",
+      "date": "2026-03-03 23:25"
+    },
+    {
+      "id": "thought_creation_form",
+      "text": "Thought creation form",
+      "color": "#00AC78",
+      "content": "The form will give you a way to:\n- write the title and contents of the new thought\n- select its shape\n- add up to three links in the content\n\nFor this I imagine a simple form with the desired text fields, shape selector and two buttons - Links and Preview\n\nLinks will lead you to the [link_adder][Link Adder] component \n\nAnd Preview button will lead to... [preview][Preview]\n",
+      "authorName": "Dev",
+      "date": "2026-03-03 23:29"
+    },
+    {
+      "id": "thought_creation",
+      "text": "Thought creation",
+      "color": "#00AC78",
+      "content": "To create a thought we will need:\n\n[thought_creation_form][Thought creation form]\n\n[thought_creation_endpoint][Thought creation endpoint]\n\n",
+      "authorName": "Dev",
+      "date": "2026-03-03 23:48"
+    },
+    {
+      "id": "dev_log",
+      "text": "dev_log",
+      "color": "#00AC78",
+      "content": "I decided to lead a dev log here because why not...\n\nRight now I'm the middle of creating the thought creator.\n\nThe website you are exploring right now is quite unready and in pretty much all ways unfinished.\n\nBut here is **what is works** so far:\n- **split screen** view with dynamic resize\n- **thought viewe**r\n- **tutorial mode**\n- **history of exploration**\n- **Some fancy animations**\n\nThere is also a **new and shiny backend** (or the architecture and basic functionality) but that is not yet used.\n\nThe thoughts you are reading now are written in obsidian and then converted by an AI generated python script into json that can be easily imported in the web app.\n\nIt is not the nicest solution (for example the dates of all of these thoughts are all over the place...) but it works just well enough.\n\n\n[explore_some_more?][Go back]\n",
+      "authorName": "Dev",
+      "date": "2026-03-03 23:28"
+    },
+    {
+      "id": "to_do",
+      "text": "to_do",
+      "color": "#00AC78",
+      "content": "**Central hub for Supertasks**. \n\nHere are the functionalities that are waiting to be done:\n(red is not finished, light blue means finished and this greenish turquoise means I'm working on it right now)\n\n[thought_creation][Thought creation]\n[robust_mode_management][Robust mode management]\n[login_and_registration_forms][Login and registration forms]\n[epochs_support][Epochs support]\n[layout_service][Layout service]\n[settings][Settings]\n[hub][Hub]\n\nAt this point the core will be done.\n\n[concepts][Concepts]\n[bookmarks][Bookmarks]\n[chat][Chat]\n[follows][Follows]\n[color_modes][Color modes]\n\nAnd we're done.\n\n[dev_log][back to dev_log]",
+      "authorName": "Dev",
+      "date": "2026-03-03 23:44"
+    },
+    {
+      "id": "robust_mode_management",
+      "text": "Robust mode management",
+      "color": "#16E0EE",
+      "content": "Right now the frontend mode management works in theory but is flimsy in practice. (mainly the boundary between tutorial and tutorial create thoughts...)\n\nThe goal is to make the whole workflow of mode/focus switching standardized and easy to reason about.\n\nEven if in the end it is gonna be a bunch of ifs asking about current state...\n\nUpdate: I think I got it.\nBasically this:\ninterface StateContract {\n\tgrafikaSettings: GrafikaSettings;\n\tinitialize: (store, focus?: string) => void;\n\thangleFocusChange: (store, focus?: string) => void;\n\tdispose: (store, newState?) => void;\n}\n\n\nInitialize will load the state, including but not limited to data, effects, interaction events subscription (node tap...) and more.\n\nDispose will cleanup after itself so that any state can use the graph.\n\nhandleFocusChange spawns a unicorn and the grafikaSettings stop trams in Brno when not null.\n\n",
+      "authorName": "Dev_done",
+      "date": "2026-03-09 20:19"
+    },
+    {
+      "id": "thought_creation_endpoint",
+      "text": "Thought creation endpoint",
+      "color": "#16E0EE",
+      "content": "The backend logic for thought creation is pretty much done I think.\n\nI put it here so that there is at least something done.",
+      "authorName": "Dev_done",
+      "date": "2026-03-03 23:06"
+    },
+    {
+      "id": "bookmarks",
+      "text": "Bookmarks",
+      "color": "#BD240A",
+      "content": "Bookmarks will be a way to:\n- save a thought for later reading\n- save a thought for later reply\n- give a tiny meaningless feedback to the author",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:32"
+    },
+    {
+      "id": "chat",
+      "text": "Chat",
+      "color": "#BD240A",
+      "content": "Imagine a graph-based non-linear real time chat if you catch my drift.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:33"
+    },
+    {
+      "id": "color_modes",
+      "text": "Color modes",
+      "color": "#BD240A",
+      "content": "I think it might be interesting to add a color profile where color is based on shape, not user preferences.\n\nThis way you could quickly see at the very least concentrations of hearts and crosses to see a sentiment around something.\n\nIt could also be a foot in the door for further color modes (for colorblind folk) or simulation modes and other graph behaviors..",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:35"
+    },
+    {
+      "id": "concepts",
+      "text": "Concepts",
+      "color": "#BD240A",
+      "content": "Concepts are like hashtags but for hip and cool people like you and me.\n\nThey look like this:\n_games\n\nand they will be used to categorize your thoughts and to explore thoughts of specific topic\n\nThey can also be nested up to three levels deep:\n_games_teamFortress2_randomCrits",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:38"
+    },
+    {
+      "id": "epochs_support",
+      "text": "Epochs support",
+      "color": "#BD240A",
+      "content": "Epochs will be sort of like pages of Aphantasia's graph.\n\nLooking at tens of thousands of nodes would be really cool, but that might prove to be expensive, impractical and just generally harder to code.\n\nThe solution is to limit the scope to a small number. I'm thinking three thousand.\n\nThen you can browse Aphantasia's history like a book with temporal imprints of its context next to one another.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:41"
+    },
+    {
+      "id": "follows",
+      "text": "Follows",
+      "color": "#BD240A",
+      "content": "You will be able to follow your fellow aphantasians.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:41"
+    },
+    {
+      "id": "hub",
+      "text": "Hub",
+      "color": "#BD240A",
+      "content": "aka Notifications that do not actively notify\n\nJust a graph of things that are relevant to you (replies to your thoughts, activity of followed users...)",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:43"
+    },
+    {
+      "id": "layout_service",
+      "text": "Layout service",
+      "color": "#BD240A",
+      "content": "A stand-alone service that will compute the positions in the background so that all users get a shared layout fresh out of the oven.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:42"
+    },
+    {
+      "id": "login_and_registration_forms",
+      "text": "Login and registration forms",
+      "color": "#BD240A",
+      "content": "word",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:43"
+    },
+    {
+      "id": "settings",
+      "text": "Settings",
+      "color": "#BD240A",
+      "content": "Settings will be a special mode - ie. settings will have its own graph.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:46"
+    },
+    {
+      "id": "from_bookmarks",
+      "text": "From Bookmarks",
+      "color": "#BD240A",
+      "content": "Link can be added from the list of bookmarked thoughts.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:26"
+    },
+    {
+      "id": "link_from_graph",
+      "text": "Link From Graph",
+      "color": "#BD240A",
+      "content": "A link can be added by clicking a thought in the graph.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:25"
+    },
+    {
+      "id": "preview",
+      "text": "Preview",
+      "color": "#BD240A",
+      "content": "Because the textarea of the thought creator doesn't support pretty colors and link rendering, preview will be there to quickly see what the thought is going to actually look like.\n\nIt will also be the place where you will find the create button.",
+      "authorName": "Dev_todo",
+      "date": "2026-03-03 23:30"
     },
     {
       "id": "about_thoughts",
       "text": "About Thoughts",
       "color": "#27b909",
-      "content": " [join][Go back to \"Join\"]\n\n**The building block of Aphantasia is a thought**.\n\nA thought, just like a comment or a forum post, is just **some piece of text** written by some user.\n\nThis thought, for example, has a title **About Thoughts** and was written by user named **Green**.\n\n\nBeyond that, thoughts also have a **date of creation**, **color**, **shape**, **size** and they are connected to one another by **links** which we will take a look next.",
+      "content": "**The building block of Aphantasia is a thought**.\n\nA thought, just like a comment or a forum post, is just **a piece of text** written by a user.\n\nThis thought, for example, has a title **About Thoughts** and was written by user named **Green**.\n\n [join][Go back to \"Join\"]",
       "authorName": "Green",
-      "date": "2026-02-22 16:24"
+      "date": "2026-02-28 01:34"
     },
     {
-      "id": "congrats!",
-      "text": "Congrats!",
+      "id": "almost_there!",
+      "text": "Almost there!",
       "color": "#27b909",
-      "content": "You are now ready to dive in.\n",
+      "content": "Now you are ready to join Aphantasia.\n\nBut before you do we need to go through a few formalities.\n\n[link_me!][Back to \"Link me!\"]\n",
       "authorName": "Green",
-      "date": "2026-02-21 03:32"
+      "date": "2026-02-28 01:38"
     },
     {
-      "id": "creating_a_thought",
-      "text": "Creating a thought",
+      "id": "aphantasia_the_condition",
+      "text": "Aphantasia the condition",
       "color": "#27b909",
-      "content": "[non-linearity][Go back to \"Non-linearity\"]\n\n\"\"\"Here the user will be lead to create their own thought\"\"\"\n\n",
+      "content": "This project is named after a fascinating phenomena.\n\nPeople with aphantasia (sometimes called aphants) are unable to visualize mental images.\n\nHow does one imagine when their imagination cannot see?\n\n\n\nThey create a website where they can visualise thoughts with others, of course:-P\n\n[trivia][Trivia]",
       "authorName": "Green",
-      "date": "2026-02-22 16:53"
+      "date": "2026-02-26 01:28"
+    },
+    {
+      "id": "explore_some_more?",
+      "text": "Explore some more?",
+      "color": "#27b909",
+      "content": "So you are a true explorer, huh?  [register][Registration can wait]\n\nHere you can find more information about the project, its features, limitations promises and whatever else I might wanna add here.",
+      "authorName": "Green",
+      "date": "2026-02-26 01:14"
+    },
+    {
+      "id": "growth",
+      "text": "Growth",
+      "color": "#27b909",
+      "content": "\n**Thoughts grow as they gather replies.**\n\nThis is good to know. **Whatever you link to**, whether you praise, criticise, argue or support, a link **will always bump the size** of its target.\n\n[mechanics_and_features][Mechanics and Features]",
+      "authorName": "Green",
+      "date": "2026-02-26 01:27"
+    },
+    {
+      "id": "having_thoughts",
+      "text": "Having thoughts",
+      "color": "#27b909",
+      "content": "Take a loook at the **big button at the top of the screen**.\n\nThis button **is** your **Mode selection** and you can use it to change the mode of exploration as well as to access the **menu**, **home**, or as we will do right now, **thought creation tool**.\nIt is the button with the prominent \"**+**\" on it.\n\n**Click Mode button, and select thought creation tool.**\n\nThought creation tool as the coolest thing you've ever seen. I just have to build it first.\n\n[non-linearity][Back to \"Non-linearity\"]\n",
+      "authorName": "Green",
+      "date": "2026-02-28 01:37"
     },
     {
       "id": "join",
       "text": "Join",
       "color": "#27b909",
-      "content": "[hello_explorer][TODO_DELETE]\n\n**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles to continue**.",
+      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles to continue**.\n\n\n  [hello_explorer][Go back to the beginning]\n",
       "authorName": "Green",
-      "date": "2026-02-20 23:28"
+      "date": "2026-02-28 01:34"
     },
     {
       "id": "links_and_replies",
       "text": "Links and Replies",
       "color": "#27b909",
-      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nLet's explore a few more ways to navigate around.\n\nThe **underlined text** 4 lines above **is** called **a link**.\n\n**Links** reference the past and **can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **mention** what you've talked about\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\n\n**Reply is the opposite end of link** and \n\nin practice it's a way to explore forwards in time. \n\n**This thought has two** replies:\n\n(or more specifically, two **continuations**)",
+      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nThe **underlined text** two lines above **is** called **a link**.\n\n**Links** reference the past and **can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **mention** what you've talked about\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\n\n**Reply is the opposite end of link** and in practice it's a way to explore forwards in time. \n\n**This thought has two** replies you can click on:",
       "authorName": "Green",
-      "date": "2026-02-22 16:17"
+      "date": "2026-02-28 01:38"
     },
     {
       "id": "non-linearity",
       "text": "Non-linearity",
       "color": "#27b909",
-      "content": "A consequence of the [3_axioms_of_links][3 axioms of links] and the key to mastering [reading_the_graph][Reading the graph] is __non linearity__.\n\nTake a look at this thought in the graph view - since **it links two thoughts at once, it can be arrived to from two different directions**.\n\nWhen you get to exploring Aphantasia, you will see this pattern everywhere - **thoughts reply, continue or expand** on other thoughts, **sometimes all at once**.\n\nThoughts that reply to more than one thought are called **associations**.",
+      "content": "A consequence of the [3_axioms_of_links][3 axioms of links] and the key to mastering [reading_the_graph][Reading the graph] is __non linearity__.\n\nTake a look at this thought in the graph view - since **it links two thoughts at once, it can be arrived to from two different directions**.\n\nWhen you get to exploring Aphantasia, you will see this pattern everywhere - **thoughts reply, continue or expand** on other thoughts, **sometimes all at once**.",
       "authorName": "Green",
-      "date": "2026-02-22 13:19"
+      "date": "2026-02-22 21:21"
     },
     {
       "id": "reading_the_graph",
       "text": "Reading the graph",
       "color": "#27b909",
-      "content": "[links_and_replies][Go back to \"Links and Replies\"]\n\nThe colorful animation you hopefully see is called a **graph view**.\n\nNow, notice that in the graph view the links are asymmetric - the replied thought is always at the wide base of a connection while **the linking thought gets the narrow end**.\n\nIn other words, if you imagine the link to be an **arrow**, it **will always point towards the future**.",
+      "content": "The colorful animation you hopefully see is called a **graph view**.\n\nNow, notice that in the graph view the links are asymmetric - the replied thought is always at the wide base of the connection while **the linking thought gets the narrow end**.\n\nIn other words, if you imagine the link to be an **arrow**, it **will always point towards the future**.\n\n[links_and_replies][Go back to \"Links and Replies\"]",
       "authorName": "Green",
-      "date": "2026-02-22 16:17"
+      "date": "2026-02-28 01:37"
     },
     {
       "id": "log_in",
@@ -108,46 +356,238 @@
       "id": "register",
       "text": "Register",
       "color": "#f5841b",
-      "content": "",
+      "content": "[use_your_head][Back to \"Use your head]\n\n\"\"\"This will hold a registration form\"\"\"\n\n",
       "authorName": "Orange",
-      "date": "2026-02-21 03:31"
+      "date": "2026-02-26 01:46"
+    },
+    {
+      "id": "a_word_on_passwords",
+      "text": "A word on passwords",
+      "color": "#f30b0b",
+      "content": "Before you [register][Register], let's have a little PSA.\n\n**Do not reuse passwords**\n\nThat is a great general advice, not just one for websites hosted by some rando.\n\nYour **browser** likely already supports **password** management and **generation** - take advantage of it.",
+      "authorName": "Red",
+      "date": "2026-02-23 21:49"
+    },
+    {
+      "id": "boo",
+      "text": "Boo",
+      "color": "#f30b0b",
+      "content": "[be_respectful][My foot, you pretentious dolt]\n\nWhile the rules are in place for a reason...\n\nsometimes it's fun being someone else.\n\nSome things are so bad and stupid it needs to be said.\n\nAnd sometimes, you just gotta turn that brain off...\n\nThis is not an invitation to break the code of conduct... only not to follow it too rigidly.\n\nAll **in good faith** of course;-)",
+      "authorName": "Red",
+      "date": "2026-02-28 01:37"
+    },
+    {
+      "id": "link_me!",
+      "text": "Link me!",
+      "color": "#f30b0b",
+      "content": "Hello I'm red.\n\nWould you be so kind and connect me to my friend Green over there?\n\n",
+      "authorName": "Red",
+      "date": "2026-02-26 01:47"
+    },
+    {
+      "id": "quantity",
+      "text": "Quantity",
+      "color": "#f30b0b",
+      "content": "Or lack there of...\n\n**Users can create only 3 thoughts a day.**\n\nHarsh rule I know... but think of all the money I will save on database space:3\n\n[mechanics_and_features][Mechanics and Features]",
+      "authorName": "Red",
+      "date": "2026-02-26 01:26"
+    },
+    {
+      "id": "attributions",
+      "text": "Attributions",
+      "color": "#cccccc",
+      "content": "[explore_some_more?][Explore some more?] is a thought.\n\n",
+      "authorName": "White",
+      "date": "2026-03-07 18:54"
     },
     {
       "id": "hello_explorer",
       "text": "Hello explorer",
       "color": "#cccccc",
-      "content": "",
+      "content": "🥚",
       "authorName": "White",
-      "date": "2026-02-20 22:20"
+      "date": "2026-02-28 01:35"
+    },
+    {
+      "id": "mechanics_and_features",
+      "text": "Mechanics and Features",
+      "color": "#cccccc",
+      "content": "[explore_some_more?][Explore some more?] is where you came from.",
+      "authorName": "White",
+      "date": "2026-02-26 01:26"
+    },
+    {
+      "id": "temp",
+      "text": "TEMP",
+      "color": "#cccccc",
+      "content": "This thought will be created by the user in the final version - bridging the gap between [having_thoughts][Having thoughts] and [link_me!][Link me!]\n\nStill haven't started on the thought creation tool, but it's coming.",
+      "authorName": "White",
+      "date": "2026-02-26 00:49"
+    },
+    {
+      "id": "trivia",
+      "text": "Trivia",
+      "color": "#cccccc",
+      "content": "[explore_some_more?][Explore some more?] is a link",
+      "authorName": "White",
+      "date": "2026-02-26 01:28"
     }
   ],
   "edges": [
     {
-      "targetId": "about",
-      "sourceId": "hello_explorer"
-    },
-    {
-      "targetId": "about",
-      "sourceId": "privacy_policy"
-    },
-    {
-      "targetId": "about",
-      "sourceId": "cookies"
+      "targetId": "3_axioms_of_links",
+      "sourceId": "links_and_replies"
     },
     {
       "targetId": "about",
       "sourceId": "the_project"
     },
     {
-      "targetId": "3_axioms_of_links",
-      "sourceId": "links_and_replies"
+      "targetId": "about",
+      "sourceId": "cookies_and_privacy_policy"
+    },
+    {
+      "targetId": "about",
+      "sourceId": "contact"
+    },
+    {
+      "targetId": "about",
+      "sourceId": "hello_explorer"
+    },
+    {
+      "targetId": "age_requirement",
+      "sourceId": "yes"
+    },
+    {
+      "targetId": "age_requirement",
+      "sourceId": "no"
+    },
+    {
+      "targetId": "age_requirement",
+      "sourceId": "almost_there!"
+    },
+    {
+      "targetId": "code_of_conduct",
+      "sourceId": "be_yourself"
+    },
+    {
+      "targetId": "code_of_conduct",
+      "sourceId": "be_respectful"
+    },
+    {
+      "targetId": "code_of_conduct",
+      "sourceId": "use_your_head"
+    },
+    {
+      "targetId": "code_of_conduct",
+      "sourceId": "yes"
+    },
+    {
+      "targetId": "cookies_and_privacy_policy",
+      "sourceId": "collected_data"
+    },
+    {
+      "targetId": "link_adder",
+      "sourceId": "link_from_graph"
+    },
+    {
+      "targetId": "link_adder",
+      "sourceId": "from_bookmarks"
+    },
+    {
+      "targetId": "thought_creation_form",
+      "sourceId": "link_adder"
+    },
+    {
+      "targetId": "thought_creation_form",
+      "sourceId": "preview"
+    },
+    {
+      "targetId": "thought_creation",
+      "sourceId": "thought_creation_form"
+    },
+    {
+      "targetId": "thought_creation",
+      "sourceId": "thought_creation_endpoint"
+    },
+    {
+      "targetId": "dev_log",
+      "sourceId": "explore_some_more?"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "thought_creation"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "robust_mode_management"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "login_and_registration_forms"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "epochs_support"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "layout_service"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "settings"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "hub"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "concepts"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "bookmarks"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "chat"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "follows"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "color_modes"
+    },
+    {
+      "targetId": "to_do",
+      "sourceId": "dev_log"
     },
     {
       "targetId": "about_thoughts",
       "sourceId": "join"
     },
     {
-      "targetId": "creating_a_thought",
+      "targetId": "almost_there!",
+      "sourceId": "link_me!"
+    },
+    {
+      "targetId": "aphantasia_the_condition",
+      "sourceId": "trivia"
+    },
+    {
+      "targetId": "explore_some_more?",
+      "sourceId": "register"
+    },
+    {
+      "targetId": "growth",
+      "sourceId": "mechanics_and_features"
+    },
+    {
+      "targetId": "having_thoughts",
       "sourceId": "non-linearity"
     },
     {
@@ -173,6 +613,42 @@
     {
       "targetId": "log_in",
       "sourceId": "hello_explorer"
+    },
+    {
+      "targetId": "register",
+      "sourceId": "use_your_head"
+    },
+    {
+      "targetId": "a_word_on_passwords",
+      "sourceId": "register"
+    },
+    {
+      "targetId": "boo",
+      "sourceId": "be_respectful"
+    },
+    {
+      "targetId": "quantity",
+      "sourceId": "mechanics_and_features"
+    },
+    {
+      "targetId": "attributions",
+      "sourceId": "explore_some_more?"
+    },
+    {
+      "targetId": "mechanics_and_features",
+      "sourceId": "explore_some_more?"
+    },
+    {
+      "targetId": "temp",
+      "sourceId": "having_thoughts"
+    },
+    {
+      "targetId": "temp",
+      "sourceId": "link_me!"
+    },
+    {
+      "targetId": "trivia",
+      "sourceId": "explore_some_more?"
     }
   ]
 }

@@ -1,8 +1,8 @@
 import { For, Show, useContext } from "solid-js";
-import type { Thought } from "../model/dto/thought"
-import css from '../styles/components/repliesScroller.module.css';
-import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
-import { handleForwardExploration } from "../stateManager/handleForwardExploration";
+import css from '../../styles/components/repliesScroller.module.css';
+import { AphantasiaStoreContext } from "../../contexts/aphantasiaStoreContext";
+import type { Thought } from "../../model/dto/thought";
+import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 
 
 

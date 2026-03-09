@@ -2,7 +2,7 @@ import { Content } from "./Content";
 import css from "../../styles/components/thoughtViewer.module.css";
 import { createEffect, Show, useContext } from "solid-js";
 import { SymbolButton } from "../SymbolButton";
-import bookmarkIcon from '../../assets/icons/bookmark.png';
+import bookmarkIcon from '../../assets/icons/bookmark.svg';
 import trashIcon from '../../assets/icons/trash.png';
 import paperPlaneIcon from '../../assets/icons/paper_plane.png';
 import { AphantasiaStoreContext } from "../../contexts/aphantasiaStoreContext";
@@ -10,8 +10,8 @@ import { isThought } from "../../utility/isTypeOf";
 import type { Thought } from "../../model/dto/thought";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
-import { RepliesScroller } from "../RepliesScroller";
 import { ScreenOrientation } from "../../contexts/screenOrientationContext";
+import { RepliesScroller } from "./RepliesScroller";
 
 
 export interface ThoughtViewerProps {
@@ -22,13 +22,16 @@ export const ThoughtViewer = () => {
     const scrOrientation = useContext(ScreenOrientation)!;
     let contentContainerRef!: HTMLDivElement;
 
-    createEffect(()=>{
-        if (isThought(store.get.contextData) && store.get.contextData.id){
+    createEffect(() => {
+        if (isThought(store.get.contextData) && store.get.contextData.id) {
             contentContainerRef.scrollTop = 0;
         }
     })
 
-    return <div class={css.thought_viewer_container}>
+    return <div classList={{
+        [css.thought_viewer_container]: true,
+        [css.thought_viewer_container_land]: scrOrientation.isLandscape()
+    }}>
         <Show when={!store.get.contextDataLoading
             && isThought(store.get.contextData)}>
             <div class={css.content_container} ref={contentContainerRef}>
@@ -46,9 +49,9 @@ export const ThoughtViewer = () => {
             </div>
             <RepliesScroller />
             <div class={`${css.action_buttons_bar} ${(!scrOrientation.isLandscape() && store.get.splitUiLayout !== 'content') ? css.action_buttons_bar_collapsed : ''}`}>
-                <SymbolButton action={() => { }} img={<img src={trashIcon} />} />
-                <SymbolButton action={() => { }} img={<img src={bookmarkIcon} />} />
-                <SymbolButton action={() => { }} img={<img src={paperPlaneIcon} />} />
+                <SymbolButton action={() => { }} img={trashIcon} />
+                <SymbolButton action={() => { }} img={bookmarkIcon} />
+                <SymbolButton action={() => { }} img={paperPlaneIcon} />
             </div>
         </Show>
     </div>

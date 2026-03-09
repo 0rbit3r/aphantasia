@@ -15,7 +15,6 @@
 
 .split_ui_container_land {
     flex-direction: row;
-    height: 100%;
 }
 
 .first_subelement {

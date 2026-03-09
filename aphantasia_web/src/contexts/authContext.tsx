@@ -9,7 +9,7 @@ export interface AuthorizedUser {
     color: string;
 }
 
-export const AuthContext = createContext<{getAuthorizedUser:() => (AuthorizedUser | null)}>({getAuthorizedUser: () => null});
+export const AuthContext = createContext<{ getAuthorizedUser: () => (AuthorizedUser | null) }>({ getAuthorizedUser: () => null });
 
 interface AuthContextProviderProps { children: JSX.Element; }
 
@@ -22,12 +22,10 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     onMount(() => {
         authCheck()
             .then(authorized => {
-                console.log(authorized)
                 if (authorized) {
                     const tokenString = localStorage.getItem('authToken')
                     if (!tokenString) return;
                     const token = decodeJwt(tokenString) as { id: string };
-                    console.log(token)
                     fetchUser(token.id).then(
                         u => {
                             setAuthorizedUser({ ...u });
@@ -37,7 +35,7 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     })
 
     return (
-        <AuthContext.Provider value={{getAuthorizedUser}}>
+        <AuthContext.Provider value={{ getAuthorizedUser }}>
             {props.children}
         </AuthContext.Provider>
     );

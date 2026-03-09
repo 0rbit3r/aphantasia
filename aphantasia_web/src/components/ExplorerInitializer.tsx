@@ -3,11 +3,10 @@ import { createSignal, onCleanup, useContext } from "solid-js";
 import { AuthContext } from "../contexts/authContext";
 import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
 import { parsePathToExplorationState } from "../model/explorationMode";
-import { initWelcomeState, initWelcomeGrafikaSettings as initWelcomeGrafika } from "../stateManager/stateInitializers/init_Welcome";
 import type { GrafikaInstance } from "grafika";
-import type { AphantasiaStoreGetAndSet } from "../stateManager/aphantasiaStore";
 import { LogoAndQuip } from "./LogoAndQuip";
 import { getCurrentExpState } from "../stateManager/getCurrentExpState";
+import { STATE_CONTRACTS } from "../stateManager/states/stateContract";
 
 
 export const ExplorerInitializer = () => {
@@ -27,24 +26,8 @@ export const ExplorerInitializer = () => {
             initialExpState?.mode !== 'welcome' || getCurrentExpState(store)?.focus === 'hello_explorer'}>
         </LogoAndQuip >
         <Explorer
-            handleGrafikaInitialized={g => { setGrafikaInst(g); StateInitializers(g, store) }}
-            grafikaSettings={initialGrafikaSettings[initialExpState.mode]}
+            handleGrafikaInitialized={g => { setGrafikaInst(g); STATE_CONTRACTS[initialExpState.mode].initialize(store)}}
+            grafikaSettings={STATE_CONTRACTS[initialExpState.mode].grafikaSettings}
         ></Explorer>
     </>
 }
-
-const initialGrafikaSettings = {
-    welcome: initWelcomeGrafika,
-    epochs: {},
-    explore: {},
-    concepts: {}
-};
-
-const StateInitializers = (g: GrafikaInstance, s: AphantasiaStoreGetAndSet) => (
-    {
-        welcome: initWelcomeState(g, s),
-        epochs: {},
-        explore: {},
-        concepts: {}
-    });
-

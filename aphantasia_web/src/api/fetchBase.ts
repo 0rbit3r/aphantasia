@@ -8,9 +8,7 @@ export function fetchBase<T>(path: string): Promise<T> {
     }).then(r => r.json()
         .catch(_ => Promise.reject())
         .then(result => {
-            console.log('foo')
             if (result.isSuccess) {
-                console.log(result.payload);
                 return result.payload;
             }
             else {

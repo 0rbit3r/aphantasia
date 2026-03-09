@@ -8,11 +8,15 @@
 }
 
 :root {
+  color-scheme: dark;
+
   --color-background: #000000;
   --color-background-secondary: #222222;
   --color-background-tertiary: #333333;
   --color-text: #ececec;
   --color-text-subtle: #ababab;
+
+  --color-text-button: #1f190f;
 
   --handlebar-thickness: 1.5rem;
   --top-bar-height: 3rem;

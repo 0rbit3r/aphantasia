@@ -1,0 +1,22 @@
+.shape_selector_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex: 1 1 auto;
+    padding: 2px;
+}
+
+.shape_selector_button {
+    height: 2rem;
+    max-height: 4rem;
+    flex: 1;
+
+    
+    display: flex;
+    justify-content: center;
+}
+
+.shape_selector_button_selected {
+    background-color: white;
+}
