@@ -1,4 +1,4 @@
-export function isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureBecauseAppleJustDecidedToMakeMeScreamOneDay() {
+export function isItIosUnfortunionately() {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         return true;
     } else {

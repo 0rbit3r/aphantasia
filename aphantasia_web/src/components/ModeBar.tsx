@@ -7,7 +7,7 @@ import forwardIcon from '../assets/icons/go_forward.svg';
 import appleIcon from '../assets/icons/apple.svg'
 import { navigateBack, navigateForward } from "../stateManager/backAndForward";
 import { AuthContext } from "../contexts/authContext";
-import { isFuckingiOSWhereNothingEverWorksAndIHaveToCreateAnIfStatementForEveryFeatureBecauseAppleJustDecidedToMakeMeScreamOneDay as isAppleGodHelpUs } from "../utility/getOperatingSystem";
+import { isItIosUnfortunionately as isAppleGodHelpUs } from "../utility/getOperatingSystem";
 import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
 import homeIcon from '../assets/icons/home.svg';
 import epochIcon from '../assets/icons/galaxy.svg';
