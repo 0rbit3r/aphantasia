@@ -1,18 +1,18 @@
 
-import { AphantasiaStoreContextProvider } from "./contexts/aphantasiaStoreContext";
+import { StoreContextProvider } from "./contexts/storeContext";
 import { ScreenOrientationProvider } from "./contexts/screenOrientationContext";
 import { AuthContextProvider } from "./contexts/authContext";
-import { ExplorerInitializer } from "./components/ExplorerInitializer";
+import { AphantasiaContainer } from "./components/AphantasiaContainer";
 
 function App() {
     return (
         <ScreenOrientationProvider>
-            <AphantasiaStoreContextProvider>
+            <StoreContextProvider>
                 <AuthContextProvider>                
-                    <ExplorerInitializer>
-                    </ExplorerInitializer>
+                    <AphantasiaContainer>
+                    </AphantasiaContainer>
                 </AuthContextProvider>
-            </AphantasiaStoreContextProvider>
+            </StoreContextProvider>
         </ScreenOrientationProvider>
     )
 }

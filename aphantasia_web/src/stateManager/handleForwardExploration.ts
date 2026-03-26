@@ -1,6 +1,6 @@
 
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore";
-import { handleStateChange } from "./stateChangeHandlers/handleStateChange";
+import { handleStateChange } from "./handleStateChange";
 import type { ExplorationStateDescriptor } from "../model/explorationMode";
 
 // It will then append that new path to the end of exploration history

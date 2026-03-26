@@ -1,8 +1,8 @@
 import { createSignal, createEffect, type JSX, Show, useContext } from "solid-js";
-import css from '../styles/components/splitUI.module.css';
-import { ScreenOrientation } from '../contexts/screenOrientationContext';
-import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
-import { AuthContext } from "../contexts/authContext";
+import css from '../../styles/components/splitUI.module.css';
+import { ScreenOrientation } from '../../contexts/screenOrientationContext';
+import { StoreContext } from "../../contexts/storeContext";
+import { AuthContext } from "../../contexts/authContext";
 
 export type SplitLayout = "graph" | "content" | "half" | "hidden";
 
@@ -14,7 +14,7 @@ interface SplitViewProps {
 export default function SplitUI(props: SplitViewProps) {
   const screenOrientation = useContext(ScreenOrientation);
   const authContext = useContext(AuthContext);
-  const store = useContext(AphantasiaStoreContext)!;
+  const store = useContext(StoreContext)!;
 
   const [handleHeld, setHandleHeld] = createSignal(false);
   const [internalRatio, setInternalRatio] = createSignal<string>(null!);

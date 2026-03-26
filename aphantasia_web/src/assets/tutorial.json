@@ -417,14 +417,6 @@
       "date": "2026-02-26 01:26"
     },
     {
-      "id": "temp",
-      "text": "TEMP",
-      "color": "#cccccc",
-      "content": "This thought will be created by the user in the final version - bridging the gap between [having_thoughts][Having thoughts] and [link_me!][Link me!]\n\nStill haven't started on the thought creation tool, but it's coming.",
-      "authorName": "White",
-      "date": "2026-02-26 00:49"
-    },
-    {
       "id": "trivia",
       "text": "Trivia",
       "color": "#cccccc",
@@ -637,14 +629,6 @@
     {
       "targetId": "mechanics_and_features",
       "sourceId": "explore_some_more?"
-    },
-    {
-      "targetId": "temp",
-      "sourceId": "having_thoughts"
-    },
-    {
-      "targetId": "temp",
-      "sourceId": "link_me!"
     },
     {
       "targetId": "trivia",

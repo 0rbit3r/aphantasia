@@ -15,9 +15,11 @@ export const Content = (props: ContentProps) => {
     </div>
 }
 
+export const LINK_REGEX = /\[(.*?)\]\[(.*?)\]/g;
+
 const renderContentWithThoughtLinks = (props: ContentProps) => {
     // thought links first
-    const parts = props.text.split(/\[(.*?)\]\[(.*?)\]/g);//TODO!!! rules for the id part
+    const parts = props.text.split(LINK_REGEX);
     //console.log("splittedPartsInLinks : ", parts);
     const result = [];
     for (let i = 0; i < parts.length; i += 3) {

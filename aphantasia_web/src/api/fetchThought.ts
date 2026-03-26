@@ -1,6 +1,6 @@
 import type { Thought} from "../model/dto/thought";
-import { fetchBase } from "./fetchBase";
+import { fetchBase } from "./base";
 
-export function fetchThought(id: string): Promise<Thought> {
+export function api_fetchThought(id: string): Promise<Thought> {
     return fetchBase<Thought>('/thoughts/' + id)
 }

@@ -1,13 +1,12 @@
-import type { StateContract } from "./stateContract";
-import tutorialJson from '../../assets/tutorial.json';
-import { EdgeType, type Data, type ProxyNode } from "grafika";
-import { getCurrentExpState } from "../getCurrentExpState";
-import { handleForwardExploration } from "../handleForwardExploration";
-import type { Thought, ThoughtTitle } from "../../model/dto/thought";
-import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
+import type { StateContract } from "../stateContract";
+import { EdgeType, type ProxyNode } from "grafika";
+import { getCurrentExpState } from "../../getCurrentExpState";
+import { handleForwardExploration } from "../../handleForwardExploration";
+import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
+import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
+import { welcome_data } from "./welcomeData";
 
 
-const tutorialData = tutorialJson satisfies Data;
 
 export const WELCOME_STATE = {
     grafikaSettings: {
@@ -28,19 +27,19 @@ export const WELCOME_STATE = {
                 url: "backdrop.png"
             }
         },
-        simulation: { defaultEdgeLength: 100, pushThreshold: 1500 },
+        simulation: { pushThreshold: 1500 },
         debug: { showFps: true },
         data: {
             nodes: [{
-                ...tutorialJson.nodes.find(n => n.id === "hello_explorer")!,
+                ...welcome_data.nodes.find(n => n.id === "hello_explorer")!,
                 hollowEffect: true, blinkEffect: true, radius: 80
             }],
-            edges: tutorialJson.edges
+            edges: welcome_data.edges
         }
     },
 
 
-    initialize: (store, focus) => {
+    initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
             handleForwardExploration(store, {
                 mode: getCurrentExpState(store).mode,
@@ -51,17 +50,6 @@ export const WELCOME_STATE = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => {
             store.get.grafika.focusOn(null);
         });
-
-        if (focus === undefined) {
-            store.get.grafika.simStart();
-
-            store.get.grafika.focusOn({ id: "hello_explorer" });
-
-            store.set('splitUiLayout', 'hidden');
-        }
-        else {
-            handleHighlightAndData(store, focus);
-        }
     },
 
 
@@ -79,14 +67,36 @@ export const WELCOME_STATE = {
         }
 
         const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
-        handleHighlightAndData(store, focusId);
+        handleHighlightAndContext(store, focusId);
         if (!focusedNode) {
             return;
         }
 
+        if (focusedNode.id === 'creating_thoughts' && !grafikaData.nodes.some(n => n.id === 'link_me!')) {
+            store.get.grafika.addData({
+                nodes: welcome_data.nodes.filter(n => n.id === 'link_me!')!.map(d => ({
+                    ...d, hollowEffect: true,
+                    x: focusedNode.x + (Math.random() - 0.5) * 20, y: focusedNode.y + (Math.random() - 0.5) * 20
+                }))
+            });
+        }
+
+        if (focusedNode.id === "hello_explorer") {
+            focusedNode.text = "";
+            focusedNode.blinkEffect = false;
+            focusedNode.hollowEffect = false;
+        } else {
+            focusedNode.glowEffect = true;
+            if(focusedNode.id !== 'link_me!') focusedNode.hollowEffect = false;
+            store.set('splitUiLayout', prev => (prev === 'graph' || prev === 'hidden') ? 'half' : prev);
+        }
+
+        if (focusedNode.id === 'link_me!') return;
+
+        // add neighbors
         let timeToLiveFrom = 0;
-        const nodesToAdd = tutorialData.nodes
-            .filter(n => tutorialData.edges.some(e =>
+        const nodesToAdd = welcome_data.nodes
+            .filter(n => welcome_data.edges.some(e =>
                 (e.sourceId === n.id && e.targetId === focusedNode.id)
                 || (e.sourceId === focusedNode.id && e.targetId === n.id)))
             .filter(nodeToAdd => !grafikaData.nodes.find(existingNode => existingNode.id === nodeToAdd.id))
@@ -94,19 +104,7 @@ export const WELCOME_STATE = {
                 ...d, hollowEffect: true, timeToLiveFrom: -30 * timeToLiveFrom++,
                 x: focusedNode.x + (Math.random() - 0.5) * 20, y: focusedNode.y + (Math.random() - 0.5) * 20
             }));
-
-        store.get.grafika.addData({ nodes: nodesToAdd })
-
-        if (focusedNode.id === "hello_explorer") {
-            focusedNode.text = "";
-            focusedNode.blinkEffect = false;
-            focusedNode.hollowEffect = false;
-            return;
-        } else {
-            focusedNode.glowEffect = true;
-            focusedNode.hollowEffect = false;
-            store.set('splitUiLayout', prev => (prev === 'graph' || prev === 'hidden') ? 'half' : prev);
-        }
+        store.get.grafika.addData({ nodes: nodesToAdd });
     },
 
     dispose: (store) => {
@@ -125,22 +123,23 @@ export const WELCOME_STATE = {
 
 
 
-
-const handleHighlightAndData = (store: AphantasiaStoreGetAndSet, focusId?: string) => {
-    const focusedThought = tutorialData.nodes.find(n => n.id === focusId);
+// converts the json file object into a proper thought
+const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: string) => {
+    const focusedThought = welcome_data.nodes.find(n => n.id === focusId);
     if (focusedThought) {
-        store.set('contextData', {
+
+        store.set('contextThought', {
             ...focusedThought,
             _type: "Thought",
             title: focusedThought.text,
             author: { id: "username", username: focusedThought.authorName, color: focusedThought.color },
             concepts: [],
             shape: 0,
-            links: tutorialData.nodes
-                .filter(n => tutorialData.edges.find(e => e.sourceId === n.id && e.targetId === focusedThought.id))
+            links: welcome_data.nodes
+                .filter(n => welcome_data.edges.find(e => e.sourceId === n.id && e.targetId === focusedThought.id))
                 .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
-            replies: tutorialData.nodes
-                .filter(n => tutorialData.edges.find(e => e.targetId === n.id && e.sourceId === focusedThought.id))
+            replies: welcome_data.nodes
+                .filter(n => welcome_data.edges.find(e => e.targetId === n.id && e.sourceId === focusedThought.id))
                 .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
             size: 0,
         } satisfies Thought)

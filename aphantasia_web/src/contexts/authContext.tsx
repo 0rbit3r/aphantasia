@@ -1,7 +1,8 @@
-import { createContext, createSignal, onMount, type JSX } from "solid-js";
-import { authCheck } from "../api/authCheck";
-import { fetchUser } from "../api/fetchUser";
+import { createContext, createEffect, createSignal, onMount, useContext } from "solid-js";
+import { api_authCheck } from "../api/authCheck";
+import { api_fetchUser } from "../api/fetchUser";
 import { decodeJwt } from 'jose';
+import { StoreContext } from "./storeContext";
 
 export interface AuthorizedUser {
     id: string;
@@ -9,33 +10,66 @@ export interface AuthorizedUser {
     color: string;
 }
 
-export const AuthContext = createContext<{ getAuthorizedUser: () => (AuthorizedUser | null) }>({ getAuthorizedUser: () => null });
 
-interface AuthContextProviderProps { children: JSX.Element; }
+export const AuthContext = createContext<{
+    getAuthorizedUser: () => (AuthorizedUser | null),
+    setTokenAndReload: (token: string) => void,
+    authStatusLoaded: () => boolean
 
-export function AuthContextProvider(props: AuthContextProviderProps) {
+}>({ getAuthorizedUser: () => null, setTokenAndReload: () => null, authStatusLoaded: () => false });
+
+
+export function AuthContextProvider(props: { children: any }) {
+    const store = useContext(StoreContext)!;
+
+    // authorized user that can be accessed throughout the application
     const [getAuthorizedUser, setAuthorizedUser] = createSignal<AuthorizedUser | null>(null);
+    const [authStatusLoaded, setAuthStatusLoaded] = createSignal<boolean>(false);
+    // Synchronize with store
+    createEffect(() => store.set('user', getAuthorizedUser() ?? undefined))
+    // todo - put something like AuthStatusLoaded and then initialize the first state AFTER auth.
+    // that wil make the exploration mode almost work I think
 
-    // here, define the reload function, call it for initial load props/discard stale token (in OnMount),
-    // then provide the reload function (along with user props) in the AuthorizedUser object to children
 
-    onMount(() => {
-        authCheck()
+    const loadUser = () => {
+        api_authCheck()
             .then(authorized => {
                 if (authorized) {
                     const tokenString = localStorage.getItem('authToken')
-                    if (!tokenString) return;
-                    const token = decodeJwt(tokenString) as { id: string };
-                    fetchUser(token.id).then(
-                        u => {
-                            setAuthorizedUser({ ...u });
-                        });
-                }
+                    if (tokenString) {
+                        const token = decodeJwt(tokenString) as { id: string };
+                        api_fetchUser(token.id).then(
+                            u => {
+                                setAuthorizedUser({ ...u });
+                                setAuthStatusLoaded(true)
+                            });
+                    }
+                    else {
+                        setAuthStatusLoaded(true)
+                    }
+                } else setAuthStatusLoaded(true);
             })
-    })
+            .catch(e => {
+                console.error(e);
+                //Note: this is duplicated and explicitely not in finally to ensure that statusLoaded is set LAST
+                setAuthStatusLoaded(true);
+            })
+    }
+
+    onMount(loadUser);
+
+
+    const setTokenAndReload = (token?: string) => {
+        if (token)
+            localStorage.setItem('authToken', token);
+        else
+            localStorage.removeItem('authToken');
+        loadUser()
+    }
+
 
     return (
-        <AuthContext.Provider value={{ getAuthorizedUser }}>
+        <AuthContext.Provider value={{ getAuthorizedUser, setTokenAndReload, authStatusLoaded }}>
             {props.children}
         </AuthContext.Provider>
     );

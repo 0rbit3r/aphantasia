@@ -1,11 +1,13 @@
 import { createStore, type SetStoreFunction } from "solid-js/store";
 import type { GrafikaInstance } from "grafika";
-import type { SplitLayout } from "../components/SplitUI";
+import type { SplitLayout } from "../components/coreUI/SplitUI";
 import type { Thought } from "../model/dto/thought";
 import type { Concept } from "../model/dto/concept";
 import type { User } from "../model/dto/user";
 import type { ExplorationStateDescriptor } from "../model/explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
+import type { AuthorizedUser } from "../contexts/authContext";
+import type { Epoch } from "../model/dto/epoch";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -14,12 +16,18 @@ export interface AphantasiaStore {
     explorationHistory: ExplorationStateDescriptor[];
     // this points to the current exploration state in the array above
     explorationIndex: number;
-    
-    contextData?: Thought | Concept | User | ThoughtInMaking;
+
+    contextThought?: Thought;
+    contextConcept?: Concept;
+    contextUser?: User;
+    contextThoughtInMaking?: ThoughtInMaking;
+    contextEpoch?: Epoch;
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;
     modeMenuOpen: boolean;
+
+    user?: AuthorizedUser;
 }
 
 export interface AphantasiaStoreGetAndSet {
@@ -38,5 +46,5 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         modeMenuOpen: false
     });
 
-    return { get: getStore, set: setStore};
+    return { get: getStore, set: setStore };
 };

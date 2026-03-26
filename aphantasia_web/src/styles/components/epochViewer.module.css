@@ -1,0 +1,10 @@
+.epoch_viewer_container {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--context-banner-height) - 4px);
+}
+
+.epoch_viewer_container_land {
+    height: calc(100% - 4px);
+}

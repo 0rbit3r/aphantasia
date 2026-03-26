@@ -7,7 +7,7 @@ namespace Aphant.Client.WebApi
     public class ApiControllerBase : ControllerBase
     {
         protected Guid? UserId
-            => Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value, out var id)
+            => Guid.TryParse(User.Claims.FirstOrDefault(c => c.Type == "id")?.Value, out var id)
             ? id
             : null;
 

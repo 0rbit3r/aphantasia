@@ -8,7 +8,8 @@ export interface Thought {
     title: string;
     date: string;
     shape: number;
-    size: number
+    size: number;
+    color: string;
 
     author: UserLight;
     content: string;

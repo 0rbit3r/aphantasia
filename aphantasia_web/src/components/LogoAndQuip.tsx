@@ -1,5 +1,4 @@
 import { createEffect, createSignal, Show } from 'solid-js';
-import { Locale } from '../locales/localization'
 import { Quips } from '../locales/quips'
 import css from '../styles/components/logoAndQuip.module.css'
 
@@ -22,7 +21,7 @@ export const LogoAndQuip = (props: { hide: boolean }) => {
         </Show>
         <Show when={!hidden()}>
             <div class={`${css.header} ${faded() ? css.hidden : ''}`}>
-                <h1 class={css.title}>{Locale.Title}</h1>
+                <h1 class={css.title}>{import.meta.env.VITE_APP_TITLE}</h1>
                 <p class={css.quip}>{Quips[Math.floor(Math.random() * (Quips.length - 1))]}</p>
             </div>
         </Show>

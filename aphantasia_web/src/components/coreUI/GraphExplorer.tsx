@@ -1,6 +1,6 @@
-import { HolisticUI } from "./HolisticUI";
+import { BlockyUI } from "./BlockyUI";
 import { addGrafika, type GrafikaInstance, type GrafikaSettings } from "grafika";
-import { AphantasiaStoreContext } from "../contexts/aphantasiaStoreContext";
+import { StoreContext } from "../../contexts/storeContext";
 import { useContext } from "solid-js";
 
 export interface ExplorerProps {
@@ -10,8 +10,8 @@ export interface ExplorerProps {
     reloadGrafika?: (s: GrafikaSettings) => void;
 }
 
-export const Explorer = (props: ExplorerProps) => {
-    const store = useContext(AphantasiaStoreContext)!;
+export const GraphExplorer = (props: ExplorerProps) => {
+    const store = useContext(StoreContext)!;
 
     const handleGrafikaRef = (element: HTMLDivElement) => {
         if (!element) return;
@@ -19,6 +19,6 @@ export const Explorer = (props: ExplorerProps) => {
         props.handleGrafikaInitialized(store.get.grafika);
     };
 
-    return <HolisticUI onGrafikaRef={handleGrafikaRef}></HolisticUI>;
+    return <BlockyUI onGrafikaRef={handleGrafikaRef}></BlockyUI>;
 }
 

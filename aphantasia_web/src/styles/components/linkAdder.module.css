@@ -1,0 +1,22 @@
+.link_adder_container {
+    display: flex;
+    flex-direction: column;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+
+.source_button {
+    height: 2.4rem;
+    font-size: larger;
+    border-radius: 0;
+    background-color: var(--color-background-tertiary);
+    border: 1px solid var(--color-text-subtle);
+    margin: 0;
+    cursor: pointer;
+    margin: 4px;
+}
+
+.hint {
+    text-align: center;
+    color: var(--color-text-subtle)
+}

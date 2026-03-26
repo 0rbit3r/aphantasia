@@ -1,7 +1,7 @@
 import type { ThoughtNode } from "./thought";
 
 export interface Epoch {
-    id: string;
+    id: number;
     name: string;
     startDate: string;
     endDate: string;

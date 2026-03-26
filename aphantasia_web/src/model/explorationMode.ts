@@ -7,7 +7,7 @@ export interface ExplorationStateDescriptor {
 export type ModeType =
     'epochs' |
     'welcome' |
-    'welcome_create'|
+    'welcome_create' |
     'explore' |
     'create' |
     'concepts' |
@@ -19,16 +19,26 @@ export type ModeType =
 //              and we only need to parse it on startup or when a something is shared through a link
 
 
-export function parsePathToExplorationState(path: string, loggedIn: boolean): ExplorationStateDescriptor {
+export function parsePathToExplorationState(path: string): ExplorationStateDescriptor {
     const splitPath = path.slice(1).split('/');
     if (splitPath.length === 1) {
+        switch (splitPath[0]) {
+            case '':
+                return { mode: 'welcome' }
+            case 'welcome':
+                return { mode: 'welcome' }
+            case 'epochs':
+                return { mode: 'epochs' }
+
+
+        }
         if (splitPath[0] === "")
             return {
-                mode: loggedIn ? 'epochs' : 'welcome'
+                mode: 'welcome'
             }
     }
 
-    return null!;
+    return { mode: 'welcome' }
 }
 
 

@@ -29,9 +29,10 @@
 }
 
 .button_bar {
-    height: 3rem;
+    height: 2.4rem;
     display: flex;
     flex-direction: row;
+    margin: 1px;
 }
 
 .button_bar_button {

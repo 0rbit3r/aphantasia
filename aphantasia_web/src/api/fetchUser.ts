@@ -1,6 +1,6 @@
 import type { User } from "../model/dto/user";
-import { fetchBase } from "./fetchBase";
+import { fetchBase } from "./base";
 
-export function fetchUser(id: string): Promise<User> {
+export function api_fetchUser(id: string): Promise<User> {
     return fetchBase<User>('/users/' + id)
 }

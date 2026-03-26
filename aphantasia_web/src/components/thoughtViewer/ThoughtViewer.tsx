@@ -1,13 +1,12 @@
 import { Content } from "./Content";
 import css from "../../styles/components/thoughtViewer.module.css";
 import { createEffect, Show, useContext } from "solid-js";
-import { SymbolButton } from "../SymbolButton";
-import bookmarkIcon from '../../assets/icons/bookmark.svg';
-import trashIcon from '../../assets/icons/trash.png';
-import paperPlaneIcon from '../../assets/icons/paper_plane.png';
-import { AphantasiaStoreContext } from "../../contexts/aphantasiaStoreContext";
-import { isThought } from "../../utility/isTypeOf";
-import type { Thought } from "../../model/dto/thought";
+// import { SymbolButton } from "../SymbolButton";
+// import bracketsIcon from '../../assets/icons/brackets.svg';
+// import bookmarkIcon from '../../assets/icons/bookmark.svg';
+// import trashIcon from '../../assets/icons/trash.png';
+// import paperPlaneIcon from '../../assets/icons/paper_plane.png';
+import { StoreContext } from "../../contexts/storeContext";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { ScreenOrientation } from "../../contexts/screenOrientationContext";
@@ -18,12 +17,12 @@ export interface ThoughtViewerProps {
 }
 
 export const ThoughtViewer = () => {
-    const store = useContext(AphantasiaStoreContext)!;
+    const store = useContext(StoreContext)!;
     const scrOrientation = useContext(ScreenOrientation)!;
     let contentContainerRef!: HTMLDivElement;
 
     createEffect(() => {
-        if (isThought(store.get.contextData) && store.get.contextData.id) {
+        if (store.get.contextThought?.id) { //id because of former reactivity enforcement -> todo try without
             contentContainerRef.scrollTop = 0;
         }
     })
@@ -33,25 +32,27 @@ export const ThoughtViewer = () => {
         [css.thought_viewer_container_land]: scrOrientation.isLandscape()
     }}>
         <Show when={!store.get.contextDataLoading
-            && isThought(store.get.contextData)}>
+            && store.get.contextThought}>
             <div class={css.content_container} ref={contentContainerRef}>
                 <Content
-                    text={(store.get.contextData as Thought)!.content}
-                    color={(store.get.contextData as Thought)!.author.color}
-                    thoughtColors={isThought(store.get.contextData) ? new Map((store.get.contextData as Thought).links.map(l => [l.id, l.color])) : undefined}
+                    text={store.get.contextThought?.content ?? ''}
+                    color={store.get.contextThought?.author?.color ?? ''}
+                    thoughtColors={store.get.contextThought ? new Map(store.get.contextThought.links.map(l => [l.id, l.color])) : undefined}
                     onThoughtLinkClick={id => handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: id })}
                 />
             </div>
             <div class={css.metadata_bar}>
-                <div class={css.date}>{(store.get.contextData as Thought)?.date}</div>
-                <div class={css.author} style={{ color: (store.get.contextData as Thought)?.author.color ?? '#eeeeee' }}>
-                    {(store.get.contextData as Thought)?.author.username}</div>
+                <div class={css.date}>{store.get.contextThought?.date}</div>
+                <div class={css.author} style={{ color: store.get.contextThought?.author.color ?? '#eeeeee' }}>
+                    {store.get.contextThought?.author.username}</div>
             </div>
             <RepliesScroller />
             <div class={`${css.action_buttons_bar} ${(!scrOrientation.isLandscape() && store.get.splitUiLayout !== 'content') ? css.action_buttons_bar_collapsed : ''}`}>
-                <SymbolButton action={() => { }} img={trashIcon} />
-                <SymbolButton action={() => { }} img={bookmarkIcon} />
-                <SymbolButton action={() => { }} img={paperPlaneIcon} />
+                {"<Usefull buttons will be here>"}
+                {/* <SymbolButton action={() => { }} img={bookmarkIcon} /> */}
+                {/* <SymbolButton action={() => { }} img={bracketsIcon} /> */}
+                {/* <SymbolButton action={() => { }} img={trashIcon} />
+                <SymbolButton action={() => { }} img={paperPlaneIcon} /> */}
             </div>
         </Show>
     </div>

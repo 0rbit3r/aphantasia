@@ -1,4 +1,4 @@
-export function authCheck(): Promise<boolean> {
+export function api_authCheck(): Promise<boolean> {
     const token = localStorage.getItem('authToken');
     const headers = new Headers();
     headers.set('Authorization', 'Bearer ' + token);

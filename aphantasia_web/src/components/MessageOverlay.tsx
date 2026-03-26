@@ -21,6 +21,6 @@ export default function MessageOverlay(props: MessageOverlayProps) {
     [css.green_message]: props.color === 'green',
     [css.yellow_message]: props.color === 'yellow',
   }}>
-    {props.text}
+    Test
   </div>
 }

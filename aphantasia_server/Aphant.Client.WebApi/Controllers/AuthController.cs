@@ -22,7 +22,7 @@ namespace Aphant.Client.WebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<Result<string>>> Login([FromBody] LogInRequest body)
         {
-            var result = await authService.LogIn(body.usernameOrEmail, body.Password);
+            var result = await authService.LogIn(body.UsernameOrEmail, body.Password);
             return ResponseFromResult(result);
         } 
 

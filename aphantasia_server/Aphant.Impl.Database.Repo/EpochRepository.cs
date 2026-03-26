@@ -37,7 +37,7 @@ internal class EpochRepository(
             {
                 Id = -1,
                 Name = "now",
-                StartDate = lastEpochEndedDate.ToString(),
+                StartDate = lastEpochEndedDate.ToString("yyyy-MM-dd"),
                 EndDate = "today",
                 Thoughts = epochlessThoughts
             };
