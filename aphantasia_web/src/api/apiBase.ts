@@ -1,3 +1,8 @@
+// Base GETters, POSTers etc.ers...
+// These methods expect the endpoints to return Result objects and throw
+// 'bad json' rejection otherwise
+
+
 export function fetchBase<T>(path: string, authorize?: 'authorize'): Promise<T> {
     const token = localStorage.getItem('authToken');
     const headers = new Headers();

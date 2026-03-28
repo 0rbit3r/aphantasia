@@ -16,7 +16,6 @@ export const WELCOME_CREATE_STATE = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => { store.get.grafika.focusOn(null) });
 
         const color = generateRandomColor();
-
         store.get.grafika.addData({
             nodes: [{ id: 'created_thought', glowEffect: true, radius: 50, text: 'An interesting title', color: color }]
         })
@@ -29,14 +28,16 @@ export const WELCOME_CREATE_STATE = {
                 _type: 'ThoughtInMaking',
                 title: 'An interesting title',
                 concepts: [],
-                content: 'Here you can create thoughts.\n\n**Click on the preview** button to see what the final thought will end up looking like.\n\n' +
-                    'To add a link, press the link button and click on a thought in the graph.',
+                content: 'Welcome to the thought creator.\n\n**Click the preview** button to see what the final thought will end up looking like.\n\n' +
+                    'From there you can either **click "Edit" to go back** to the editor **or Publish to create** the thought."\n\n' +
+                    'Go ahead and try to **publish this thought**',
                 links: [],
                 shape: 0,
                 linkSelectionState: 'hidden',
                 cursorPosition: 0,
                 color: color
             });
+        else store.set('contextThoughtInMaking', 'color', color);
     },
 
     hangleFocusChange: (store, _) => {
@@ -55,9 +56,9 @@ export const WELCOME_CREATE_STATE = {
 
 
 const generateRandomColor = () => {
-    let R = Math.floor((Math.random() * 127) + 127);
-    let G = Math.floor((Math.random() * 127) + 127);
-    let B = Math.floor((Math.random() * 127) + 127);
+    let R = Math.floor((Math.random() * 185) + 70);
+    let G = Math.floor((Math.random() * 185) + 70);
+    let B = Math.floor((Math.random() * 185) + 70);
 
     let rgb = (R << 16) + (G << 8) + B;
     return `#${rgb.toString(16)}`;

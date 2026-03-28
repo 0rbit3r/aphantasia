@@ -130,7 +130,6 @@ const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: st
 
         store.set('contextThought', {
             ...focusedThought,
-            _type: "Thought",
             title: focusedThought.text,
             author: { id: "username", username: focusedThought.authorName, color: focusedThought.color },
             concepts: [],

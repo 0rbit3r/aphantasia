@@ -7,7 +7,7 @@ import { handleForwardExploration } from '../../stateManager/handleForwardExplor
 import welcomeIcon from '../../assets/icons/home.svg';
 import epochIcon from '../../assets/icons/galaxy.svg';
 import createIcon from '../../assets/icons/create_thought.svg';
-import settingsIcon from '../../assets/icons/settings.png';
+import settingsIcon from '../../assets/icons/settings.svg';
 // import bellIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
 // import conceptsIcon from '../../assets/icons/concepts.png';

@@ -1,0 +1,15 @@
+.common_button {
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: larger;
+    border-radius: 0;
+    background-color: var(--color-background-tertiary);
+    margin: 0;
+    cursor: pointer;
+    border: 1px solid white;
+    color: white;
+}
+
+.common_button:hover {
+    background-color: var(--color-background-secondary);
+}

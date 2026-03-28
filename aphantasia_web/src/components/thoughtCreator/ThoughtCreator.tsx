@@ -1,9 +1,9 @@
 import { createEffect, createSignal, Show, useContext } from "solid-js"
 import { StoreContext } from "../../contexts/storeContext"
-import _ from '../../styles/common/controls.module.css';
+import _ from '../../styles/common/htmlControls.module.css';
 import css from '../../styles/components/thoughtCreator.module.css';
+import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
-import { ScreenOrientation } from "../../contexts/screenOrientationContext";
 import { LinkAdder } from "./LinkAdder";
 import { Content, LINK_REGEX } from "../thoughtViewer/Content";
 import { type GraphEdge, type ProxyNode } from "grafika";
@@ -18,7 +18,6 @@ import { api_postCreateThought } from "../../api/postCreateThought";
 
 export const ThoughtCreator = () => {
     const store = useContext(StoreContext)!;
-    const scrOrientation = useContext(ScreenOrientation);
     const authContext = useContext(AuthContext);
 
     const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought')!;
@@ -54,20 +53,17 @@ export const ThoughtCreator = () => {
         store.get.grafika.addData({ edges: edgesToAdd });
         store.get.grafika.removeData({ edges: edgesToDelete });
 
-        console.log(foundIds);
-        console.log(linkThoughts)
-        console.log(edgesToAdd)
-        console.log(store.get.grafika.getData())
+        // console.log(foundIds);
+        // console.log(linkThoughts)
+        // console.log(edgesToAdd)
+        // console.log(store.get.grafika.getData())
 
         store.set('contextThoughtInMaking', 'links', prev => edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 })).concat(prev) ?? []);
     })
 
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
 
-    return <div classList={{
-        [css.thought_creator_container]: true,
-        [css.thought_creator_container_land]: scrOrientation.isLandscape()
-    }}>
+    return <div class={css.thought_creator_container}>
         <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden' && !previewMode()}>
             <div class={css.title_and_shape_cont}>
                 <textarea placeholder='Title'
@@ -84,10 +80,10 @@ export const ThoughtCreator = () => {
                 value={store.get.contextThoughtInMaking?.content ?? ''}
                 on:input={e => store.set('contextThoughtInMaking', 'content', e.target.value)} />
             <div class={css.button_bar}>
-                <button class={css.button_bar_button}
+                <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
                     Link</button>
-                <button class={css.button_bar_button}
+                <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => setPreviewMode(true)}>
                     Preview</button>
             </div>
@@ -98,7 +94,7 @@ export const ThoughtCreator = () => {
                     thoughtColors={linkColors()} color={store.get.contextThoughtInMaking?.color} />
             </div>
             <div class={css.button_bar}>
-                <button class={css.button_bar_button}
+                <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     style={{
                         color: authContext.getAuthorizedUser()?.color || "white"
                     }}
@@ -106,7 +102,7 @@ export const ThoughtCreator = () => {
                         ? handleThoughtCreation_Welcome(store, graphNode)
                         : handleThoughtCreation_forReal(store, graphNode)}>
                     Publish</button>
-                <button class={css.button_bar_button}
+                <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => setPreviewMode(false)}>
                     Edit</button>
             </div>
@@ -136,22 +132,20 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNod
 
     store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] })
 
-    welcome_data.nodes.push({ ...newData.nodes.map(n => ({ ...n, content: store.get.contextThoughtInMaking?.content ?? '', authorName: 'Explorling', date: 'now' }))[0] })
+    welcome_data.nodes.push({ ...newData.nodes.map(n => ({ ...n, content: store.get.contextThoughtInMaking?.content ?? '', authorName: 'You', date: 'today' }))[0] })
+    welcome_data.edges = welcome_data.edges.concat(newData.edges);
 
     store.set('contextThoughtInMaking', undefined);
 
     handleForwardExploration(store, { mode: "welcome", focus: userCreatedId.toString() });
+
+    console.log(welcome_data)
 
     userCreatedId++;
 }
 
 const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNode: ProxyNode) => {
     const newThought = store.get.contextThoughtInMaking;
-    // console.log("foo")
-    // console.log(newThought);
-    // console.log(graphNode.inEdges);
-
-    // todo - it seems that some edges might be dplicated throughout the thought creation process
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }
 

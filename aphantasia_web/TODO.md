@@ -8,10 +8,16 @@
         - [x] On login fail
         - [x] On attempt to reply to created thought
         - [x] On create fail
-        - [ ] On auth fail
-    - [ ] Nicer login form
-    - [ ] 
+        - [x] On auth fail
+    - [x] Nicer login form
+    - [ ] Add the registration form too, why the hell not...
+        - [ ] Form
+        - [ ] Api call
+    - [ ] Cursor position respecting links
 - [ ] Finish the tutorial
+    - [ ] Written part
+    - [ ] Logic
+    - [x] Fix Welcome not showing created thoughts in the replies bar
 - [x] Add Settings
     - [x] Color
     - [x] Logout
@@ -20,4 +26,4 @@
 
 - [ ] Release closed beta
 
-- [ ] Fix new thought not linking in graph when re-initialized
+- [x] Fix new thought not linking in graph when re-initialized

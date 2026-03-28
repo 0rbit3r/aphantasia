@@ -16,7 +16,7 @@ import createIcon from '../../assets/icons/create_thought.svg';
 import conceptsIcon from '../../assets/icons/concepts.png';
 import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
-import settingsIcon from '../../assets/icons/settings.png';
+import settingsIcon from '../../assets/icons/settings.svg';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 
 export default function ModeBar() {
@@ -70,7 +70,7 @@ export default function ModeBar() {
             ? nothing
             : icons[getCurrentExpState(store).mode]} />
       </div>
-      <SymbolButton action={() => { }} img={envelopeIcon}
+      <SymbolButton action={() => store.set('notificationMessages', prev => [...prev, {text:'This feature is not yet ready. Stay tuned!', color: 'yellow'}])} img={envelopeIcon}
         dim={getCurrentExpState(store).mode !== 'inbox'} />
       <SymbolButton action={handleFullScreenButton}
         img={

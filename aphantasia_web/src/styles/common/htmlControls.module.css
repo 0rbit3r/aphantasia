@@ -1,3 +1,5 @@
+/* Used to style common html control elements - import as _ to apply*/
+ 
 input {
     border-radius: 0;
     background-color: var(--color-background-secondary);

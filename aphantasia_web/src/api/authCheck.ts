@@ -5,5 +5,5 @@ export function api_authCheck(): Promise<boolean> {
     
     return fetch(import.meta.env.VITE_URL + '/auth/check', { headers })
         .then(r => r.ok)
-        .catch(_ => false);
+        .catch(_ => Promise.reject('Connection error - Aphantasia may be unavailable'));
 }

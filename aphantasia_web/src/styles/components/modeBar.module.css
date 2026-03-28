@@ -12,6 +12,7 @@
 .big_middle_button {
     z-index: var(--z-mode-bar-middle-button);
     height: calc(100% + var(--handlebar-thickness));
+    aspect-ratio: 1;
 
     background-color: var(--color-background-secondary);
 }

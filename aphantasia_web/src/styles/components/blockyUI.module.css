@@ -16,17 +16,25 @@
     height: 100%;
 }
 
-.content_container {
+.banner_and_content_container {
     height: 100%;
     min-width: 33vw;
 }
+
+.content_container {
+    height: calc(100% - var(--context-banner-height));
+}
+
+.content_container_land {
+    height: 100%;
+}
+
 
 .top_bar {
     height: var(--top-bar-height);
     display: flex;
     width: 100%;
     transition: height 1s ease, position 1s ease;
-
 }
 
 .top_bar_hidden {

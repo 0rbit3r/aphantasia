@@ -17,7 +17,7 @@ export const AuthContext = createContext<{
     setTokenAndReload: (token: string) => void,
     authStatusLoaded: () => boolean
 
-}>({ getAuthorizedUser: () => null, setTokenAndReload: () => null, reload: ()=>{}, authStatusLoaded: () => false });
+}>({ getAuthorizedUser: () => null, setTokenAndReload: () => null, reload: () => { }, authStatusLoaded: () => false });
 
 
 export function AuthContextProvider(props: { children: any }) {
@@ -52,6 +52,7 @@ export function AuthContextProvider(props: { children: any }) {
             })
             .catch(e => {
                 console.error(e);
+                store.set('notificationMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
                 //Note: this is duplicated and explicitely not in finally to ensure that statusLoaded is set LAST
                 setAuthStatusLoaded(true);
             })
@@ -70,7 +71,7 @@ export function AuthContextProvider(props: { children: any }) {
 
 
     return (
-        <AuthContext.Provider value={{ getAuthorizedUser, setTokenAndReload, authStatusLoaded, reload: loadUser}}>
+        <AuthContext.Provider value={{ getAuthorizedUser, setTokenAndReload, authStatusLoaded, reload: loadUser }}>
             {props.children}
         </AuthContext.Provider>
     );

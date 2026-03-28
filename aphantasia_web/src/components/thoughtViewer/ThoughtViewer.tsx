@@ -27,10 +27,7 @@ export const ThoughtViewer = () => {
         }
     })
 
-    return <div classList={{
-        [css.thought_viewer_container]: true,
-        [css.thought_viewer_container_land]: scrOrientation.isLandscape()
-    }}>
+    return <div class={css.thought_viewer_container}>
         <Show when={!store.get.contextDataLoading
             && store.get.contextThought}>
             <div class={css.content_container} ref={contentContainerRef}>

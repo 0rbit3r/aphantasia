@@ -10,8 +10,6 @@
 .shape_selector_button {
     height: 2rem;
     max-height: 4rem;
-    flex: 1;
-
     
     display: flex;
     justify-content: center;

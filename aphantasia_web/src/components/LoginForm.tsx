@@ -3,7 +3,8 @@ import { api_postLogin } from "../api/postLogin"
 import { AuthContext } from "../contexts/authContext";
 import { StoreContext } from "../contexts/storeContext";
 import css from "../styles/components/loginForm.module.css";
-// import _ from "../styles/common/controls.module.css";
+import _ from '../styles/common/htmlControls.module.css';
+import css_buttons from '../styles/common/buttons.module.css';
 
 export const LoginForm = () => {
     const auth = useContext(AuthContext)!;
@@ -14,7 +15,6 @@ export const LoginForm = () => {
 
 
     const handleLogin = () => {
-        console.log(password())
         api_postLogin(usernameOrMail(), password())
             .then(token => {
                 auth.setTokenAndReload(token);
@@ -33,6 +33,6 @@ export const LoginForm = () => {
             value={password()}
             on:change={e => setPassword(e.target.value)}
         ></input></label>
-        <button on:click={() => handleLogin()}>Log in</button>
+        <button class={css_buttons.common_button} on:click={() => handleLogin()}>Log in</button>
     </div>
 }

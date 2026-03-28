@@ -1,8 +1,4 @@
 .settings_container {
     margin: 2px;
-    height: calc(100% - var(--context-banner-height) - 4px);
-}
-
-.settings_container_land {
     height: calc(100% - 4px);
 }

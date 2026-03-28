@@ -1,5 +1,4 @@
 export interface User {
-    readonly _type: 'User';
     id: string;
     username: string;
     color: string;

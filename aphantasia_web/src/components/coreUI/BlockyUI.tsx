@@ -32,34 +32,38 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
     const graphPart = <div class={css.graph_container} >
         <div ref={onGrafikaRef} class={css.grafika_container} />
         <ModeMenu />
-        <MessageOverlay/>
+        <MessageOverlay />
     </div>
 
-    const contentPart = <div class={css.content_container}>
+    const contentPart = <div class={css.banner_and_content_container}>
         <Show when={!screenOrientation.isLandscape()}>
             <div class={css.portrait_context_banner}>{contextBanner()}</div>
         </Show>
-        <Switch>
-            <Match when={getCurrentExpState(store).focus === 'log_in'}>
-                <LoginForm />
-            </Match>
-            <Match when={store.get.contextThought
-                && (getCurrentExpState(store).mode === 'welcome' || getCurrentExpState(store).mode === 'explore')}>
-                <ThoughtViewer />
-            </Match>
-            <Match when={store.get.contextThoughtInMaking
-                && (getCurrentExpState(store).mode === 'welcome_create' || getCurrentExpState(store).mode === 'create')}>
-                <ThoughtCreator />
-            </Match>
-            <Match when={store.get.contextEpoch
-                && (getCurrentExpState(store).mode === 'epochs')}>
-                <EpochViewer />
-            </Match>
-            <Match when={getCurrentExpState(store).mode === 'settings'}>
-                <Settings/>
-            </Match>
-        </Switch>
-
+        <div classList={{
+            [css.content_container]: true,
+            [css.content_container_land]: screenOrientation.isLandscape()
+        }}>
+            <Switch>
+                <Match when={getCurrentExpState(store).focus === 'log_in'}>
+                    <LoginForm />
+                </Match>
+                <Match when={store.get.contextThought
+                    && (getCurrentExpState(store).mode === 'welcome' || getCurrentExpState(store).mode === 'explore')}>
+                    <ThoughtViewer />
+                </Match>
+                <Match when={store.get.contextThoughtInMaking
+                    && (getCurrentExpState(store).mode === 'welcome_create' || getCurrentExpState(store).mode === 'create')}>
+                    <ThoughtCreator />
+                </Match>
+                <Match when={store.get.contextEpoch
+                    && (getCurrentExpState(store).mode === 'epochs')}>
+                    <EpochViewer />
+                </Match>
+                <Match when={getCurrentExpState(store).mode === 'settings'}>
+                    <Settings />
+                </Match>
+            </Switch>
+        </div>
     </div>
 
     return (

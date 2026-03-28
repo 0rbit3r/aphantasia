@@ -3,7 +3,6 @@ import type { ConceptLight } from "./concept";
 import type { UserLight } from "./user"
 
 export interface Thought {
-    readonly _type: 'Thought';
     id: string;
     title: string;
     date: string;
