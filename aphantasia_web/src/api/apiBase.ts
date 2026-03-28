@@ -8,13 +8,12 @@ export function fetchBase<T>(path: string, authorize?: 'authorize'): Promise<T> 
         headers: headers
     }).then(r => r.json()
         // parse result object
-        .catch(_ => Promise.reject())
+        .catch(_ => Promise.reject('bad json'))
         .then(result => {
             if (result.isSuccess) {
                 return result.payload;
             }
             else {
-                console.log(result.error.statue + ': ' + result.error.message)
                 return Promise.reject(result.error.message);
             }
         }
@@ -36,17 +35,17 @@ export function postBase<T>(path: string, body: object, authorize?: 'authorize')
         headers: headers, method: 'POST', body: JSON.stringify(body)
     }).then(r => r.json()
         // parse result object
-        .catch(_ => Promise.reject())
+        .catch(_ => Promise.reject('bad json'))
         .then(result => {
             if (result.isSuccess) {
                 return result.payload;
             }
             else {
-                console.log(result.error.statue + ': ' + result.error.message)
                 return Promise.reject(result.error.message);
             }
         }
         )).catch(
-            _ => Promise.reject()
+
+            e => Promise.reject(e)
         );
 }

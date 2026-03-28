@@ -16,6 +16,7 @@ import createIcon from '../../assets/icons/create_thought.svg';
 import conceptsIcon from '../../assets/icons/concepts.png';
 import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
+import settingsIcon from '../../assets/icons/settings.png';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 
 export default function ModeBar() {
@@ -44,7 +45,8 @@ export default function ModeBar() {
     explore: exploreIcon,
     create: createIcon,
     concepts: conceptsIcon,
-    inbox: envelopeIcon
+    inbox: envelopeIcon,
+    settings: settingsIcon
   };
 
   return <>

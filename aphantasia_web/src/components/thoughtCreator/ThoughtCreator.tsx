@@ -36,28 +36,28 @@ export const ThoughtCreator = () => {
         }
 
         const linkThoughts: ThoughtTitle[] = [];
-        foundIds.forEach(id => {
-            const nodeInGraph = store.get.grafika.getData().nodes.find(n => n.id === id)
+        foundIds.forEach(thoughtId => {
+            const nodeInGraph = store.get.grafika.getData().nodes.find(node => node.id === thoughtId)
             if (nodeInGraph) {
                 linkThoughts.push({ id: nodeInGraph.id, color: nodeInGraph.color, shape: nodeInGraph.shape, title: nodeInGraph.text })
             }
             else {
                 // in normal create, fetch from api
-                store.set('contextThoughtInMaking', 'validations', store.get.contextThoughtInMaking?.validations + 'thought not found')
+                store.set('notificationMessages', prev => [...prev, { color: 'yellow', text: 'Thought not found\n' + thoughtId }])
             }
         });
 
         const edgesToDelete = store.get.grafika.getData().edges.filter(e => e.targetId === 'created_thought' && !linkThoughts?.find(l => l.id === e.sourceId));
         const edgesToAdd = linkThoughts?.filter(link => store.get.grafika.getData().edges.filter(e => e.sourceId === link.id && e.targetId === 'created_thought')?.length === 0)
-            .map<GraphEdge>(link => ({ sourceId: link.id, targetId: 'created_thought',  color: link.color, length: 300 }));// length should not need to be specified - todo fix grafika
+            .map<GraphEdge>(link => ({ sourceId: link.id, targetId: 'created_thought', color: link.color, length: 300 }));// length should not need to be specified - todo fix grafika
 
         store.get.grafika.addData({ edges: edgesToAdd });
         store.get.grafika.removeData({ edges: edgesToDelete });
 
-        // console.log(foundIds);
-        // console.log(linkThoughts)
-        // console.log(edgesToAdd)
-        // console.log(store.get.grafika.getData())
+        console.log(foundIds);
+        console.log(linkThoughts)
+        console.log(edgesToAdd)
+        console.log(store.get.grafika.getData())
 
         store.set('contextThoughtInMaking', 'links', prev => edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 })).concat(prev) ?? []);
     })
@@ -93,8 +93,10 @@ export const ThoughtCreator = () => {
             </div>
         </Show>
         <Show when={previewMode()}>
-            <Content text={store.get.contextThoughtInMaking?.content ?? ''}
-                thoughtColors={linkColors()} color={store.get.contextThoughtInMaking?.color} />
+            <div class={css.preview_content_container}>
+                <Content text={store.get.contextThoughtInMaking?.content ?? ''}
+                    thoughtColors={linkColors()} color={store.get.contextThoughtInMaking?.color} />
+            </div>
             <div class={css.button_bar}>
                 <button class={css.button_bar_button}
                     style={{
@@ -152,10 +154,10 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
     // todo - it seems that some edges might be dplicated throughout the thought creation process
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }
-    
-    
+
+
     api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0)
-    .then(newId => {
+        .then(newId => {
             const newData = {
                 nodes: [{
                     id: newId, color: graphNode.color, x: graphNode.x, y: graphNode.y,
@@ -163,13 +165,15 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
                 }],
                 edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: newId })))
             };
-            
-            
+
+
             store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] })
             store.get.grafika.addData(newData);
 
             handleForwardExploration(store, { mode: "explore", focus: newId });
-            
+
             store.set('contextThoughtInMaking', undefined);
-        });//catch
+        }).catch(e => {
+            store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }])
+        })
 }

@@ -9,6 +9,7 @@
     overflow: hidden;
     opacity: 1;
     transition: opacity 0.3s ease-in-out;
+    z-index: var(--z-mode-menu);
 }
 
 .mode_menu_container_hidden{

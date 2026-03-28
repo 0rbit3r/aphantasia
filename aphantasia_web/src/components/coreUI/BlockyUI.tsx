@@ -11,6 +11,8 @@ import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { ThoughtCreator } from "../thoughtCreator/ThoughtCreator";
 import { LoginForm } from "../LoginForm";
 import { EpochViewer } from "../EpochViewer";
+import MessageOverlay from "./MessageOverlay";
+import { Settings } from "../Settings";
 
 
 export interface BlockyUIProps {
@@ -30,6 +32,7 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
     const graphPart = <div class={css.graph_container} >
         <div ref={onGrafikaRef} class={css.grafika_container} />
         <ModeMenu />
+        <MessageOverlay/>
     </div>
 
     const contentPart = <div class={css.content_container}>
@@ -51,6 +54,9 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
             <Match when={store.get.contextEpoch
                 && (getCurrentExpState(store).mode === 'epochs')}>
                 <EpochViewer />
+            </Match>
+            <Match when={getCurrentExpState(store).mode === 'settings'}>
+                <Settings/>
             </Match>
         </Switch>
 

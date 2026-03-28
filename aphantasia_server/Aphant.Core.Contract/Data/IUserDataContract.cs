@@ -17,4 +17,6 @@ public interface IUserDataContract
         string? color = null);
 
     Task<Result<string>> GetUserPassHash(Guid id);
+    Task<Result<UserSettings>> GetSettings(Guid id);
+    Task<Result> UpdateSettings(UserSettings newSettings);
 }

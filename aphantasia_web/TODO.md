@@ -4,18 +4,20 @@
     - [x] Remove Home from logged in modes
 - [x] Add 'logged-in' thought creation
 - [ ] Find other things absolutely necessary before closed beta release
-    - [ ] Validation messages
-        - [ ] On login fail
-        - [ ] On attempt to reply to created thought
-        - [ ] On create fail
+    - [x] Validation messages
+        - [x] On login fail
+        - [x] On attempt to reply to created thought
+        - [x] On create fail
         - [ ] On auth fail
+    - [ ] Nicer login form
+    - [ ] 
 - [ ] Finish the tutorial
-- [ ] Add Settings
-    - [ ] Color
-    - [ ] Logout
+- [x] Add Settings
+    - [x] Color
+    - [x] Logout
     - [ ] Delete account
+    - [ ] Make it look good
 
 - [ ] Release closed beta
 
-- [ ] Validation messages component
-- [ ] Thought validation
+- [ ] Fix new thought not linking in graph when re-initialized

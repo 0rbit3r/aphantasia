@@ -33,7 +33,6 @@ export const WELCOME_CREATE_STATE = {
                     'To add a link, press the link button and click on a thought in the graph.',
                 links: [],
                 shape: 0,
-                validations: [],
                 linkSelectionState: 'hidden',
                 cursorPosition: 0,
                 color: color
@@ -47,7 +46,7 @@ export const WELCOME_CREATE_STATE = {
     dispose: (store) => {
         store.get.grafika.removeData({
             nodes: [{ id: 'created_thought' }],
-            // edges: [store.get.]
+            edges: store.get.grafika.getData().edges.filter(e => e.targetId === 'created_thought')
         })
         store.get.grafika.interactionEvents.all.clear();
     }

@@ -37,7 +37,6 @@ export const CREATE_STATE = {
                 content: '',
                 links: [],
                 shape: 0,
-                validations: [],
                 linkSelectionState: 'hidden',
                 cursorPosition: 0,
                 color: color
@@ -51,6 +50,7 @@ export const CREATE_STATE = {
     dispose: (store) => {
         store.get.grafika.removeData({
             nodes: [{ id: 'created_thought' }],
+            edges: store.get.grafika.getData().edges.filter(e => e.targetId === 'created_thought')
         })
         store.get.grafika.interactionEvents.all.clear();
     }

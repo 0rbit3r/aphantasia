@@ -8,6 +8,7 @@ import type { ExplorationStateDescriptor } from "../model/explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 import type { AuthorizedUser } from "../contexts/authContext";
 import type { Epoch } from "../model/dto/epoch";
+import type { Notification } from "../components/coreUI/MessageOverlay";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -27,6 +28,8 @@ export interface AphantasiaStore {
     splitUiLayout: SplitLayout;
     modeMenuOpen: boolean;
 
+    notificationMessages: Notification[];
+
     user?: AuthorizedUser;
 }
 
@@ -43,7 +46,8 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         splitUiLayout: 'graph',
         grafika: null!,
         contextDataLoading: false,
-        modeMenuOpen: false
+        modeMenuOpen: false,
+        notificationMessages: []
     });
 
     return { get: getStore, set: setStore };

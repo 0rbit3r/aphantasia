@@ -32,6 +32,7 @@
   --z-handle: 30;
   --z-content: 40;
   --z-context-banner: 50;
+  --z-message-overlay: 60;
 }
 
 body {

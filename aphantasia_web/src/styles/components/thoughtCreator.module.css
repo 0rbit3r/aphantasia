@@ -28,6 +28,11 @@
     flex: 1 1 auto;
 }
 
+.preview_content_container {
+    width: 100%;
+    flex: 1 1 auto;
+}
+
 .button_bar {
     height: 2.4rem;
     display: flex;

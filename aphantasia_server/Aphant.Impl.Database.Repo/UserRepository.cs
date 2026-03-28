@@ -87,4 +87,45 @@ internal class UserRepository(
             return Error.General("Server error");
         }
     }
+
+    //todo - test coverage
+    public async Task<Result<UserSettings>> GetSettings(Guid id)
+    {
+        try
+        {
+            var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (entity is null)
+                return Error.BadRequest("Non-existent user");
+            return Result.Success(new UserSettings
+            {
+                Bio= entity.Bio,
+                Color=entity.Color
+            });
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to fetch user settings");
+            return Error.General("Server error");
+        }
+    }
+    public async Task<Result> UpdateSettings(UserSettings newSettings)
+    {
+        try
+        {
+            var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == newSettings.UserId);
+            if (entity is null)
+                return Error.BadRequest("Non-existent user");
+
+            entity.Color = newSettings.Color;
+            entity.Bio = newSettings.Bio;
+
+            _db.SaveChanges();
+            return Result.Success(entity.Id);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to update settings");
+            return Error.General("Server error");
+        }
+    }
 }

@@ -1,6 +1,4 @@
-using Aphant.Core.Contract;
 using Aphant.Core.Contract.Data;
-using Aphant.Core.Dto.Results;
 using Microsoft.Extensions.Logging;
 
 namespace Aphant.Impl.Logic.Thoughts;

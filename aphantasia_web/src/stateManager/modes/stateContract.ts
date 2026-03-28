@@ -6,6 +6,7 @@ import { WELCOME_CREATE_STATE } from "./welcome/welcomeCreate";
 import { EPOCHS_STATE } from "./epochs";
 import { EXPLORE_STATE } from "./explore";
 import { CREATE_STATE } from "./create";
+import { SETTINGS_STATE } from "./settings";
 
 export interface StateContract {
     // settings to initialize grafika with
@@ -25,6 +26,7 @@ export const STATE_CONTRACTS: Record<ModeType, StateContract> = {
     epochs: EPOCHS_STATE,
     explore: EXPLORE_STATE,
     create: CREATE_STATE,
+    settings: SETTINGS_STATE,
     concepts: null!,
     inbox: null!
 };

@@ -9,6 +9,7 @@ import { getCurrentExpState } from "../stateManager/getCurrentExpState";
 import { STATE_CONTRACTS } from "../stateManager/modes/stateContract";
 import { Loading } from "./Loading";
 
+let firstLoad = true;
 
 export const AphantasiaContainer = () => {
     const auth = useContext(AuthContext)!;
@@ -19,9 +20,9 @@ export const AphantasiaContainer = () => {
 
     // setInitialState when the authorizedUser call loads
     createEffect(() => {
-        console.log(auth.authStatusLoaded())
-        console.log(auth.getAuthorizedUser())
-        if (!auth.authStatusLoaded()) return;
+        if (!auth.authStatusLoaded() || !firstLoad) return;  
+        // only do this the very first time auth is loaded (when saving settings terminate)
+        firstLoad = false;
 
         const loggedIn = auth.getAuthorizedUser() !== null;
         location.pathname;//...

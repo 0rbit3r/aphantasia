@@ -24,11 +24,11 @@ namespace Aphant.Client.WebApi.Controllers
         [Authorize]
         public async Task<ActionResult<Result<Guid>>> PostThought([FromBody] CreateThoughtRequest body)
         {
-            if (UserId is null) return ResponseFromResult(Error.Unauthorized("Invalid token"));
+            if (UserIdClaim is null) return ResponseFromResult(Error.Unauthorized("Invalid token"));
 
             return ResponseFromResult(
                 await _thoughtLogic.PostThought(
-                    UserId.Value,
+                    UserIdClaim.Value,
                     body.Title,
                     body.Content,
                     body.Shape));

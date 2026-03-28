@@ -42,7 +42,7 @@ export const EXPLORE_STATE = {
     },
 
     hangleFocusChange: (store, focusId) => {
-        if (store.get.splitUiLayout === 'hidden' || 'graph') store.set('splitUiLayout', 'half');
+        if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph') store.set('splitUiLayout', 'half');
 
         const grafikaData = store.get.grafika.getData();
 
@@ -53,7 +53,7 @@ export const EXPLORE_STATE = {
             if (highlightedNodeProxy) {
                 highlightedNodeProxy.glowEffect = false;
             }
-        }
+        } 
 
         if (focusId === undefined)
             return; // todo - ???

@@ -17,7 +17,7 @@ export default function ContextBanner() {
 
   createEffect(() => {
     const currentMode = getCurrentExpState(store).mode;
-    if (currentMode === 'welcome_create') {
+    if (currentMode === 'welcome_create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
       setText('What\'s on your mind?')
       setColor('#a0a0a0')
       return;
@@ -39,8 +39,13 @@ export default function ContextBanner() {
     }
     if (currentMode === 'epochs' && !getCurrentExpState(store).focus) {
       setText('Aphantasia');
-      setColor('#cccccc');
+      setColor('#eeeeee');
     }
+    if (currentMode === 'settings'){
+      setText('Settings');
+      setColor('#cccccc')
+    }
+
   })
 
   return <div classList={{

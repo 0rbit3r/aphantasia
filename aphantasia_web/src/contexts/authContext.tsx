@@ -13,10 +13,11 @@ export interface AuthorizedUser {
 
 export const AuthContext = createContext<{
     getAuthorizedUser: () => (AuthorizedUser | null),
+    reload: () => void,
     setTokenAndReload: (token: string) => void,
     authStatusLoaded: () => boolean
 
-}>({ getAuthorizedUser: () => null, setTokenAndReload: () => null, authStatusLoaded: () => false });
+}>({ getAuthorizedUser: () => null, setTokenAndReload: () => null, reload: ()=>{}, authStatusLoaded: () => false });
 
 
 export function AuthContextProvider(props: { children: any }) {
@@ -69,7 +70,7 @@ export function AuthContextProvider(props: { children: any }) {
 
 
     return (
-        <AuthContext.Provider value={{ getAuthorizedUser, setTokenAndReload, authStatusLoaded }}>
+        <AuthContext.Provider value={{ getAuthorizedUser, setTokenAndReload, authStatusLoaded, reload: loadUser}}>
             {props.children}
         </AuthContext.Provider>
     );

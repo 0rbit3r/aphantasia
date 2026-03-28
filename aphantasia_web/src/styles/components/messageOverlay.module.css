@@ -1,20 +1,35 @@
 .message_container_overlay {
+    z-index: var(--z-message-overlay);
     text-align: center;
     font-size: larger;
-    background-color: black;
+    position: absolute;
+    top: 33%;
+    left: 0;
+    right: 0;
+    height: auto;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
 }
 
-/* todo - color scheme of validation messages and make
-        "shadow" under text to increase readibility */
+.message {
+    white-space: pre-wrap;
+    transition: all 0.3s ease-in-out;
+    background-color: rgba(0, 0, 0, 0.7);
+}
 
 .red_message {
-    color: red;
+    color: rgb(255, 153, 153);
+    background-color: rgba(138, 0, 0, 0.747);
 }
 
 .green_message {
-    color: green;
+    color: rgb(181, 255, 181);
+    background-color: rgba(0, 138, 11, 0.747);
+
 }
 
 .yellow_message {
-    color: yellow;
+    color: rgb(255, 255, 173);
+    background-color: rgba(129, 138, 0, 0.747);
+
 }

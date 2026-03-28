@@ -4,8 +4,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-
-    transition: height 1s ease;
 }
 
 .split_ui_container_welcome {

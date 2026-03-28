@@ -13,8 +13,6 @@ public class User
 public class UserColorName
 {
     public Guid Id { get; set; }
-
     public required string Username { get; set; }
-
     public required string Color { get; set; }
 }

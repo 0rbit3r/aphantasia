@@ -7,7 +7,6 @@ export interface ThoughtInMaking {
     content: string;
     links: ThoughtTitle[];
     concepts: string[];
-    validations: string[];
     shape: NodeShape;
     color: string;
 

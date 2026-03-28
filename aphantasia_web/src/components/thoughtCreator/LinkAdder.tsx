@@ -18,6 +18,10 @@ export const LinkAdder = (props: {
         const grafika = store.get.grafika
         grafika.interactionEvents.all.clear();
         grafika.interactionEvents.on('nodeClicked', clickedNode => {
+            if (clickedNode.id === 'created_thought') {
+                store.set('notificationMessages', prev => [...prev, { color: 'yellow', text: 'A thought cannot reply to itself' }]);
+                return;
+            }
             if (store.get.contextThoughtInMaking?.links.find(l => l.id === clickedNode.id)) return;
             // if tutorial...
             setThoughtToLink({ id: clickedNode.id, color: clickedNode.color, shape: clickedNode.shape, title: clickedNode.text });

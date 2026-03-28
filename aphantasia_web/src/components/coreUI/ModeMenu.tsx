@@ -7,7 +7,7 @@ import { handleForwardExploration } from '../../stateManager/handleForwardExplor
 import welcomeIcon from '../../assets/icons/home.svg';
 import epochIcon from '../../assets/icons/galaxy.svg';
 import createIcon from '../../assets/icons/create_thought.svg';
-// import settingsIcon from '../../assets/icons/settings.png';
+import settingsIcon from '../../assets/icons/settings.png';
 // import bellIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
 // import conceptsIcon from '../../assets/icons/concepts.png';
@@ -63,9 +63,9 @@ export const ModeMenu = () => {
                         {/* <div class={css.button_container}>
                         <SymbolButton img={conceptsIcon} action={() => { }}></SymbolButton>
                         Concepts</div> */}
-                        {/* <div class={css.button_container}>
-                            <SymbolButton img={settingsIcon} action={() => { }}></SymbolButton>
-                            Settings</div> */}
+                        <div class={css.button_container}>
+                            <SymbolButton img={settingsIcon} action={() => handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
+                            Settings</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={chatIcon} action={() => { }}></SymbolButton>
                         Chat</div> */}
