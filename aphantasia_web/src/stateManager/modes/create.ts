@@ -1,4 +1,4 @@
-import type { ProxyNode } from "grafika";
+import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
 import type { StateContract } from "./stateContract";
 
@@ -7,8 +7,8 @@ export const CREATE_STATE = {
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
-            if (clickedNode.id === 'created_thought'){
-                store.get.grafika.focusOn({id: 'created_thought'});
+            if (clickedNode.id === 'created_thought') {
+                store.get.grafika.focusOn({ id: 'created_thought' });
                 return;
             }
             handleForwardExploration(store, {
@@ -19,9 +19,15 @@ export const CREATE_STATE = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => { store.get.grafika.focusOn(null) });
 
         const color = store.get.user?.color ?? '#cccccc';
+        const viewport = store.get.grafika.getViewport();
 
         store.get.grafika.addData({
-            nodes: [{ id: 'created_thought', glowEffect: true, radius: 50, text: '', color: color }]
+            nodes: [{ id: 'created_thought', glowEffect: true, radius: 50,
+                text: store.get.contextThoughtInMaking?.title ?? '',
+                shape: store.get.contextThoughtInMaking?.shape ?? NodeShape.Circle,
+                color: color,
+                x: viewport.position.x, y: viewport.position.y
+             }]
         })
 
         console.log(store.get.grafika.getData());
@@ -31,7 +37,6 @@ export const CREATE_STATE = {
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking)
             store.set('contextThoughtInMaking', {
-                _type: 'ThoughtInMaking',
                 title: '',
                 concepts: [],
                 content: '',

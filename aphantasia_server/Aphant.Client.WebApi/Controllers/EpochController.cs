@@ -7,7 +7,7 @@ using Aphant.Core.Contract.Data;
 
 namespace Aphant.Client.WebApi.Controllers
 {
-    [Route("epochs")]
+    [Route("api/epochs")]
     [ApiController]
     public class EpochController(
         IEpochDataContract epochDataContract

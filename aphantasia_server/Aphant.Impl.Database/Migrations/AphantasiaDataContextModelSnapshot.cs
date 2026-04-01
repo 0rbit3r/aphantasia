@@ -17,7 +17,7 @@ namespace Aphant.Impl.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.2")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -25,248 +25,313 @@ namespace Aphant.Impl.Database.Migrations
             modelBuilder.Entity("Aphant.Impl.Database.Entity.BookmarkEntity", b =>
                 {
                     b.Property<Guid>("ThoughtId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("thought_id");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("ThoughtId", "UserId");
+                    b.HasKey("ThoughtId", "UserId")
+                        .HasName("pk_bookmarks");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_bookmarks_user_id");
 
-                    b.ToTable("Bookmarks");
+                    b.ToTable("bookmarks", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.ConceptEntity", b =>
                 {
                     b.Property<string>("Tag")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("tag");
 
                     b.Property<string>("Color")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("color");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_created");
 
-                    b.HasKey("Tag");
+                    b.HasKey("Tag")
+                        .HasName("pk_concepts");
 
-                    b.ToTable("Concepts");
+                    b.ToTable("concepts", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.ConceptFollowEntity", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("ConceptTag")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concept_tag");
 
                     b.Property<int>("MinimumReplies")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("minimum_replies");
 
-                    b.HasKey("UserId", "ConceptTag");
+                    b.HasKey("UserId", "ConceptTag")
+                        .HasName("pk_concept_follows");
 
-                    b.HasIndex("ConceptTag");
+                    b.HasIndex("ConceptTag")
+                        .HasDatabaseName("ix_concept_follows_concept_tag");
 
-                    b.ToTable("ConceptFollows");
+                    b.ToTable("concept_follows", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.EpochEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_epochs");
 
-                    b.ToTable("Epochs");
+                    b.ToTable("epochs", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.NotificationEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_created");
 
                     b.Property<bool>("IsRead")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_read");
 
                     b.Property<string>("Text")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("text");
 
                     b.Property<Guid?>("ThoughtId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("thought_id");
 
                     b.Property<byte>("Type")
-                        .HasColumnType("smallint");
+                        .HasColumnType("smallint")
+                        .HasColumnName("type");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_notifications");
 
-                    b.HasIndex("ThoughtId");
+                    b.HasIndex("ThoughtId")
+                        .HasDatabaseName("ix_notifications_thought_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_notifications_user_id");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("notifications", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.ThoughtConceptEntity", b =>
                 {
                     b.Property<Guid>("ThoughtId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("thought_id");
 
                     b.Property<string>("ConceptTag")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concept_tag");
 
-                    b.HasKey("ThoughtId", "ConceptTag");
+                    b.HasKey("ThoughtId", "ConceptTag")
+                        .HasName("pk_thought_concepts");
 
-                    b.HasIndex("ConceptTag");
+                    b.HasIndex("ConceptTag")
+                        .HasDatabaseName("ix_thought_concepts_concept_tag");
 
-                    b.ToTable("ThoughtConcepts");
+                    b.ToTable("thought_concepts", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.ThoughtEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("author_id");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("character varying(7)");
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("color");
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(3000)
-                        .HasColumnType("character varying(3000)");
+                        .HasColumnType("character varying(3000)")
+                        .HasColumnName("content");
 
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_created");
 
                     b.Property<int?>("EpochId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("epoch_id");
 
                     b.Property<double>("PositionX")
-                        .HasColumnType("double precision");
+                        .HasColumnType("double precision")
+                        .HasColumnName("position_x");
 
                     b.Property<double>("PositionY")
-                        .HasColumnType("double precision");
+                        .HasColumnType("double precision")
+                        .HasColumnName("position_y");
 
                     b.Property<int>("Shape")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("shape");
 
                     b.Property<int>("SizeMultiplier")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("size_multiplier");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("title");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_thoughts");
 
-                    b.HasIndex("AuthorId");
+                    b.HasIndex("AuthorId")
+                        .HasDatabaseName("ix_thoughts_author_id");
 
-                    b.HasIndex("DateCreated");
+                    b.HasIndex("DateCreated")
+                        .HasDatabaseName("ix_thoughts_date_created");
 
-                    b.HasIndex("EpochId");
+                    b.HasIndex("EpochId")
+                        .HasDatabaseName("ix_thoughts_epoch_id");
 
-                    b.ToTable("Thoughts");
+                    b.ToTable("thoughts", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.ThoughtReferenceEntity", b =>
                 {
                     b.Property<Guid>("SourceId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_id");
 
                     b.Property<Guid>("TargetId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_id");
 
-                    b.HasKey("SourceId", "TargetId");
+                    b.HasKey("SourceId", "TargetId")
+                        .HasName("pk_thought_references");
 
-                    b.HasIndex("TargetId");
+                    b.HasIndex("TargetId")
+                        .HasDatabaseName("ix_thought_references_target_id");
 
-                    b.ToTable("ThoughtReferences");
+                    b.ToTable("thought_references", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Bio")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("bio");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(7)
-                        .HasColumnType("character varying(7)");
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("color");
 
                     b.Property<DateTime>("DateJoined")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date_joined");
 
                     b.Property<string>("Email")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("email");
 
                     b.Property<string>("PassHash")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("pass_hash");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("username");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
 
                     b.HasIndex("Username")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_username");
 
-                    b.ToTable("Users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.UserFollowEntity", b =>
                 {
                     b.Property<Guid>("FollowedId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("followed_id");
 
                     b.Property<Guid>("FollowerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("follower_id");
 
-                    b.HasKey("FollowedId", "FollowerId");
+                    b.HasKey("FollowedId", "FollowerId")
+                        .HasName("pk_user_follows");
 
-                    b.HasIndex("FollowerId");
+                    b.HasIndex("FollowerId")
+                        .HasDatabaseName("ix_user_follows_follower_id");
 
-                    b.ToTable("UserFollows");
+                    b.ToTable("user_follows", (string)null);
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.BookmarkEntity", b =>
@@ -275,13 +340,15 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany("Bookmarks")
                         .HasForeignKey("ThoughtId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bookmarks_thoughts_thought_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "User")
                         .WithMany("Bookmarks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bookmarks_users_user_id");
 
                     b.Navigation("Thought");
 
@@ -294,13 +361,15 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany()
                         .HasForeignKey("ConceptTag")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_concept_follows_concepts_concept_tag");
 
                     b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_concept_follows_users_user_id");
 
                     b.Navigation("Concept");
 
@@ -311,13 +380,15 @@ namespace Aphant.Impl.Database.Migrations
                 {
                     b.HasOne("Aphant.Impl.Database.Entity.ThoughtEntity", "Thought")
                         .WithMany()
-                        .HasForeignKey("ThoughtId");
+                        .HasForeignKey("ThoughtId")
+                        .HasConstraintName("fk_notifications_thoughts_thought_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "User")
                         .WithMany("Notifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_notifications_users_user_id");
 
                     b.Navigation("Thought");
 
@@ -330,13 +401,15 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany()
                         .HasForeignKey("ConceptTag")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_thought_concepts_concepts_concept_tag");
 
                     b.HasOne("Aphant.Impl.Database.Entity.ThoughtEntity", "Thought")
                         .WithMany()
                         .HasForeignKey("ThoughtId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_thought_concepts_thoughts_thought_id");
 
                     b.Navigation("Concept");
 
@@ -349,12 +422,14 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany("Thoughts")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_thoughts_users_author_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.EpochEntity", "Epoch")
                         .WithMany("Thoughts")
                         .HasForeignKey("EpochId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_thoughts_epochs_epoch_id");
 
                     b.Navigation("Author");
 
@@ -367,13 +442,15 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany("Links")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_thought_references_thoughts_source_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.ThoughtEntity", "TargetThought")
                         .WithMany("Backlinks")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_thought_references_thoughts_target_id");
 
                     b.Navigation("SourceThought");
 
@@ -386,13 +463,15 @@ namespace Aphant.Impl.Database.Migrations
                         .WithMany()
                         .HasForeignKey("FollowedId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_follows_users_followed_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "Follower")
                         .WithMany()
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_follows_users_follower_id");
 
                     b.Navigation("Followed");
 

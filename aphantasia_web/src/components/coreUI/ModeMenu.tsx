@@ -41,9 +41,11 @@ export const ModeMenu = () => {
                         <div class={css.button_container}>
                             <SymbolButton img={welcomeIcon} action={() => handleForwardExploration(store, { mode: 'welcome' })}></SymbolButton>
                             Welcome</div>
-                        <div class={css.button_container}>
-                            <SymbolButton img={createIcon} action={() => handleForwardExploration(store, { mode: 'welcome_create' })} />
-                            Write</div>
+                        <Show when={store.get.grafika.getData().nodes.find(n => n.id === 'let_us_create_a_thought')}>
+                            <div class={css.button_container}>
+                                <SymbolButton img={createIcon} action={() => handleForwardExploration(store, { mode: 'welcome_create' })} />
+                                Write</div>
+                        </Show>
                     </>
                 </Show>
                 <Show when={authContext.getAuthorizedUser() !== null}>

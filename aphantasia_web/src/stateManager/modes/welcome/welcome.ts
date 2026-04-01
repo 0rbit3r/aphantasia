@@ -7,7 +7,6 @@ import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
 
 
-
 export const WELCOME_STATE = {
     grafikaSettings: {
         graphics: {
@@ -54,7 +53,6 @@ export const WELCOME_STATE = {
 
 
     hangleFocusChange: (store, focusId) => {
-
         const grafikaData = store.get.grafika.getData();
 
         // remove old highlight
@@ -72,7 +70,7 @@ export const WELCOME_STATE = {
             return;
         }
 
-        if (focusedNode.id === 'creating_thoughts' && !grafikaData.nodes.some(n => n.id === 'link_me!')) {
+        if (focusedNode.id === 'good_job!' && !grafikaData.nodes.some(n => n.id === 'link_me!')) {
             store.get.grafika.addData({
                 nodes: welcome_data.nodes.filter(n => n.id === 'link_me!')!.map(d => ({
                     ...d, hollowEffect: true,
@@ -87,7 +85,7 @@ export const WELCOME_STATE = {
             focusedNode.hollowEffect = false;
         } else {
             focusedNode.glowEffect = true;
-            if(focusedNode.id !== 'link_me!') focusedNode.hollowEffect = false;
+            if (focusedNode.id !== 'link_me!') focusedNode.hollowEffect = false;
             store.set('splitUiLayout', prev => (prev === 'graph' || prev === 'hidden') ? 'half' : prev);
         }
 
@@ -100,9 +98,10 @@ export const WELCOME_STATE = {
                 (e.sourceId === n.id && e.targetId === focusedNode.id)
                 || (e.sourceId === focusedNode.id && e.targetId === n.id)))
             .filter(nodeToAdd => !grafikaData.nodes.find(existingNode => existingNode.id === nodeToAdd.id))
-            .map(d => ({
-                ...d, hollowEffect: true, timeToLiveFrom: -30 * timeToLiveFrom++,
-                x: focusedNode.x + (Math.random() - 0.5) * 20, y: focusedNode.y + (Math.random() - 0.5) * 20
+            .map(n => ({
+                ...n, hollowEffect: true, timeToLiveFrom: -30 * timeToLiveFrom++,
+                x: n.x ?? focusedNode.x + (Math.random() - 0.5) * 20,
+                y: n.y ?? focusedNode.y + (Math.random() - 0.5) * 20
             }));
         store.get.grafika.addData({ nodes: nodesToAdd });
     },
@@ -151,3 +150,12 @@ const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: st
             store.get.grafika.focusOn('all');
     }
 }
+
+
+// to print positions of thoughts
+// console.log(JSON.stringify(grafikaData, (key, value) => { 
+//     console.log(key)
+//     if (key === 'nodes' || key === 'id' || key === 'x' || key === 'y' || key === '' || !Number.isNaN(Number.parseInt(key)))
+//         return value;
+//     return undefined;
+// }))

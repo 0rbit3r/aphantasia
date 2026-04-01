@@ -38,7 +38,7 @@ export default function ContextBanner() {
       return;
     }
     if (currentMode === 'epochs' && !getCurrentExpState(store).focus) {
-      setText('Aphantasia');
+      setText(import.meta.env.VITE_APP_TITLE);
       setColor('#eeeeee');
     }
     if (currentMode === 'settings'){

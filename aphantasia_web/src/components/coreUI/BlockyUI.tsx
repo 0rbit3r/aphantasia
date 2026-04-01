@@ -13,6 +13,7 @@ import { LoginForm } from "../LoginForm";
 import { EpochViewer } from "../EpochViewer";
 import MessageOverlay from "./MessageOverlay";
 import { Settings } from "../Settings";
+import { RegisterForm } from "../RegisterForm";
 
 
 export interface BlockyUIProps {
@@ -46,6 +47,9 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
             <Switch>
                 <Match when={getCurrentExpState(store).focus === 'log_in'}>
                     <LoginForm />
+                </Match>
+                <Match when={getCurrentExpState(store).focus === 'register'}>
+                    <RegisterForm/>
                 </Match>
                 <Match when={store.get.contextThought
                     && (getCurrentExpState(store).mode === 'welcome' || getCurrentExpState(store).mode === 'explore')}>

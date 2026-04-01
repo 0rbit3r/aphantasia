@@ -10,20 +10,27 @@
         - [x] On create fail
         - [x] On auth fail
     - [x] Nicer login form
-    - [ ] Add the registration form too, why the hell not...
-        - [ ] Form
-        - [ ] Api call
-    - [ ] Cursor position respecting links
-- [ ] Finish the tutorial
-    - [ ] Written part
-    - [ ] Logic
+    - [x] Add the registration form too, why the hell not...
+        - [x] Form
+        - [x] Api call
+    - [x] Cursor position respecting links
+- [x] Finish the tutorial
+    - [x] Written part
+    - [x] Logic
     - [x] Fix Welcome not showing created thoughts in the replies bar
 - [x] Add Settings
     - [x] Color
     - [x] Logout
     - [ ] Delete account
-    - [ ] Make it look good
+    - [x] Make it look good
 
-- [ ] Release closed beta
+- [x] Release closed beta
 
 - [x] Fix new thought not linking in graph when re-initialized
+- [x] Not working shape when clicking off and on created thought (and title too)
+
+- [ ] Replies mode
+
+Mode button zmatečný
+green a red blikají, když se mají propojit
+do vybírače linků zpět

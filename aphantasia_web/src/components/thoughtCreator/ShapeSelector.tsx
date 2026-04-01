@@ -1,5 +1,5 @@
 import { NodeShape } from "grafika";
-import { createSignal, For } from "solid-js";
+import { For, useContext } from "solid-js";
 import css from '../../styles/components/shapeSelector.module.css';
 import { SymbolButton } from "../SymbolButton";
 import circleIcon from '../../assets/icons/circle.svg';
@@ -9,18 +9,18 @@ import triangleIcon from '../../assets/icons/triangle.svg';
 import downTriangleIcon from '../../assets/icons/down-triangle.svg';
 import heartIcon from '../../assets/icons/heart.svg';
 import crossIcon from '../../assets/icons/cross.svg';
+import { StoreContext } from "../../contexts/storeContext";
 
 
-export interface ShapeSelectorProps {
-    shapeSelected: (shape: NodeShape) => void
-}
 
-export const ShapeSelector = (props: ShapeSelectorProps) => {
-    const [shape, setShape] = createSignal(NodeShape.Circle);
+
+export const ShapeSelector = () => {
+    const store = useContext(StoreContext);
 
     const handleShapeClick = (shape: NodeShape) => {
-        setShape(shape);
-        props.shapeSelected(shape);
+        store?.set('contextThoughtInMaking', 'shape', shape);
+        store?.get.grafika.getData().nodes.filter(n=> n.id ==='created_thought')
+            .forEach(n=> n.shape = shape);
     }
 
     const shapes = [
@@ -35,8 +35,8 @@ export const ShapeSelector = (props: ShapeSelectorProps) => {
 
     return <div class={css.shape_selector_container}>
         <For each={shapes}>
-            {(item) => <div classList={{ [css.shape_selector_button]: true, [css.shape_selector_button_selected]: shape() === item.shape }}>
-                <SymbolButton img={item.image} action={() => handleShapeClick(item.shape)} dim={shape() === item.shape} /></div>}
+            {(item) => <div classList={{ [css.shape_selector_button]: true, [css.shape_selector_button_selected]: store?.get.contextThoughtInMaking?.shape === item.shape }}>
+                <SymbolButton img={item.image} action={() => handleShapeClick(item.shape)} dim={store?.get.contextThoughtInMaking?.shape === item.shape} /></div>}
         </For>
     </div>
 }

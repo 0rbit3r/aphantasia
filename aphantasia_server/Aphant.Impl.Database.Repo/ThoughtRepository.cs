@@ -57,9 +57,24 @@ internal class ThoughtRepository(
             return Error.General("Server error");
         }
     }
-    public Task<Result> DeleteThought(Guid id)
+    public async Task<Result> DeleteThought(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var thought = await _db.Thoughts
+                .FirstOrDefaultAsync(t => t.Id == id);
+            if (thought is null) return Error.NotFound();
+
+            _db.Remove(thought);
+            _db.SaveChanges();
+
+            return Result.Success();
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to fetch thought to database.");
+            return Error.General("Server error");
+        }
     }
     public async Task<Result<List<ThoughtLight>>> GetRepliesOfThought(Guid id)
     {
@@ -93,6 +108,7 @@ internal class ThoughtRepository(
                 Content = content,
                 AuthorId = userId,
                 Color = user.Color,
+                Shape = shape,
                 DateCreated = DateTime.UtcNow
             };
             _db.Thoughts.Add(entity);

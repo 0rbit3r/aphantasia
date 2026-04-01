@@ -3,7 +3,7 @@ import { api_postLogin } from "../api/postLogin"
 import { AuthContext } from "../contexts/authContext";
 import { StoreContext } from "../contexts/storeContext";
 import css from "../styles/components/loginForm.module.css";
-import _ from '../styles/common/htmlControls.module.css';
+import '../styles/common/htmlControls.css';
 import css_buttons from '../styles/common/buttons.module.css';
 
 export const LoginForm = () => {

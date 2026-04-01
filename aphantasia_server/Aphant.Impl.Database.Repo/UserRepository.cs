@@ -98,8 +98,8 @@ internal class UserRepository(
                 return Error.BadRequest("Non-existent user");
             return Result.Success(new UserSettings
             {
-                Bio= entity.Bio,
-                Color=entity.Color
+                Bio = entity.Bio,
+                Color = entity.Color
             });
         }
         catch (Exception e)
@@ -125,6 +125,31 @@ internal class UserRepository(
         catch (Exception e)
         {
             _log.LogError(e, "Failed to update settings");
+            return Error.General("Server error");
+        }
+    }
+
+    public async Task<Result> ChangeThoughtColorsOfUSer(Guid userId, string newColor)
+    {
+        try
+        {
+            var user = await _db.Users
+                .Include(u => u.Thoughts)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+                return Error.BadRequest("Non-existent user");
+
+            foreach(var thought in user.Thoughts)
+            {
+                thought.Color = newColor;
+            }
+
+            _db.SaveChanges();
+            return Result.Success(user.Id);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to change thought colors of user {id}", userId);
             return Error.General("Server error");
         }
     }

@@ -25,7 +25,8 @@ namespace Aphant.Impl.Database
             }
 
             var optionsBuilder = new DbContextOptionsBuilder<AphantasiaDataContext>()
-                .UseNpgsql(config.GetConnectionString("DefaultConnection"));
+                .UseNpgsql(config.GetConnectionString("DefaultConnection"))
+                .UseSnakeCaseNamingConvention();
 
             return new AphantasiaDataContext(optionsBuilder.Options);
         }

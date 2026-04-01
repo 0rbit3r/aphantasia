@@ -23,6 +23,10 @@
 
 .action_buttons_bar_collapsed {
     height: 0;
+} 
+
+.action_buttons_bar_button{
+    width: var(--action-buttons-bar); /* to make it square*/
 }
 
 .metadata_bar {

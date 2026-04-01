@@ -9,7 +9,7 @@ export function fetchBase<T>(path: string, authorize?: 'authorize'): Promise<T> 
     if (authorize)
         headers.set('Authorization', 'Bearer ' + token);
 
-    return fetch(import.meta.env.VITE_URL + path, {
+    return fetch(import.meta.env.VITE_URL + import.meta.env.VITE_API_PATH + path, {
         headers: headers
     }).then(r => r.json()
         // parse result object
@@ -36,7 +36,7 @@ export function postBase<T>(path: string, body: object, authorize?: 'authorize')
 
     console.log(JSON.stringify(body))
 
-    return fetch(import.meta.env.VITE_URL + path, {
+    return fetch(import.meta.env.VITE_URL + import.meta.env.VITE_API_PATH + path, {
         headers: headers, method: 'POST', body: JSON.stringify(body)
     }).then(r => r.json()
         // parse result object
@@ -51,6 +51,29 @@ export function postBase<T>(path: string, body: object, authorize?: 'authorize')
         }
         )).catch(
 
+            e => Promise.reject(e)
+        );
+}
+
+export function deleteBase<T>(path: string): Promise<T> {
+    const token = localStorage.getItem('authToken');
+    const headers = new Headers();
+    headers.set('Authorization', 'Bearer ' + token);
+
+    return fetch(import.meta.env.VITE_URL + import.meta.env.VITE_API_PATH + path, {
+        headers: headers, method: 'DELETE'
+    }).then(r => r.json()
+        // parse result object
+        .catch(r => r)
+        .then(result => {
+            if (result.isSuccess) {
+                return result.payload;
+            }
+            else {
+                return Promise.reject(result.error.message);
+            }
+        }
+        )).catch(
             e => Promise.reject(e)
         );
 }

@@ -19,4 +19,5 @@ public interface IUserDataContract
     Task<Result<string>> GetUserPassHash(Guid id);
     Task<Result<UserSettings>> GetSettings(Guid id);
     Task<Result> UpdateSettings(UserSettings newSettings);
+    Task<Result> ChangeThoughtColorsOfUSer(Guid userId, string newColor);
 }

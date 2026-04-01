@@ -1,6 +1,6 @@
 import { createEffect, createSignal, Show, useContext } from "solid-js"
 import { StoreContext } from "../../contexts/storeContext"
-import _ from '../../styles/common/htmlControls.module.css';
+import '../../styles/common/htmlControls.css';
 import css from '../../styles/components/thoughtCreator.module.css';
 import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
@@ -15,10 +15,22 @@ import { welcome_data } from "../../stateManager/modes/welcome/welcomeData";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { api_postCreateThought } from "../../api/postCreateThought";
 
+const [publishInProgress, setPublishInProgress] = createSignal(false);
 
 export const ThoughtCreator = () => {
     const store = useContext(StoreContext)!;
     const authContext = useContext(AuthContext);
+
+    
+    // caret tracking (to insert thought where the caret is)
+    let contentInputRef!: HTMLTextAreaElement;
+    const [selectionStart, setSelectionStart] = createSignal(0);
+    const [selectionEnd, setSelectionEnd] = createSignal(0);
+    const updateCaret = () => {
+        setSelectionStart(contentInputRef.selectionStart);
+        setSelectionEnd(contentInputRef.selectionEnd);
+    }
+
 
     const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought')!;
     if (graphNode === undefined) { console.error('created graph node not found.'); return; }
@@ -28,6 +40,7 @@ export const ThoughtCreator = () => {
 
     // fetch thoughts and modify links array based on content
     createEffect(() => {
+        updateCaret()
         const foundIds: string[] = [];
         const parts = store.get.contextThoughtInMaking?.content.split(LINK_REGEX) ?? [];
         for (let i = 0; i < parts.length; i += 3) {
@@ -53,12 +66,13 @@ export const ThoughtCreator = () => {
         store.get.grafika.addData({ edges: edgesToAdd });
         store.get.grafika.removeData({ edges: edgesToDelete });
 
-        // console.log(foundIds);
-        // console.log(linkThoughts)
-        // console.log(edgesToAdd)
-        // console.log(store.get.grafika.getData())
+        store.set('contextThoughtInMaking', 'links', prev => {
+            const newLinks = edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 }))
+                .concat(prev)
+                .filter(l => !edgesToDelete.find(e => e.sourceId === l.id)) ?? [];
 
-        store.set('contextThoughtInMaking', 'links', prev => edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 })).concat(prev) ?? []);
+            return newLinks;
+        });
     })
 
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
@@ -73,12 +87,14 @@ export const ThoughtCreator = () => {
                         store.set('contextThoughtInMaking', 'title', e.target.value);
                         if (graphNode) graphNode.text = e.target.value;
                     }} />
-                <ShapeSelector shapeSelected={shape => graphNode && (graphNode.shape = shape)}></ShapeSelector>
+                <ShapeSelector />
             </div>
-            <textarea placeholder='Content'
+            <textarea ref={contentInputRef}
+                placeholder='Content'
                 class={css.content_input}
                 value={store.get.contextThoughtInMaking?.content ?? ''}
-                on:input={e => store.set('contextThoughtInMaking', 'content', e.target.value)} />
+                on:input={e => store.set('contextThoughtInMaking', 'content', e.target.value)}
+                on:selectionchange={updateCaret}/>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
@@ -95,6 +111,7 @@ export const ThoughtCreator = () => {
             </div>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
+                    disabled={publishInProgress()}
                     style={{
                         color: authContext.getAuthorizedUser()?.color || "white"
                     }}
@@ -109,7 +126,8 @@ export const ThoughtCreator = () => {
         </Show>
         <Show when={store.get.contextThoughtInMaking?.linkSelectionState !== 'hidden'}>
             <LinkAdder onLinkSelected={(thought, text) => {
-                store.set('contextThoughtInMaking', 'content', (store.get.contextThoughtInMaking?.content ?? '') + `[${thought.id}][${text}]`);
+                const newContent = getContentWithNewLink(store.get.contextThoughtInMaking?.content ?? '', selectionStart(), selectionEnd(), `[${thought.id}][${text}]`);
+                store.set('contextThoughtInMaking', 'content', newContent);
             }}></LinkAdder>
         </Show>
     </div>
@@ -118,30 +136,52 @@ export const ThoughtCreator = () => {
 let userCreatedId = 0;
 
 const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNode: ProxyNode) => {
+    try {
 
-    const newData = {
-        nodes: [{
-            id: userCreatedId.toString(), color: graphNode.color, x: graphNode.x, y: graphNode.y,
-            shape: graphNode.shape, text: graphNode.text
-        }], edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: userCreatedId.toString() })))
-    };
+        const newData = {
+            nodes: [{
+                id: userCreatedId.toString(), color: graphNode.color, x: graphNode.x, y: graphNode.y,
+                shape: graphNode.shape, text: graphNode.text
+            }], edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: userCreatedId.toString() })))
+        };
 
-    console.log(newData)
+        store.get.grafika.addData(newData);
 
-    store.get.grafika.addData(newData);
+        // detect if user connected red to green to proceed in the tutorial
+        if (userCreatedId > 0) {
+            let connectedToGreen = false;
+            let connectedToRed = false;
+            const inEdges = Array.from(graphNode.inEdges); // it has to be done like this otherwise iPhones will crash. I don't even wanna know why...
+            inEdges.forEach(edge => {
+                if (edge.sourceId === 'good_job!')
+                    connectedToGreen = true;
+                if (edge.sourceId === 'link_me!')
+                    connectedToRed = true;
+            })
 
-    store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] })
+            if (connectedToGreen && connectedToRed) {
+                const nextNode = welcome_data.nodes.filter(n => n.id === 'almost_there!').map(d => ({
+                    ...d, hollowEffect: true,
+                    x: graphNode.x + (Math.random() - 0.5) * 20, y: graphNode.y + (Math.random() - 0.5) * 20
+                }))[0];
+                store.get.grafika.addData({ nodes: [nextNode] });
+                store.get.grafika.getData().nodes.filter(n => n.id === 'link_me!')[0].hollowEffect = false;
+            }
+        }
 
-    welcome_data.nodes.push({ ...newData.nodes.map(n => ({ ...n, content: store.get.contextThoughtInMaking?.content ?? '', authorName: 'You', date: 'today' }))[0] })
-    welcome_data.edges = welcome_data.edges.concat(newData.edges);
+        store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] })
 
-    store.set('contextThoughtInMaking', undefined);
+        welcome_data.nodes.push({ ...newData.nodes.map(n => ({ ...n, content: store.get.contextThoughtInMaking?.content ?? '', authorName: 'You', date: 'today' }))[0] })
+        welcome_data.edges = welcome_data.edges.concat(newData.edges);
 
-    handleForwardExploration(store, { mode: "welcome", focus: userCreatedId.toString() });
+        store.set('contextThoughtInMaking', undefined);
 
-    console.log(welcome_data)
+        handleForwardExploration(store, { mode: "welcome", focus: userCreatedId.toString() });
 
-    userCreatedId++;
+        userCreatedId++;
+    } catch (e: any) {
+        store.set('notificationMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
+    }
 }
 
 const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNode: ProxyNode) => {
@@ -149,6 +189,9 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }
 
+    console.log(newThought)
+    if (publishInProgress()) return;
+    setPublishInProgress(true);
 
     api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0)
         .then(newId => {
@@ -167,7 +210,16 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
             handleForwardExploration(store, { mode: "explore", focus: newId });
 
             store.set('contextThoughtInMaking', undefined);
+            setPublishInProgress(false);
         }).catch(e => {
-            store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }])
+            store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }]);
+            setPublishInProgress(false);
         })
+}
+
+const getContentWithNewLink = (previousText: string, selectionStart: number, selectionEnd: number, linkText: string) => {
+    const newContent = previousText.slice(0, selectionStart) + linkText + previousText.slice(selectionEnd);
+
+    console.log(newContent)
+    return newContent;
 }

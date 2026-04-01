@@ -13,6 +13,11 @@ internal partial class UserLogicService : IUserLogicContract
         if (settings.Bio.Length > 300)
             return Error.BadRequest("Bio can be at most 300 characters long");
 
-        return await _userData.UpdateSettings(settings);
+        var settingsResult = await _userData.UpdateSettings(settings);
+        var colorsResult = await _userData.ChangeThoughtColorsOfUSer(settings.UserId, settings.Color);
+
+        if (settingsResult.IsSuccess && colorsResult.IsSuccess)
+            return Result.Success();
+        return Error.General("Error while saving settings");
     }
 }

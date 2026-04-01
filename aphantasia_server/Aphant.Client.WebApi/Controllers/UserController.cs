@@ -8,7 +8,7 @@ using Aphant.Core.Contract.Logic;
 
 namespace Aphant.Client.WebApi.Controllers
 {
-    [Route("users")]
+    [Route("api/users")]
     [ApiController]
     public class UserController(
         IUserDataContract _userData,

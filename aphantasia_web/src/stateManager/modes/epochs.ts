@@ -16,11 +16,11 @@ export const EPOCHS_STATE = {
             colorfulText: true,
             defaultEdgeType: EdgeType.Tapered,
             backdrop: {
-                startAppearingAt: 0.05,
-                fullyVisibleAt: 2,
-                parallax: 0.5,
-                scale: 15,
-                url: "temp.jpg"
+                startAppearingAt: 0.001,
+                fullyVisibleAt: 0.1,
+                parallax: 0.75,
+                scale: 5,
+                url: "backdrop.png"
             }
         },
         simulation: { pushThreshold: 3000 },

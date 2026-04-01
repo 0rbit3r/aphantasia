@@ -4,14 +4,16 @@ using Aphant.Core.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Aphant.Core.Contract.Data;
+using Microsoft.Extensions.Logging;
 
 namespace Aphant.Client.WebApi.Controllers
 {
-    [Route("thoughts")]
+    [Route("api/thoughts")]
     [ApiController]
     public class ThoughtController(
         IThoughtDataContract _thoughtData,
-        IThoughtLogicContract _thoughtLogic
+        IThoughtLogicContract _thoughtLogic,
+        ILogger<ThoughtController> _log
     ) : ApiControllerBase
     {
         [HttpGet("{id}")]
@@ -32,6 +34,23 @@ namespace Aphant.Client.WebApi.Controllers
                     body.Title,
                     body.Content,
                     body.Shape));
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<Result>> DeleteThought([FromRoute] Guid id)
+        {
+            if (UserIdClaim is null) return ResponseFromResult(Error.Unauthorized());
+            _log.LogInformation("Attempting to delete thought {id} by user {user}", id, UserIdClaim);
+
+            var thought = await _thoughtData.GetThoughtLightById(id);
+            if (!thought.IsSuccess) return ResponseFromResult(Error.NotFound());
+
+            if (thought.Payload!.AuthorId != UserIdClaim) return ResponseFromResult(Error.Unauthorized());
+
+            _log.LogInformation("Thought deleted");
+
+            return ResponseFromResult(await _thoughtData.DeleteThought(id));
         }
     }
 }

@@ -18,7 +18,7 @@ export const SETTINGS_STATE = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => {
             store.get.grafika.focusOn(null);
         });
-        store.set('splitUiLayout', 'content');
+        if( store.get.splitUiLayout !== 'content') store.set('splitUiLayout', 'half');
     },
 
     hangleFocusChange: (store, _) => {

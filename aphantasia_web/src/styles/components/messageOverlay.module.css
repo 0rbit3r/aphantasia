@@ -18,18 +18,18 @@
 }
 
 .red_message {
-    color: rgb(255, 153, 153);
+    color: #ff9999;
     background-color: rgba(138, 0, 0, 0.747);
 }
 
 .green_message {
-    color: rgb(181, 255, 181);
+    color: #b5ffb5;
     background-color: rgba(0, 138, 11, 0.747);
 
 }
 
 .yellow_message {
-    color: rgb(255, 255, 173);
+    color: #ffffad;
     background-color: rgba(129, 138, 0, 0.747);
 
 }

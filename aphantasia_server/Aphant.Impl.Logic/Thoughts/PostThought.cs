@@ -2,7 +2,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
-using Aphant.Core.Contract;
 using Microsoft.Extensions.Logging;
 using Aphant.Core.Contract.Data;
 
@@ -12,14 +11,20 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 {
     public async Task<Result<Guid>> PostThought(Guid creatorId, string title, string content, ThoughtShape shape)
     {
-        _log.LogInformation("Creating new thought: {title}", title);
+        title = title.Trim();
+        content = content.Trim();
 
         var validationResult = ValidateTitleAndContent(title, content);
-        if (!validationResult.IsSuccess) return validationResult.Error!;
+        if (!validationResult.IsSuccess)
+        {
+            _log.LogError("Thought creation failed: {err}", validationResult.Error?.Message);
+            return validationResult.Error!;
+        }
 
         var thoughtIdLinksResult = GetLinksAsync(content);
         if (!thoughtIdLinksResult.IsSuccess)
         {
+            _log.LogError("Thought creation failed: {err}", thoughtIdLinksResult.Error?.Message);
             return thoughtIdLinksResult.Error!;
         }
         var thoughtIdLinks = thoughtIdLinksResult.Payload!;
@@ -45,6 +50,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 
         if (errors.Length > 0)
         {
+            _log.LogError("Failed to create thought {err}", errors.Replace("\n", "; "));
             return Error.BadRequest(errors.ToString().TrimEnd('\n'));
         }
 
@@ -57,7 +63,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         }
 
         var insertedThoughtResult = await _thoughtData.GetThoughtLightById(insertResult.Payload!);
-        if(!insertedThoughtResult.IsSuccess)
+        if (!insertedThoughtResult.IsSuccess)
         {
             _log.LogError("Failed to fetch thought from DB, even thought it was just created. This requires attention.");
             return Error.General("Server failed spectacularly");
@@ -75,7 +81,6 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             }
 
             // Then bump
-
             // self-replies don't bump
             if (targetThought.AuthorId == creatorId)
                 continue;
@@ -84,7 +89,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             var replies = await _thoughtData.GetRepliesOfThought(targetThought.Id);
             if (replies.IsSuccess && replies.Payload!.Count(t => t.AuthorId == creatorId) > 1)
                 continue;
-            
+
 
             var bumpResult = await _thoughtData.BumpThought(targetThought.Id);
             if (!bumpResult.IsSuccess)
@@ -93,10 +98,12 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             }
         }
 
-            //  await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
+        //  await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
 
         //     await _notificationsRepository.HandleReplyNotificationsCreationAsync(insertedThought.Payload!.Id);
         //     //todo - add error handling here
+
+        _log.LogInformation("Thought created: {title}", title);
 
         return insertedThoughtResult.Payload!.Id;
     }
@@ -120,29 +127,29 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             references.Add(thoughtId);
         }
 
-        return references;
+        return references.Distinct().ToList();
     }
 
     private Result ValidateTitleAndContent(string title, string content)
     {
-        
-            var errors = new StringBuilder();
-            if(content.Length > 3000 || content.Length < 5)
-            {
-                errors.AppendLine("Content must be between 5 and 3000 characters long");
-            }
-            if (title.Length > 50 || title.Length < 1)
-            {
-                errors.AppendLine("Title must be between 1 and 50 characters long");
-            }
-            if (title.Contains("]") || title.Contains("["))
-            {
-                errors.AppendLine("Title cannot contain characters [ and ]");
-            }
-            if (errors.Length > 0)
-            {
-                return Error.BadRequest(errors.ToString());
-            }
-            return Result.Success();
+
+        var errors = new StringBuilder();
+        if (content.Length > 3000 || content.Length < 5)
+        {
+            errors.AppendLine("Content must be between 5 and 3000 characters long");
+        }
+        if (title.Length > 50 || title.Length < 1)
+        {
+            errors.AppendLine("Title must be between 1 and 50 characters long");
+        }
+        if (title.Contains("]") || title.Contains("["))
+        {
+            errors.AppendLine("Title cannot contain characters [ and ]");
+        }
+        if (errors.Length > 0)
+        {
+            return Error.BadRequest(errors.ToString());
+        }
+        return Result.Success();
     }
 }

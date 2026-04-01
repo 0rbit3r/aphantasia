@@ -1,6 +1,7 @@
 .common_button {
     -webkit-appearance: none;
     appearance: none;
+
     font-size: larger;
     border-radius: 0;
     background-color: var(--color-background-tertiary);
@@ -8,8 +9,15 @@
     cursor: pointer;
     border: 1px solid white;
     color: white;
+
+    min-height: 2rem;
 }
 
 .common_button:hover {
     background-color: var(--color-background-secondary);
+}
+
+.common_button:disabled{
+    background-color: var(--color-background-primary);
+    color: var(--color-background-tertiary)
 }

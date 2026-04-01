@@ -6,7 +6,7 @@ using Aphant.Core.Dto.Results;
 
 namespace Aphant.Client.WebApi.Controllers
 {
-    [Route("auth")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController(
         IAuthContract authService

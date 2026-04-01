@@ -1,4 +1,57 @@
 .settings_container {
     margin: 2px;
-    height: calc(100% - 4px);
+    height: calc(100% - 4px); 
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    text-align: center;
+    margin: 4px
+}
+
+.settings_section {
+    border: 1px solid white;
+    padding: 4px;
+    margin: 4px;
+    margin-bottom: 16px;
+}
+
+.color_text_input{
+    text-align: center;
+}
+.color_input {
+    cursor: pointer;   
+}
+
+.label{
+    margin:4px;
+}
+.color_picker_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.bio_input{
+    width: 100%;
+    min-height: 80px;
+}
+
+.settings_content_container {
+    flex: 1 1 auto;
+    overflow-y: scroll;
+}
+
+.button_bar {
+    height: var(--action-buttons-bar);
+    flex: none;
+    display: flex;
+    flex-direction: row;
+    margin: 1px;
+}
+
+.button_bar_button {
+    flex: 1;
 }

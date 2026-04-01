@@ -9,7 +9,7 @@ export function convertThoughtToNode(thought: ThoughtNode): GraphNode {
         color: thought.color,
         shape: thought.shape,
         text: thought.title,
-        radius: 50,
+        radius: Math.log((thought.size + 100) / 100) * 3000 + 50 // 50 is the base radius here... todo - put this into its own function
     }
 }
 

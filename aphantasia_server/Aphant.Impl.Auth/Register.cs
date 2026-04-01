@@ -19,9 +19,9 @@ internal partial class AuthService : IAuthContract
         {
             errors.AddMessage("Username must be between 3 and 20 characters long");
         }
-        if (!Regex.IsMatch(username, @"^[a-zA-Z0-9\-ÁáČčĎďÉéĚěÍíŇňÓóŘřŠšŤťÚúŮůÝýŽž]+$"))
+        if (!Regex.IsMatch(username, @"^[a-zA-Z0-9\-]+$")) //@"^[a-zA-Z0-9\-ÁáČčĎďÉéĚěÍíŇňÓóŘřŠšŤťÚúŮůÝýŽž]+$" for czech?
         {
-            errors.AddMessage("Username can only contain letters,numbers and dashes");
+            errors.AddMessage("Username can only contain letters, numbers and dashes");
         }
         if (email is not null)
         {

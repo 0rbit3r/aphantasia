@@ -51,7 +51,8 @@ builder.Services.RegisterLogicModule();
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .UseSnakeCaseNamingConvention());
 
 
 builder.Services.AddSerilog();
