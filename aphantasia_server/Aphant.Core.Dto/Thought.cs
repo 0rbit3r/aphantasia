@@ -57,13 +57,3 @@ public class ThoughtNode
     public ICollection<string> Links { get; set; } = new List<string>();
     public ICollection<string> Replies { get; set; } = new List<string>();
 }
-
-
-// todo:
-
-// on fe, map links to grafika (might be ready for list of strings?)
-// register form
-// fail messages banner ?
-// welcome screen
-// tutorial
-// etc.

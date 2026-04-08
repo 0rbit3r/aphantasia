@@ -14,6 +14,7 @@ import { EpochViewer } from "../EpochViewer";
 import MessageOverlay from "./MessageOverlay";
 import { Settings } from "../Settings";
 import { RegisterForm } from "../RegisterForm";
+import { Inbox } from "../inbox/Inbox";
 
 
 export interface BlockyUIProps {
@@ -65,6 +66,9 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
                 </Match>
                 <Match when={getCurrentExpState(store).mode === 'settings'}>
                     <Settings />
+                </Match>
+                <Match when={getCurrentExpState(store).mode === 'inbox'}>
+                    <Inbox />
                 </Match>
             </Switch>
         </div>

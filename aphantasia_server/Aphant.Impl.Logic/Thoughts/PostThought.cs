@@ -80,27 +80,23 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
                     insertedThoughtResult.Payload!.Id, targetThought.Id);
             }
 
-            // Then bump
-            // self-replies don't bump
+            // self-replies don't bump nor notify
             if (targetThought.AuthorId == creatorId)
                 continue;
+
+            // Then notify
+            await _notificationData.InsertNotification(targetThought.AuthorId, insertedThoughtResult.Payload.Id, creatorId, null);
 
             // check if the creator has already replied to the target thought
             var replies = await _thoughtData.GetRepliesOfThought(targetThought.Id);
             if (replies.IsSuccess && replies.Payload!.Count(t => t.AuthorId == creatorId) > 1)
                 continue;
 
-
-            var bumpResult = await _thoughtData.BumpThought(targetThought.Id);
-            if (!bumpResult.IsSuccess)
-            {
-                _log.LogWarning("Error while bumping {id}, {message}", targetThought.Id, bumpResult.Error);
-            }
+            // if not, bump the target
+            await _thoughtData.BumpThought(targetThought.Id);
         }
 
         //  await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
-
-        //     await _notificationsRepository.HandleReplyNotificationsCreationAsync(insertedThought.Payload!.Id);
         //     //todo - add error handling here
 
         _log.LogInformation("Thought created: {title}", title);

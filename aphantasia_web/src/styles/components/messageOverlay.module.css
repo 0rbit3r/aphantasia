@@ -19,17 +19,17 @@
 
 .red_message {
     color: #ff9999;
-    background-color: rgba(138, 0, 0, 0.747);
+    background-color: rgba(87, 0, 0, 0.808);
 }
 
 .green_message {
     color: #b5ffb5;
-    background-color: rgba(0, 138, 11, 0.747);
+    background-color: rgba(0, 90, 8, 0.836);
 
 }
 
 .yellow_message {
     color: #ffffad;
-    background-color: rgba(129, 138, 0, 0.747);
+    background-color: rgba(97, 104, 0, 0.884);
 
 }

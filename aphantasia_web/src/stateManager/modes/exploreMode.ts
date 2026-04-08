@@ -1,10 +1,10 @@
 import { EdgeType, type ProxyNode } from "grafika";
-import type { StateContract } from "./stateContract";
+import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { getCurrentExpState } from "../getCurrentExpState";
 import { api_fetchThought } from "../../api/fetchThought";
 
-export const EXPLORE_STATE = {
+export const ExploreMode = {
     grafikaSettings: {
         graphics: {
             antialiasing: true,
@@ -53,21 +53,16 @@ export const EXPLORE_STATE = {
             if (highlightedNodeProxy) {
                 highlightedNodeProxy.glowEffect = false;
             }
-        } 
+        }
 
         if (focusId === undefined)
             return; // todo - ???
-
-        api_fetchThought(focusId).then(thought =>{
+        store.set('contextDataLoading', true);
+        api_fetchThought(focusId).then(thought => {
             store.set('contextThought', thought);
-            // store.get.grafika.addData(
-            //     // add validation of duplicity here
-            //      {
-            //         nodes: thought
-            //      }
-            // )
-        })  
-        .catch(e => console.error(e));
+            })
+            .catch(e => console.error(e))
+            .finally(() => store.set('contextDataLoading', false));
 
 
         const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
@@ -106,4 +101,4 @@ export const EXPLORE_STATE = {
         }
     }
 
-} satisfies StateContract
+} satisfies ModeContract

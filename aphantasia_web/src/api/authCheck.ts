@@ -4,6 +4,6 @@ export function api_authCheck(): Promise<boolean> {
     headers.set('Authorization', 'Bearer ' + token);
 
     return fetch(import.meta.env.VITE_URL + import.meta.env.VITE_API_PATH + '/auth/check', { headers })
-        .then(r => r.ok)
-        .catch(_ => Promise.reject('Connection error - Aphantasia may be unavailable'));
+        .then(r => r.status === 200)
+        .catch(_ => Promise.reject('Connection error - Site may be unavailable'));
 }

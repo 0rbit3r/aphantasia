@@ -94,6 +94,11 @@ public class AphantasiaDataContext : DbContext
             .WithMany(u => u.Notifications)
             .HasForeignKey(n => n.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<NotificationEntity>()
+            .HasOne(n => n.Thought)
+            .WithMany(t => t.Notifications)
+            .HasForeignKey(n => n.ThoughtId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         // epochs
         modelBuilder.Entity<EpochEntity>()

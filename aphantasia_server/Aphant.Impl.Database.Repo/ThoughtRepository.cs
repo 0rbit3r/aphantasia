@@ -11,12 +11,12 @@ using Aphant.Impl.Database.Entity;
 namespace Aphant.Impl.Database.Repo;
 
 internal class ThoughtRepository(
-    AphantasiaDataContext db,
-    ILogger<AphantasiaDataContext> log
+    AphantasiaDataContext _db,
+    ILogger<AphantasiaDataContext> _log
     ) : IThoughtDataContract
 {
-    private readonly AphantasiaDataContext _db = db;
-    private readonly ILogger<AphantasiaDataContext> _log = log;
+    private readonly AphantasiaDataContext _db = _db;
+    private readonly ILogger<AphantasiaDataContext> _log = _log;
 
 
     public async Task<Result<Thought>> GetThoughtById(Guid id)

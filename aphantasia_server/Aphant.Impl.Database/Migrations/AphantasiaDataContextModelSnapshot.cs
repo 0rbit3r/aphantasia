@@ -123,6 +123,10 @@ namespace Aphant.Impl.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date_created");
 
+                    b.Property<Guid?>("FromUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("from_user_id");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("boolean")
                         .HasColumnName("is_read");
@@ -135,16 +139,15 @@ namespace Aphant.Impl.Database.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("thought_id");
 
-                    b.Property<byte>("Type")
-                        .HasColumnType("smallint")
-                        .HasColumnName("type");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
                         .HasName("pk_notifications");
+
+                    b.HasIndex("FromUserId")
+                        .HasDatabaseName("ix_notifications_from_user_id");
 
                     b.HasIndex("ThoughtId")
                         .HasDatabaseName("ix_notifications_thought_id");
@@ -378,9 +381,15 @@ namespace Aphant.Impl.Database.Migrations
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.NotificationEntity", b =>
                 {
-                    b.HasOne("Aphant.Impl.Database.Entity.ThoughtEntity", "Thought")
+                    b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "FromUser")
                         .WithMany()
+                        .HasForeignKey("FromUserId")
+                        .HasConstraintName("fk_notifications_users_from_user_id");
+
+                    b.HasOne("Aphant.Impl.Database.Entity.ThoughtEntity", "Thought")
+                        .WithMany("Notifications")
                         .HasForeignKey("ThoughtId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_notifications_thoughts_thought_id");
 
                     b.HasOne("Aphant.Impl.Database.Entity.UserEntity", "User")
@@ -389,6 +398,8 @@ namespace Aphant.Impl.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_notifications_users_user_id");
+
+                    b.Navigation("FromUser");
 
                     b.Navigation("Thought");
 
@@ -490,6 +501,8 @@ namespace Aphant.Impl.Database.Migrations
                     b.Navigation("Bookmarks");
 
                     b.Navigation("Links");
+
+                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("Aphant.Impl.Database.Entity.UserEntity", b =>

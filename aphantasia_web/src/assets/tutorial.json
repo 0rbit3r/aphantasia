@@ -164,7 +164,7 @@
       "id": "join",
       "text": "Join",
       "color": "#27b909",
-      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles to continue**.\n\n\n  [hello_explorer][Go back to the beginning]\n",
+      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles and follow the instructions** and eventually you will find the registration form.\n\n[hello_explorer][Go back to the beginning]\n",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -260,7 +260,7 @@
       "id": "link_me!",
       "text": "Link me!",
       "color": "#f30b0b",
-      "content": "Hello I'm red.\n\nWould you be so kind and connect me to my friend Green over there?\n\n**Simply go to the thought creator, click the Link button and then click on this thought in the graph view.**\n\n**Then do the same for thought titled \"Good job!\"**\n\n**Then publish to proceed**",
+      "content": "Hello I'm Red.\n\nWould you be so kind and connect me to my friend Green over there?\n\n**Simply go to the thought creator, click the Link button and then click on this thought in the graph view.**\n\n**Then do the same for thought titled \"Good job!\"**\n\n**Then publish to proceed**",
       "authorName": "Red",
       "date": "ages ago"
     },

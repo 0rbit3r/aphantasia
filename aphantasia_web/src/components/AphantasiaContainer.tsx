@@ -6,7 +6,7 @@ import { parsePathToExplorationState, type ExplorationStateDescriptor } from "..
 import type { GrafikaInstance } from "grafika";
 import { LogoAndQuip } from "./LogoAndQuip";
 import { getCurrentExpState } from "../stateManager/getCurrentExpState";
-import { STATE_CONTRACTS } from "../stateManager/modes/stateContract";
+import { MODE_CONTRACTS } from "../stateManager/modes/modeContract";
 import { Loading } from "./Loading";
 
 let firstLoad = true;
@@ -51,10 +51,10 @@ export const AphantasiaContainer = () => {
                         store.set('splitUiLayout', 'hidden');
                     }
                     //Initialize the initial store
-                    STATE_CONTRACTS[initialExpState()!.mode].initialize(store);
-                    STATE_CONTRACTS[initialExpState()!.mode].hangleFocusChange(store, initialExpState()!.focus)
+                    MODE_CONTRACTS[initialExpState()!.mode].initialize(store);
+                    MODE_CONTRACTS[initialExpState()!.mode].hangleFocusChange(store, initialExpState()!.focus)
                 }}
-                grafikaSettings={STATE_CONTRACTS[initialExpState()!.mode].grafikaSettings}
+                grafikaSettings={MODE_CONTRACTS[initialExpState()!.mode].grafikaSettings}
             ></GraphExplorer>
         </Show>
         <Show when={!auth.authStatusLoaded()}>

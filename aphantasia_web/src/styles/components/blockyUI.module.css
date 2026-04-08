@@ -6,6 +6,7 @@
 
 .graph_container {
     height: 100%;
+    user-select: none;
 }
 
 .grafika_container {

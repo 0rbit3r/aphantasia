@@ -1,19 +1,19 @@
 import { type ExplorationStateDescriptor} from "../model/explorationMode";
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
 import { getCurrentExpState } from "./getCurrentExpState";
-import { STATE_CONTRACTS } from "./modes/stateContract";
+import { MODE_CONTRACTS } from "./modes/modeContract";
 
 
 export const handleStateChange = (store: AphantasiaStoreGetAndSet,
     newState: ExplorationStateDescriptor) => {
 
-    const contract = STATE_CONTRACTS[newState.mode];
+    const contract = MODE_CONTRACTS[newState.mode];
     const prevMode = getCurrentExpState(store).mode;
 
     if (prevMode === newState.mode) {
         contract.hangleFocusChange(store, newState.focus);
     } else {
-        STATE_CONTRACTS[prevMode].dispose(store);
+        MODE_CONTRACTS[prevMode].dispose(store);
         contract.initialize(store);
         contract.hangleFocusChange(store, newState.focus)
     }

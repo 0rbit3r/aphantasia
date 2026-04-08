@@ -13,21 +13,25 @@ export const Settings = () => {
     const [bio, setBio] = createSignal('');
 
     onMount(() => {
+        store.set('contextDataLoading', true);
         setColor(authContext.getAuthorizedUser()?.color ?? '#eeeeee');
         api_fetchUserSettings(authContext.getAuthorizedUser()?.id ?? '')
             .then(fetchedSettings => {
                 setBio(fetchedSettings.bio);
                 setColor(fetchedSettings.color);
             })
+            .finally(() =>
+                store.set('contextDataLoading', false)
+            )
     })
 
     const handleSave = () => api_postUserSettings({ bio: bio(), color: color(), userId: authContext.getAuthorizedUser()?.id ?? '' })
         .then(_ => {
-            store.set('notificationMessages', prev => [...prev, { color: 'green', text: 'Settings saved' }]);
+            store.set('screenMessages', prev => [...prev, { color: 'green', text: 'Settings saved' }]);
             authContext.reload();
         })
         .catch(e =>
-            store.set('notificationMessages', prev => [...prev, { color: 'red', text: e }])
+            store.set('screenMessages', prev => [...prev, { color: 'red', text: e }])
         )
 
 
@@ -52,7 +56,7 @@ export const Settings = () => {
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => { localStorage.removeItem('authToken'); location.reload() }}>Log out</button>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
-                on:click={handleSave}
+                    on:click={handleSave}
                 >Save</button>
             </div>
         </div>

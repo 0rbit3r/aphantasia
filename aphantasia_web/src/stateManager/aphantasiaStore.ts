@@ -8,7 +8,8 @@ import type { ExplorationStateDescriptor } from "../model/explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 import type { AuthorizedUser } from "../contexts/authContext";
 import type { Epoch } from "../model/dto/epoch";
-import type { Notification } from "../components/coreUI/MessageOverlay";
+import type { ScreenMessage } from "../components/coreUI/MessageOverlay";
+import type { InboxNotification } from "../model/dto/inboxNotification";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -23,12 +24,13 @@ export interface AphantasiaStore {
     contextUser?: User;
     contextThoughtInMaking?: ThoughtInMaking;
     contextEpoch?: Epoch;
+    contextInbox?: InboxNotification[];
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;
     modeMenuOpen: boolean;
 
-    notificationMessages: Notification[];
+    screenMessages: ScreenMessage[];
 
     user?: AuthorizedUser;
 }
@@ -47,7 +49,7 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         grafika: null!,
         contextDataLoading: false,
         modeMenuOpen: false,
-        notificationMessages: []
+        screenMessages: []
     });
 
     return { get: getStore, set: setStore };

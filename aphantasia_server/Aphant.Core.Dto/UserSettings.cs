@@ -1,3 +1,5 @@
+namespace Aphant.Core.Dto;
+
 public class UserSettings
 {
     public Guid UserId { get; set; }

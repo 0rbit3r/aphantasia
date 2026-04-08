@@ -32,14 +32,14 @@ export const RegisterForm = () => {
     const handleRegistration = () => {
         api_postRegister(username(), email() === '' ? undefined : email(), password())
             .then(_ => {
-                store.set('notificationMessages', [...store.get.notificationMessages, { color: 'green', text: 'Registraion successful. You may now log in.' }]);
+                store.set('screenMessages', [...store.get.screenMessages, { color: 'green', text: 'Registraion successful. You may now log in.' }]);
                 setUsername('');
                 setEmail('');
                 setPassword('');
                 setPasswordConfirm('');
                 handleForwardExploration(store, {mode: 'welcome', focus: 'log_in'});
             })
-            .catch(e => store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }]));
+            .catch(e => store.set('screenMessages', [...store.get.screenMessages, { color: 'red', text: e }]));
     }
 
     return <div class={css.register_form_container}>

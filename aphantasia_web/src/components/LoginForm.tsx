@@ -20,7 +20,7 @@ export const LoginForm = () => {
                 auth.setTokenAndReload(token);
                 window.location.reload();
             })
-            .catch(e => store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }]));
+            .catch(e => store.set('screenMessages', [...store.get.screenMessages, { color: 'red', text: e }]));
     }
 
     return <div class={css.login_form_container}>

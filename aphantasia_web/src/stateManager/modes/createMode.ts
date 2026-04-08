@@ -1,8 +1,8 @@
 import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
-import type { StateContract } from "./stateContract";
+import type { ModeContract } from "./modeContract";
 
-export const CREATE_STATE = {
+export const CreateMode = {
     grafikaSettings: null!,
 
     initialize: (store) => {
@@ -60,4 +60,4 @@ export const CREATE_STATE = {
         store.get.grafika.interactionEvents.all.clear();
     }
 
-} satisfies StateContract
+} satisfies ModeContract

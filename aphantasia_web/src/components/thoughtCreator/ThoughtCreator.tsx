@@ -14,6 +14,7 @@ import { handleForwardExploration } from "../../stateManager/handleForwardExplor
 import { welcome_data } from "../../stateManager/modes/welcome/welcomeData";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { api_postCreateThought } from "../../api/postCreateThought";
+import { setTutorialCreatedThoughtIndex } from "../../stateManager/modes/welcome/welcomeCreateMode";
 
 const [publishInProgress, setPublishInProgress] = createSignal(false);
 
@@ -21,7 +22,6 @@ export const ThoughtCreator = () => {
     const store = useContext(StoreContext)!;
     const authContext = useContext(AuthContext);
 
-    
     // caret tracking (to insert thought where the caret is)
     let contentInputRef!: HTMLTextAreaElement;
     const [selectionStart, setSelectionStart] = createSignal(0);
@@ -31,6 +31,8 @@ export const ThoughtCreator = () => {
         setSelectionEnd(contentInputRef.selectionEnd);
     }
 
+    const [titleLen, setTitleLen] = createSignal(store.get.contextThoughtInMaking?.title?.length ?? 0);
+    const [contentLen, setContentLen] = createSignal(store.get.contextThoughtInMaking?.content?.length ?? 0);
 
     const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought')!;
     if (graphNode === undefined) { console.error('created graph node not found.'); return; }
@@ -55,7 +57,7 @@ export const ThoughtCreator = () => {
             }
             else {
                 // in normal create, fetch from api
-                store.set('notificationMessages', prev => [...prev, { color: 'yellow', text: 'Thought not found\n' + thoughtId }])
+                store.set('screenMessages', prev => [...prev, { color: 'yellow', text: 'Thought not found\n' + thoughtId }])
             }
         });
 
@@ -85,16 +87,22 @@ export const ThoughtCreator = () => {
                     value={store.get.contextThoughtInMaking?.title ?? ''}
                     on:input={e => {
                         store.set('contextThoughtInMaking', 'title', e.target.value);
+                        setTitleLen(e.target.value.length);
                         if (graphNode) graphNode.text = e.target.value;
                     }} />
+                <div class={css.char_counter}>{titleLen()} / 50</div>
                 <ShapeSelector />
             </div>
             <textarea ref={contentInputRef}
                 placeholder='Content'
                 class={css.content_input}
                 value={store.get.contextThoughtInMaking?.content ?? ''}
-                on:input={e => store.set('contextThoughtInMaking', 'content', e.target.value)}
-                on:selectionchange={updateCaret}/>
+                on:input={e => {
+                    store.set('contextThoughtInMaking', 'content', e.target.value);
+                    setContentLen(e.target.value.length);
+                }}
+                on:selectionchange={updateCaret} />
+            <div class={css.char_counter}>{contentLen()} / 3000</div>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
@@ -126,7 +134,7 @@ export const ThoughtCreator = () => {
         </Show>
         <Show when={store.get.contextThoughtInMaking?.linkSelectionState !== 'hidden'}>
             <LinkAdder onLinkSelected={(thought, text) => {
-                const newContent = getContentWithNewLink(store.get.contextThoughtInMaking?.content ?? '', selectionStart(), selectionEnd(), `[${thought.id}][${text}]`);
+                const newContent = getContentWithLinkInserted(store.get.contextThoughtInMaking?.content ?? '', selectionStart(), selectionEnd(), `[${thought.id}][${text}]`);
                 store.set('contextThoughtInMaking', 'content', newContent);
             }}></LinkAdder>
         </Show>
@@ -144,6 +152,7 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNod
                 shape: graphNode.shape, text: graphNode.text
             }], edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: userCreatedId.toString() })))
         };
+
 
         store.get.grafika.addData(newData);
 
@@ -179,8 +188,9 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNod
         handleForwardExploration(store, { mode: "welcome", focus: userCreatedId.toString() });
 
         userCreatedId++;
+        setTutorialCreatedThoughtIndex(prev => prev + 1);
     } catch (e: any) {
-        store.set('notificationMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
+        store.set('screenMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
     }
 }
 
@@ -192,6 +202,8 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
     console.log(newThought)
     if (publishInProgress()) return;
     setPublishInProgress(true);
+
+    store.set('contextDataLoading', true);
 
     api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0)
         .then(newId => {
@@ -212,14 +224,13 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNod
             store.set('contextThoughtInMaking', undefined);
             setPublishInProgress(false);
         }).catch(e => {
-            store.set('notificationMessages', [...store.get.notificationMessages, { color: 'red', text: e }]);
+            store.set('screenMessages', [...store.get.screenMessages, { color: 'red', text: e }]);
             setPublishInProgress(false);
-        })
+        }).finally(() => store.set('contextDataLoading', false));
 }
 
-const getContentWithNewLink = (previousText: string, selectionStart: number, selectionEnd: number, linkText: string) => {
-    const newContent = previousText.slice(0, selectionStart) + linkText + previousText.slice(selectionEnd);
 
-    console.log(newContent)
+const getContentWithLinkInserted = (previousText: string, selectionStart: number, selectionEnd: number, linkText: string) => {
+    const newContent = previousText.slice(0, selectionStart) + linkText + previousText.slice(selectionEnd);
     return newContent;
 }

@@ -31,6 +31,6 @@
 
 - [ ] Replies mode
 
-Mode button zmatečný
-green a red blikají, když se mají propojit
-do vybírače linků zpět
+
+- [ ] Title on tutorial second load is empty on node
+- [x] Cannot link thought a second time (anebo to povolit...)

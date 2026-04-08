@@ -1,0 +1,61 @@
+.notification_card {
+    background-color: var(--color-background-secondary);
+    margin: 4px;
+    margin-bottom: 8px;
+    border: 2px solid;
+    cursor: pointer;
+}
+
+.notification_card_unread {
+    border-left: 16px solid;
+}
+
+.notification_card:hover {
+    background-color: var(--color-background-primary);
+}
+
+.notification_card:hover * {
+    background-color: var(--color-background-primary);
+}
+
+
+.title_and_shape {
+    font-weight: bold;
+    border-bottom: 1px solid var(--color-text-subtle);
+    padding: 4px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    min-height: var(--metadata-bar-height);
+}
+
+.title {
+    word-wrap: break-word;
+    max-width: calc(100% - var(--metadata-bar-height));
+    text-shadow: 0px 0px 3px black;
+}
+
+.shape_icon {
+    height: 1.4rem;
+}
+
+.shape_icon img {
+    height: 100%;
+    opacity: 0.75;
+}
+
+.date_and_user {
+    background-color: var(--color-background-tertiary);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 4px;
+}
+
+.username {
+    font-weight: bold;
+}

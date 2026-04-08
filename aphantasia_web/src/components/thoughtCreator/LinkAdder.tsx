@@ -19,10 +19,15 @@ export const LinkAdder = (props: {
         grafika.interactionEvents.all.clear();
         grafika.interactionEvents.on('nodeClicked', clickedNode => {
             if (clickedNode.id === 'created_thought') {
-                store.set('notificationMessages', prev => [...prev, { color: 'yellow', text: 'A thought cannot reply to itself' }]);
+                store.set('screenMessages', prev => [...prev, { color: 'yellow', text: 'A thought cannot reply to itself' }]);
                 return;
             }
-            if (store.get.contextThoughtInMaking?.links.find(l => l.id === clickedNode.id)) return;
+            if (store.get.contextThoughtInMaking?.links.find(l => l.id === clickedNode.id)) {
+                store.set('screenMessages', prev => [...prev, {
+                    color: 'yellow', text: 'This thought is already linked'
+                }])
+                return;
+            }
             // if tutorial...
             setThoughtToLink({ id: clickedNode.id, color: clickedNode.color, shape: clickedNode.shape, title: clickedNode.text });
             if (getCurrentExpState(store).mode === 'welcome_create') {
@@ -38,7 +43,7 @@ export const LinkAdder = (props: {
         });
     });
 
-    const handleLinkSelected = (thought: ThoughtTitle, text: string) => {
+    const disposeLinkAdder = () => {
         const grafika = store.get.grafika;
         grafika.interactionEvents.all.clear();
         grafika.interactionEvents.on('viewportMoved', () => { grafika.focusOn(null) });
@@ -52,6 +57,10 @@ export const LinkAdder = (props: {
         grafika.focusOn({ id: 'created_thought' });
 
         store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'hidden' })
+    }
+
+    const handleLinkSelected = (thought: ThoughtTitle, text: string) => {
+        disposeLinkAdder();
         props.onLinkSelected(thought, text);
     }
 
@@ -83,6 +92,10 @@ export const LinkAdder = (props: {
                 Custom (todo)
             </button>
         </Show>
+        <button class={css.source_button}
+            on:click={disposeLinkAdder}>
+            Cancel
+        </button>
     </div>
 
 }

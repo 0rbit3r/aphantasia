@@ -16,3 +16,20 @@
 
     background-color: var(--color-background-secondary);
 }
+
+.inbox_button_container {
+    position: relative;
+    height: 100%;
+    width: 100%; /* keep as-is */
+}
+
+.notifications_indicator {
+    position: absolute; 
+    font-weight: bold;
+    top: 0.1rem;
+    right: 50%;
+    transform: translateX(140%);
+    font-size: 1.5rem;
+    line-height: 1;
+    pointer-events: none;
+}

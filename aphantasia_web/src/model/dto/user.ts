@@ -5,7 +5,7 @@ export interface User {
     bio: string;
 }
 
-export interface UserLight {
+export interface UserColorName {
     id: string;
     username: string;
     color: string;

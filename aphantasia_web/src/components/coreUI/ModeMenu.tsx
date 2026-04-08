@@ -8,7 +8,7 @@ import welcomeIcon from '../../assets/icons/home.svg';
 import epochIcon from '../../assets/icons/galaxy.svg';
 import createIcon from '../../assets/icons/create_thought.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
-// import bellIcon from '../../assets/icons/envelope.svg';
+import notificationsIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
 // import conceptsIcon from '../../assets/icons/concepts.png';
 // import chatIcon from '../../assets/icons/chat.png';
@@ -53,10 +53,10 @@ export const ModeMenu = () => {
                         <div class={css.button_container}>
                             <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epochs' })}></SymbolButton>
                             Epochs</div>
-                        {/* <div class={css.button_container}>
-                        <SymbolButton img={bellIcon} action={() => { }}></SymbolButton>
-                        Replies</div>
-                    <div class={css.button_container}>
+                        <div class={css.button_container}>
+                            <SymbolButton img={notificationsIcon} action={() => handleForwardExploration(store, { mode: 'inbox' })}></SymbolButton>
+                            Inbox</div>
+                        {/*<div class={css.button_container}>
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
                         Bookmarks</div> */}
                         <div class={css.button_container}>

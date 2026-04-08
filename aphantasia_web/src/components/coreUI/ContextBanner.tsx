@@ -19,7 +19,7 @@ export default function ContextBanner() {
     const currentMode = getCurrentExpState(store).mode;
     if (currentMode === 'welcome_create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
       setText('What\'s on your mind?')
-      setColor('#a0a0a0')
+      setColor(store.get.user?.color ?? '#cccccc');
       return;
     }
     if (store.get.contextDataLoading) {
@@ -41,9 +41,13 @@ export default function ContextBanner() {
       setText(import.meta.env.VITE_APP_TITLE);
       setColor('#eeeeee');
     }
-    if (currentMode === 'settings'){
+    if (currentMode === 'settings') {
       setText('Settings');
       setColor('#cccccc')
+    }
+    if (currentMode === 'inbox') {
+      setText('Inbox');
+      setColor(store.get.user?.color ?? '#cccccc');
     }
 
   })
@@ -55,11 +59,12 @@ export default function ContextBanner() {
     border: `2px solid ${color()}`
   }}
     onClick={() => {
-      if (getCurrentExpState(store).mode === 'explore' || getCurrentExpState(store).mode === 'welcome')
+      const currentState = getCurrentExpState(store);
+      if (currentState.mode === 'explore' || currentState.mode === 'welcome')
         store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' });
-      if (getCurrentExpState(store).mode === 'epochs' && !getCurrentExpState(store).focus)
+      if (currentState.mode === 'epochs' && !currentState.focus)
         store.get.grafika.focusOn('all');
-      if (getCurrentExpState(store).mode === 'welcome_create')
+      if (currentState.mode === 'welcome_create' || currentState.mode === 'create')
         store.get.grafika.focusOn({ id: 'created_thought' })
     }}>
     <h1 style={{ color: color() }}>

@@ -4,7 +4,7 @@ import { StoreContext } from '../../contexts/storeContext';
 
 type MessageOverlayColor = "red" | "green" | "yellow";
 
-export interface Notification {
+export interface ScreenMessage {
   color: MessageOverlayColor;
   text: string;
 }
@@ -17,14 +17,14 @@ export default function MessageOverlay() {
   const store = useContext(StoreContext)!;
 
   createEffect(() => {
-    if (store.get.notificationMessages.length === 0) return;
-    setTimeout(() => { store.set('notificationMessages', store.get.notificationMessages.slice(1)) }, 5000)
+    if (store.get.screenMessages.length === 0) return;
+    setTimeout(() => { store.set('screenMessages', store.get.screenMessages.slice(1)) }, 5000)
   })
 
-  return <Show when={store.get.notificationMessages.length > 0}>
+  return <Show when={store.get.screenMessages.length > 0}>
     <div
       class={css.message_container_overlay}>
-      {store.get.notificationMessages.map(n =>
+      {store.get.screenMessages.map(n =>
         <div classList={{
           [css.message]: true,
           [css.red_message]: n.color === 'red',

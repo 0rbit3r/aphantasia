@@ -1,11 +1,11 @@
 import { EdgeType, type ProxyNode } from "grafika";
-import type { StateContract } from "./stateContract";
+import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { api_fetchEpoch } from "../../api/fetchEpoch";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 
-export const EPOCHS_STATE = {
+export const EpochsMode = {
     grafikaSettings: {
         graphics: {
             antialiasing: true,
@@ -51,6 +51,7 @@ export const EPOCHS_STATE = {
         // todo solve reload on every time?
 
         store.get.grafika.removeData();
+        store.set('contextDataLoading', true);
         api_fetchEpoch(focusId)
             .then(epoch => {
                 console.log(epoch)
@@ -61,10 +62,11 @@ export const EPOCHS_STATE = {
                 });
             })
             .catch(e => console.error(e))
+            .finally(()=>store.set('contextDataLoading', false));
     },
 
     dispose: (store) => {
         store.get.grafika.interactionEvents.all.clear();
     }
 
-} satisfies StateContract
+} satisfies ModeContract

@@ -28,8 +28,6 @@ export function AuthContextProvider(props: { children: any }) {
     const [authStatusLoaded, setAuthStatusLoaded] = createSignal<boolean>(false);
     // Synchronize with store
     createEffect(() => store.set('user', getAuthorizedUser() ?? undefined))
-    // todo - put something like AuthStatusLoaded and then initialize the first state AFTER auth.
-    // that wil make the exploration mode almost work I think
 
 
     const loadUser = () => {
@@ -43,7 +41,11 @@ export function AuthContextProvider(props: { children: any }) {
                             u => {
                                 setAuthorizedUser({ ...u });
                                 setAuthStatusLoaded(true)
-                            });
+                            })
+                            .catch(errorMsg => {
+                                setAuthStatusLoaded(true);
+                                return errorMsg;                // Man, this is awful... todo - use await
+                            })
                     }
                     else {
                         setAuthStatusLoaded(true)
@@ -52,7 +54,7 @@ export function AuthContextProvider(props: { children: any }) {
             })
             .catch(e => {
                 console.error(e);
-                store.set('notificationMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
+                store.set('screenMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
                 //Note: this is duplicated and explicitely not in finally to ensure that statusLoaded is set LAST
                 setAuthStatusLoaded(true);
             })

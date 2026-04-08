@@ -1,11 +1,12 @@
-import type { StateContract } from "../stateContract";
+import type { ModeContract } from "../modeContract";
 import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../../handleForwardExploration";
 import type { ThoughtInMaking } from "../../../model/ThoughtInMaking";
+import { createSignal } from "solid-js";
 
-let tutorialCreatedThoughtIndex = 0;
+export const [tutorialCreatedThoughtIndex, setTutorialCreatedThoughtIndex] = createSignal(0);
 
-export const WELCOME_CREATE_STATE = {
+export const WelcomeCreateMode = {
     grafikaSettings: null!,
 
     initialize: (store) => {
@@ -18,7 +19,7 @@ export const WELCOME_CREATE_STATE = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => { store.get.grafika.focusOn(null) });
 
         const color = generateRandomColor();
-        const index = Math.min(tutorialCreatedThoughtIndex, tutorialCreatedThoughts.length - 1);
+        const index = Math.min(tutorialCreatedThoughtIndex(), tutorialCreatedThoughts.length - 1);
         const currentTutorialThought = tutorialCreatedThoughts[index];
 
         const viewport = store.get.grafika.getViewport();
@@ -36,8 +37,7 @@ export const WELCOME_CREATE_STATE = {
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking) {
             currentTutorialThought.color = color;
-            store.set('contextThoughtInMaking', currentTutorialThought)
-            tutorialCreatedThoughtIndex++;
+            store.set('contextThoughtInMaking', currentTutorialThought);
         }
         else store.set('contextThoughtInMaking', 'color', color);
     },
@@ -54,7 +54,7 @@ export const WELCOME_CREATE_STATE = {
         store.get.grafika.interactionEvents.all.clear();
     }
 
-} satisfies StateContract
+} satisfies ModeContract
 
 
 const generateRandomColor = () => {

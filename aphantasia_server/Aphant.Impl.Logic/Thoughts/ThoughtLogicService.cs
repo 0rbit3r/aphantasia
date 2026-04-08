@@ -7,10 +7,12 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 {
     private readonly ILogger<ThoughtLogicService> _log;
     private readonly IThoughtDataContract _thoughtData;
+    private readonly INotificationDataContract _notificationData;
 
-    public ThoughtLogicService(ILogger<ThoughtLogicService> log, IThoughtDataContract thoughtData)
+    public ThoughtLogicService(ILogger<ThoughtLogicService> log, IThoughtDataContract thoughtData, INotificationDataContract notificationData)
     {
         _log = log;
         _thoughtData = thoughtData;
+        _notificationData = notificationData;
     }
 }

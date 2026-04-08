@@ -11,6 +11,7 @@
 }
 
 .reply_box {
+    user-select: none;
     margin: 8px;
     padding: 4px;
     display: inline-block;

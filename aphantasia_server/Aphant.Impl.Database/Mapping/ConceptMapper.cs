@@ -1,5 +1,3 @@
-// using Aphant.Impl.Database.Entity;
-
 using System.Linq.Expressions;
 using Aphant.Impl.Database.Entity;
 using Aphant.Core.Dto;

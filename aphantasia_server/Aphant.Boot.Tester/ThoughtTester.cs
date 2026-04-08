@@ -22,6 +22,16 @@ public class ThoughtTester : IClassFixture<SeededAppContainer<ThoughtTester>>
     [InlineData("asdfsadfdasasdfsfdsfsdsdfdsfdsdsdsdsdsfsfsdfsdssfssd", "sdfdsfds", ErrorCode.BadRequest)]
     [InlineData("title", tooLongContent, ErrorCode.BadRequest)]
 
+
+
+
+
+    //todo - test multiple same links, trimming, weird links, 
+
+
+
+
+
     [InlineData("title", "hello, [019c5448-1254-7282-8040-47be31969dbf][this] doesn't exist", ErrorCode.BadRequest)] // malformed thought link
     public async Task PostLoneThoughtSuccesfully(string title, string content, ErrorCode? expectedCode)
     {

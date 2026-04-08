@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, useContext } from "solid-js";
+import { createSignal, onCleanup, onMount, Show, useContext } from "solid-js";
 import css from '../../styles/components/modeBar.module.css';
 import { SymbolButton } from "../SymbolButton";
 import fullscreenIcon from '../../assets/icons/fullscreen.svg';
@@ -16,12 +16,28 @@ import createIcon from '../../assets/icons/create_thought.svg';
 import conceptsIcon from '../../assets/icons/concepts.png';
 import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
+import arrowIcon from '../../assets/icons/arrow.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
+import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
+import { api_fetchNotifications } from "../../api/api_notifications";
 
 export default function ModeBar() {
   const authContext = useContext(AuthContext);
   const store = useContext(StoreContext)!;
+
+  const [notificationsInterval, setNotificationsInterval] = createSignal<number | undefined>();
+  onMount(() => {
+    const fetchNotifications = () => api_fetchNotifications()
+      .then(result => store.set('contextInbox', result));
+
+    fetchNotifications();
+    setNotificationsInterval(setInterval(fetchNotifications, 180 * 1000));
+  });
+  onCleanup(() => {
+    if (notificationsInterval() !== undefined)
+      clearInterval(notificationsInterval());
+  })
 
   //fullscreen
   const [isFullscreen, setFullScreen] = createSignal(false);
@@ -45,7 +61,7 @@ export default function ModeBar() {
     explore: exploreIcon,
     create: createIcon,
     concepts: conceptsIcon,
-    inbox: envelopeIcon,
+    inbox: arrowIcon,
     settings: settingsIcon
   };
 
@@ -70,8 +86,14 @@ export default function ModeBar() {
             ? nothing
             : icons[getCurrentExpState(store).mode]} />
       </div>
-      <SymbolButton action={() => store.set('notificationMessages', prev => [...prev, {text:'This feature is not yet ready. Stay tuned!', color: 'yellow'}])} img={envelopeIcon}
-        dim={getCurrentExpState(store).mode !== 'inbox'} />
+      <div class={css.inbox_button_container}>
+        <SymbolButton action={() => handleForwardExploration(store, { mode: 'inbox' })} img={envelopeIcon}
+          dim={getCurrentExpState(store).mode !== 'inbox'} />
+        <Show when={getCurrentExpState(store).mode != 'inbox' && store.get.contextInbox?.some(n => !n.read)}>
+          <div class={css.notifications_indicator}
+            style={{ color: store.get.user?.color ?? '#ffffff' }}>•</div>
+        </Show>
+      </div>
       <SymbolButton action={handleFullScreenButton}
         img={
           isAppleGodHelpUs()

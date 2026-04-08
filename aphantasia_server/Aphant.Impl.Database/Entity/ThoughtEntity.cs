@@ -30,4 +30,5 @@ public class ThoughtEntity
     public ICollection<ThoughtReferenceEntity> Backlinks { get; set; } = [];
     public ICollection<ConceptEntity> Concepts { get; set; } = [];
     public ICollection<BookmarkEntity> Bookmarks { get; set; } = [];
+    public ICollection<NotificationEntity> Notifications { get; set; } = [];
 }

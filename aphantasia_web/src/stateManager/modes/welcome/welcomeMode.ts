@@ -1,4 +1,4 @@
-import type { StateContract } from "../stateContract";
+import type { ModeContract } from "../modeContract";
 import { EdgeType, type ProxyNode } from "grafika";
 import { getCurrentExpState } from "../../getCurrentExpState";
 import { handleForwardExploration } from "../../handleForwardExploration";
@@ -7,7 +7,7 @@ import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
 
 
-export const WELCOME_STATE = {
+export const WelcomeMode = {
     grafikaSettings: {
         graphics: {
             antialiasing: true,
@@ -118,7 +118,7 @@ export const WELCOME_STATE = {
         }
     }
 
-} satisfies StateContract
+} satisfies ModeContract
 
 
 
