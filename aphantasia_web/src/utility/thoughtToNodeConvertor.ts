@@ -5,7 +5,7 @@ export function convertThoughtToNode(thought: ThoughtNode): GraphNode {
     return {
         id: thought.id,
         x: thought.x ? thought.x : 0,
-        y: thought.x ? thought.x : 0,
+        y: thought.y ? thought.y : 0,
         color: thought.color,
         shape: thought.shape,
         text: thought.title,

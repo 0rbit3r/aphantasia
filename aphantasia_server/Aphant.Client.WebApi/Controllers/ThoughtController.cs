@@ -43,14 +43,14 @@ namespace Aphant.Client.WebApi.Controllers
             if (UserIdClaim is null) return ResponseFromResult(Error.Unauthorized());
             _log.LogInformation("Attempting to delete thought {id} by user {user}", id, UserIdClaim);
 
-            var thought = await _thoughtData.GetThoughtLightById(id);
+            var thought = await _thoughtData.GetThoughtById(id);
             if (!thought.IsSuccess) return ResponseFromResult(Error.NotFound());
 
-            if (thought.Payload!.AuthorId != UserIdClaim) return ResponseFromResult(Error.Unauthorized());
+            if (thought.Payload!.Author.Id != UserIdClaim) return ResponseFromResult(Error.Unauthorized());
 
             _log.LogInformation("Thought deleted");
 
-            return ResponseFromResult(await _thoughtData.DeleteThought(id));
+            return ResponseFromResult(await _thoughtLogic.DeleteThought(id));
         }
     }
 }

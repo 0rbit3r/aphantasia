@@ -12,8 +12,8 @@ export function getEdgesFromNodes(thoughts: ThoughtNode[]): GraphEdge[] {
             const key = `${thought.id}-${targetId}`;
             if (!seen.has(key)) {
                 edges.push({
-                    sourceId: thought.id,
-                    targetId: targetId
+                    sourceId: targetId,
+                    targetId: thought.id
                 });
                 seen.add(key);
             }

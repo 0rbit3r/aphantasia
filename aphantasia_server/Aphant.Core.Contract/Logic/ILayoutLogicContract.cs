@@ -5,5 +5,5 @@ namespace Aphant.Core.Contract;
 
 public interface ILayoutLogicContract
 {
-    Task<Result<List<ThoughtNode>>> RunFDL(List<ThoughtNode> thoughts, int iterations = 1);
+    Task<Result<List<ThoughtNode>>> LayoutThoughts(List<ThoughtNode> thoughts, int iterations = 1); 
 }

@@ -29,18 +29,18 @@ internal class EpochRepository(
                 .Where(t => t.EpochId == null)
                 .Select(ThoughtMapper.ToDtoNodeExpr).ToList();
 
-            var lastEpochEndedDate = db.Epochs.Any()
-                ? db.Epochs.Max(e => e.EndDate)
-                : DateTime.UtcNow;
+            var lastEpoch = db.Epochs.OrderByDescending(e => e.Id).Select(EpochMapper.ToDtoFullExpr).FirstOrDefault()
+                ?? new Epoch()
+                {
+                    Id = 0,
+                    Name = "First Epoch",
+                    StartDate = "recent times",
+                    EndDate = "today",
+                    Thoughts = epochlessThoughts
+                };
 
-            return new Epoch()
-            {
-                Id = -1,
-                Name = "now",
-                StartDate = lastEpochEndedDate.ToString("yyyy-MM-dd"),
-                EndDate = "today",
-                Thoughts = epochlessThoughts
-            };
+
+            return lastEpoch;
         }
         catch (Exception e)
         {

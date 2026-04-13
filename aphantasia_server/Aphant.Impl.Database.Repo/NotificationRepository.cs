@@ -49,7 +49,7 @@ internal class NotificationRepository(
                 : (NotificationEntity n) => n.Id < takeBefore;
 
             return _db.Notifications
-                .OrderBy(n => n.Id)
+                .OrderByDescending(n => n.Id)
                 .Where(n => n.UserId == user)
                 .Where(whereClause)
                 .Take(NOTIFICATIONS_PAGE_COUNT)

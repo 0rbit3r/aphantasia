@@ -41,24 +41,6 @@ public static class ThoughtMapper
         return ToDtoFullExpr.Compile()(entity);
     }
 
-    public static Expression<Func<ThoughtEntity, ThoughtLight>> ToDtoLightExpr = (ThoughtEntity entity) =>
-        new ThoughtLight
-        {
-            Id = entity.Id,
-            Title = entity.Title,
-            Color = entity.Color,
-            Date = entity.DateCreated.ToString("yyyy-MM-dd"),
-            Size = entity.SizeMultiplier,
-            Shape = entity.Shape,
-            AuthorId = entity.AuthorId,
-            EpochId = entity.EpochId
-        };
-
-    public static ThoughtLight ToDtoLight(this ThoughtEntity entity)
-    {
-        return ToDtoLightExpr.Compile()(entity);
-    }
-
     public static Expression<Func<ThoughtEntity, ThoughtTitle>> ToDtoTitleExpr = (ThoughtEntity entity) =>
         new ThoughtTitle
         {
@@ -80,11 +62,13 @@ public static class ThoughtMapper
             Title = entity.Title,
             Shape = entity.Shape,
             Color = entity.Color,
-            Links = entity.Links.AsQueryable().Select(tr => tr.TargetId.ToString()).ToList(),
-            Replies = entity.Backlinks.AsQueryable().Select(tr => tr.SourceId.ToString()).ToList(),
-            Size=entity.SizeMultiplier,
-            X=entity.PositionX,
-            Y=entity.PositionY
+            Links = entity.Links.AsQueryable().Select(tr => tr.TargetId).ToList(),
+            Replies = entity.Backlinks.AsQueryable().Select(tr => tr.SourceId).ToList(),
+            Size = entity.SizeMultiplier,
+            X = entity.PositionX,
+            Y = entity.PositionY,
+            Author = new UserColorName { Id = entity.Author.Id, Color = entity.Author.Color, Username = entity.Author.Username },
+            Date = entity.DateCreated.ToString("yyyy-MM-dd")
         };
 
     public static ThoughtNode ToDtoNode(this ThoughtEntity entity)

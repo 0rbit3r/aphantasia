@@ -39,12 +39,32 @@ internal class ThoughtRepository(
         }
     }
 
-    public async Task<Result<ThoughtLight>> GetThoughtLightById(Guid id)
+    public async Task<Result<ThoughtTitle>> GetThoughtTitleById(Guid id)
     {
         try
         {
             var thought = await _db.Thoughts
-                .Select(ThoughtMapper.ToDtoLightExpr)
+                .Select(ThoughtMapper.ToDtoTitleExpr)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (thought is null) return Error.NotFound();
+
+            return thought;
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to fetch thought to database.");
+            return Error.General("Server error");
+        }
+    }
+
+
+    public async Task<Result<ThoughtNode>> GetThoughtNodeById(Guid id)
+    {
+        try
+        {
+            var thought = await _db.Thoughts
+                .Select(ThoughtMapper.ToDtoNodeExpr)
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (thought is null) return Error.NotFound();
@@ -76,13 +96,13 @@ internal class ThoughtRepository(
             return Error.General("Server error");
         }
     }
-    public async Task<Result<List<ThoughtLight>>> GetRepliesOfThought(Guid id)
+    public async Task<Result<List<ThoughtNode>>> GetRepliesOfThought(Guid id)
     {
         try
         {
             return await _db.Thoughts
                     .Where(t => t.Links.Any(l => l.TargetId == id))
-                    .Select(ThoughtMapper.ToDtoLightExpr)
+                    .Select(ThoughtMapper.ToDtoNodeExpr)
                     .ToListAsync();
         }
         catch (Exception e)
@@ -156,6 +176,27 @@ internal class ThoughtRepository(
         catch (Exception e)
         {
             _log.LogError(e, "Failed to bump thought {id}", id);
+            return Error.General("Server error");
+        }
+    }
+
+    public async Task<Result> DebumpThought(Guid id)
+    {
+        try
+        {
+            var thought = await _db.Thoughts.SingleOrDefaultAsync(t => t.Id == id);
+            if (thought is null) return Error.NotFound();
+            thought.SizeMultiplier -= 1;
+
+            if (thought.SizeMultiplier < 0)
+                thought.SizeMultiplier = 0; // Should not happen ...often
+
+            await _db.SaveChangesAsync();
+            return Result.Success();
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e, "Failed to debump thought {id}", id);
             return Error.General("Server error");
         }
     }

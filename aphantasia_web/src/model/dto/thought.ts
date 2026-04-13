@@ -18,18 +18,6 @@ export interface Thought {
     concepts: ConceptLight[];
 }
 
-export interface ThoughtLight {
-    id: string;
-    title: string;
-    color: string;
-    date: string;
-    EpochId: string;
-    size: number;
-    author: UserColorName;
-    epochId: number;
-    shape: NodeShape;
-}
-
 export interface ThoughtTitle {
 
     id: string;
@@ -48,4 +36,7 @@ export interface ThoughtNode {
     y: number;
     links: string[];
     replies: string[];
+    
+    author: UserColorName;
+    date: string;
 }

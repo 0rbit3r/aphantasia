@@ -20,20 +20,6 @@ public class Thought
     public ICollection<ConceptLight> Concepts { get; set; } = new List<ConceptLight>();
 }
 
-// Lighter version that doesn't require joins in DB
-public class ThoughtLight
-{
-    public Guid Id { get; set; }
-    public required string Title { get; set; }
-    public required string Color { get; set; }
-    public Guid AuthorId { get; set; }
-    public required string Date { get; set; }
-    public int? EpochId { get; set; }
-    public int Size { get; set; }
-    public ThoughtShape Shape { get; set; }
-}
-
-
 
 // Lightest thought dto for replies, links, scollers etc.  - only key identyfying information
 public class ThoughtTitle
@@ -54,6 +40,8 @@ public class ThoughtNode
     public string Color { get; set; } = "#ffffff";
     public double X { get; set; }
     public double Y { get; set; }
-    public ICollection<string> Links { get; set; } = new List<string>();
-    public ICollection<string> Replies { get; set; } = new List<string>();
+    public ICollection<Guid> Links { get; set; } = new List<Guid>();
+    public ICollection<Guid> Replies { get; set; } = new List<Guid>();
+    public required UserColorName Author { get; set; }
+    public string Date { get; set; } = "";
 }

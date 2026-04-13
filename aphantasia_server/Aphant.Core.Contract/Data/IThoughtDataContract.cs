@@ -6,8 +6,9 @@ namespace Aphant.Core.Contract.Data;
 public interface IThoughtDataContract
 {
     Task<Result<Thought>> GetThoughtById(Guid id);
-    Task<Result<ThoughtLight>> GetThoughtLightById(Guid id);
-    Task<Result<List<ThoughtLight>>> GetRepliesOfThought(Guid id);
+    Task<Result<ThoughtTitle>> GetThoughtTitleById(Guid id);
+    Task<Result<ThoughtNode>> GetThoughtNodeById(Guid id);
+    Task<Result<List<ThoughtNode>>> GetRepliesOfThought(Guid id);
 
     Task<Result<Guid>> InsertThought(
         Guid user,
@@ -20,4 +21,6 @@ public interface IThoughtDataContract
     Task<Result> DeleteThought(Guid id);
 
     Task<Result> BumpThought(Guid id);
+
+    Task<Result> DebumpThought(Guid id);
 }

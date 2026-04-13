@@ -34,8 +34,6 @@ export function postBase<T>(path: string, body: object, authorize?: 'authorize')
         headers.set('Authorization', 'Bearer ' + token);
     headers.set('Content-type', 'application/json')
 
-    console.log(JSON.stringify(body))
-
     return fetch(import.meta.env.VITE_URL + import.meta.env.VITE_API_PATH + path, {
         headers: headers, method: 'POST', body: JSON.stringify(body)
     }).then(r => r.json()

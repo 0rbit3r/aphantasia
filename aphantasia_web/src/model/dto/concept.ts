@@ -1,10 +1,10 @@
-import type { ThoughtLight } from "./thought";
+import type { ThoughtNode } from "./thought";
 
 export interface Concept {
     tag: string;
     color: string;
 
-    largestThoughts: ThoughtLight[];
+    largestThoughts: ThoughtNode[];
 }
 
 export interface ConceptLight {

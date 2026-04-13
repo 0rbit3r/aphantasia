@@ -87,7 +87,9 @@ export default function ModeBar() {
             : icons[getCurrentExpState(store).mode]} />
       </div>
       <div class={css.inbox_button_container}>
-        <SymbolButton action={() => handleForwardExploration(store, { mode: 'inbox' })} img={envelopeIcon}
+        <SymbolButton action={() => authContext.getAuthorizedUser()
+          ? handleForwardExploration(store, { mode: 'inbox' })
+          : store.set('screenMessages', prev => [...prev, {color: 'yellow', text:'Log in to access inbox'}])} img={envelopeIcon}
           dim={getCurrentExpState(store).mode !== 'inbox'} />
         <Show when={getCurrentExpState(store).mode != 'inbox' && store.get.contextInbox?.some(n => !n.read)}>
           <div class={css.notifications_indicator}

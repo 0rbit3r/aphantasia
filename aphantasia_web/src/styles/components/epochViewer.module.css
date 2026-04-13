@@ -2,9 +2,22 @@
     margin: 2px;
     display: flex;
     flex-direction: column;
-    height: calc(100% - var(--context-banner-height) - 4px);
+    height: calc(100% - 4px);
 }
 
-.epoch_viewer_container_land {
-    height: calc(100% - 4px);
+.scroll_container {
+    overflow-y: scroll;
+}
+
+h1{
+    text-align: center;
+    margin: 8px;
+}
+
+/* .dates{
+
+} */
+
+.thought_count{
+    text-align: right;
 }

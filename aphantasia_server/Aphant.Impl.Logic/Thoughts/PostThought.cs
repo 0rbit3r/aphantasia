@@ -36,10 +36,10 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 
         // validate references
         var errors = new StringBuilder();
-        var linkedThoughts = new List<ThoughtLight>();
+        var linkedThoughts = new List<ThoughtNode>();
         foreach (var targetId in thoughtIdLinks)
         {
-            var referencedThought = await _thoughtData.GetThoughtLightById(targetId);// Check exists would be enough here...
+            var referencedThought = await _thoughtData.GetThoughtNodeById(targetId);// Check exists would be enough here...
             if (!referencedThought.IsSuccess)
             {
                 _log.LogWarning("Referenced thought with id {id} not found.", targetId);
@@ -62,7 +62,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return insertResult.Error!;
         }
 
-        var insertedThoughtResult = await _thoughtData.GetThoughtLightById(insertResult.Payload!);
+        var insertedThoughtResult = await _thoughtData.GetThoughtById(insertResult.Payload!);
         if (!insertedThoughtResult.IsSuccess)
         {
             _log.LogError("Failed to fetch thought from DB, even thought it was just created. This requires attention.");
@@ -81,15 +81,15 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             }
 
             // self-replies don't bump nor notify
-            if (targetThought.AuthorId == creatorId)
+            if (targetThought.Author.Id == creatorId)
                 continue;
 
             // Then notify
-            await _notificationData.InsertNotification(targetThought.AuthorId, insertedThoughtResult.Payload.Id, creatorId, null);
+            await _notificationData.InsertNotification(targetThought.Author.Id, insertedThoughtResult.Payload.Id, creatorId, null);
 
             // check if the creator has already replied to the target thought
             var replies = await _thoughtData.GetRepliesOfThought(targetThought.Id);
-            if (replies.IsSuccess && replies.Payload!.Count(t => t.AuthorId == creatorId) > 1)
+            if (replies.IsSuccess && replies.Payload!.Count(t => t.Author.Id == creatorId) > 1)
                 continue;
 
             // if not, bump the target

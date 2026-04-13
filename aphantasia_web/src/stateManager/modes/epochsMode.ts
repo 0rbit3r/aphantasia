@@ -54,8 +54,9 @@ export const EpochsMode = {
         store.set('contextDataLoading', true);
         api_fetchEpoch(focusId)
             .then(epoch => {
-                console.log(epoch)
-                store.set('contextEpoch', epoch);
+                epoch.thoughts.sort((a, b)=> (a.id < b.id) ? 1 : -1)
+                store.set('contextEpoch', epoch); 
+                console.log(getEdgesFromNodes(epoch.thoughts))
                 store.get.grafika.addData({
                     nodes: convertThoughtsToNodes(epoch.thoughts),
                     edges: getEdgesFromNodes(epoch.thoughts)
