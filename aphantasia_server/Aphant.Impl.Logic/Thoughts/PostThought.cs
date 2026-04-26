@@ -113,7 +113,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
     private Result<List<Guid>> GetLinksAsync(string content)
     {
         var references = new List<Guid>();
-        var regex = new Regex(@"\[([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})\]\[[^\[\]\n]+?\]", RegexOptions.Compiled);
+        var regex = new Regex(@"\[([^\[\]\n]+?)\]\[[^\[\]\n]+?\]", RegexOptions.Compiled);
 
         var matches = regex.Matches(content);
         if (matches.Count == 0)

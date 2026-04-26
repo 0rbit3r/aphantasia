@@ -13,9 +13,23 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             var thought = await _thoughtData.GetThoughtById(thoughtId);
             if (!thought.IsSuccess) return Error.NotFound();
 
-            foreach (var linkedThought in thought.Payload!.Links)
+            foreach (var link in thought.Payload!.Links)
             {
-                await _thoughtData.DebumpThought(linkedThought.Id);
+                var target = await _thoughtData.GetThoughtNodeById(link.Id);
+                if (!target.IsSuccess) continue;
+
+                // Self-links were never bumped
+                if (target.Payload!.Author.Id == thought.Payload.Author.Id)
+                    continue;
+
+                // Only debump if this was the author's only reply to the target
+                // (thought is still in DB here, so count > 1 means there are other replies)
+                var replies = await _thoughtData.GetRepliesOfThought(link.Id);
+                var authorReplies = replies.Payload?.Count(r => r.Author.Id == thought.Payload.Author.Id) ?? 0;
+                if (authorReplies > 1)
+                    continue;
+
+                await _thoughtData.DebumpThought(link.Id);
             }
 
             return await _thoughtData.DeleteThought(thoughtId);

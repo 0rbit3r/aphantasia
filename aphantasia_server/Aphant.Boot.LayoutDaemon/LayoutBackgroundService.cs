@@ -49,6 +49,16 @@ public class LayoutBackgroundService : BackgroundService
                 await SavePositions(result.Payload!);
             }
 
+            if (_opts.ExportImageAfterXRuns > 0 && Iteration % _opts.ExportImageAfterXRuns == 0)
+            {
+                var path = $"{_opts.LayoutPNGsPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+                var printResult = await layoutService.PrintLayout(path, null);
+                if (!printResult.IsSuccess)
+                    _log.LogWarning("Failed to export layout image: {err}", printResult.Error!.Message);
+                else
+                    _log.LogInformation("Layout image exported: {path}", path);
+            }
+
             _log.LogInformation("Finished run {iter}", Iteration);
 
             Iteration++;
@@ -60,7 +70,6 @@ public class LayoutBackgroundService : BackgroundService
     {
         try
         {
-
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<AphantasiaDataContext>();
 

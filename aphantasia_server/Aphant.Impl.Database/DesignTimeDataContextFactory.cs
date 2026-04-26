@@ -9,7 +9,14 @@ namespace Aphant.Impl.Database
     {
         public AphantasiaDataContext CreateDbContext(string[] args)
         {
-            Console.WriteLine($"DesignTImeDataContext props: {string.Join(", ", args)}");
+            if (!args.Contains("--apply"))
+            {
+                return new AphantasiaDataContext(
+                    new DbContextOptionsBuilder<AphantasiaDataContext>()
+                        .UseNpgsql("Host=localhost;Database=_migrations_scaffold;Username=x;Password=x")
+                        .UseSnakeCaseNamingConvention()
+                        .Options);
+            }
 
             var config = new ConfigurationBuilder()
                 .AddJsonFile("migrationsettings.json")
@@ -24,11 +31,11 @@ namespace Aphant.Impl.Database
                 Environment.Exit(0);
             }
 
-            var optionsBuilder = new DbContextOptionsBuilder<AphantasiaDataContext>()
-                .UseNpgsql(config.GetConnectionString("DefaultConnection"))
-                .UseSnakeCaseNamingConvention();
-
-            return new AphantasiaDataContext(optionsBuilder.Options);
+            return new AphantasiaDataContext(
+                new DbContextOptionsBuilder<AphantasiaDataContext>()
+                    .UseNpgsql(config.GetConnectionString("DefaultConnection"))
+                    .UseSnakeCaseNamingConvention()
+                    .Options);
         }
     }
 }

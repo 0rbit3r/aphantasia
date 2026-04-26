@@ -1,17 +1,20 @@
 ﻿using Aphant.Core.Contract;
+using Aphant.Core.Contract.Data;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Microsoft.Extensions.Options;
 
 namespace Aphant.Impl.FdlLayout;
 
-public class FdlLayoutService : ILayoutLogicContract
+public partial class FdlLayoutService : ILayoutLogicContract
 {
     private readonly FdlLayoutOptions _options;
+    private readonly IEpochDataContract _epochData;
 
-    public FdlLayoutService(IOptions<FdlLayoutOptions> options)
+    public FdlLayoutService(IOptions<FdlLayoutOptions> options, IEpochDataContract epochData)
     {
         _options = options.Value;
+        _epochData = epochData;
     }
 
     public async Task<Result<List<ThoughtNode>>> LayoutThoughts(List<ThoughtNode> thoughts, int iterations = 1)
@@ -258,4 +261,5 @@ public class FdlLayoutService : ILayoutLogicContract
         // return (int)(Math.Log(repliesNum + 10) * 700 - 1610 + opts.BaseRadius);
         return (int)(Math.Log(((double)repliesNum + 100) / 100) * 3000 + _options.BaseRadius);
     }
+
 }
