@@ -31,7 +31,8 @@ public class AppContainer<T> : IDisposable
         var connString = configuration.GetConnectionString("DefaultConnection")?.Replace("{{id}}", typeof(T).Name);
 
         builder.Services.AddDbContext<AphantasiaDataContext>(options =>
-            options.UseNpgsql(connString));
+            options.UseNpgsql(connString)
+            .UseSnakeCaseNamingConvention());
 
         app = builder.Build();
         Services = app.Services;

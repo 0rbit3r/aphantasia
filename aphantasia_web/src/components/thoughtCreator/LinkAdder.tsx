@@ -1,9 +1,11 @@
-import { createSignal, onMount, Show, useContext } from "solid-js"
+import { createSignal, Match, onMount, Show, Switch, useContext } from "solid-js"
 import { StoreContext } from "../../contexts/storeContext"
+import buttonCss from '../../styles/common/buttons.module.css';
 import css from '../../styles/components/linkAdder.module.css';
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import type { ThoughtTitle } from "../../model/dto/thought";
+import { QuoteSelector } from "./QuoteSelector";
 
 
 
@@ -13,6 +15,7 @@ export const LinkAdder = (props: {
 
     const store = useContext(StoreContext)!;
     const [thoughtToLink, setThoughtToLink] = createSignal<ThoughtTitle | null>(null);
+    const [customText, setCustomText] = createSignal<string>('');
 
     onMount(() => {
         const grafika = store.get.grafika
@@ -56,7 +59,22 @@ export const LinkAdder = (props: {
 
         grafika.focusOn({ id: 'created_thought' });
 
-        store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'hidden' })
+        store.set('contextThoughtInMaking', 'linkSelectionState', 'hidden');
+    }
+
+    const handleCustomTextConfirm = () => {
+        if (customText().length === 0) {
+            store.set('screenMessages', prev => [...prev, { text: 'The text cannot be empty', color: 'yellow' }]);
+            return;
+        }
+        if (customText().includes('[') || customText().includes(']')) {
+            store.set('screenMessages', prev => [...prev, { text: 'The text cannot contain symbols [ and ]', color: 'yellow' }]);
+            return;
+        }
+        const selectedThought = thoughtToLink();
+        if (!selectedThought) return;
+
+        handleLinkSelected(selectedThought, customText());
     }
 
     const handleLinkSelected = (thought: ThoughtTitle, text: string) => {
@@ -65,34 +83,52 @@ export const LinkAdder = (props: {
     }
 
     return <div class={css.link_adder_container}>
-        <Show when={store.get.contextThoughtInMaking?.linkSelectionState === 'link-menu'}>
-            <Show when={getCurrentExpState(store).mode === 'welcome_create'}>
-                <p class={css.hint}>Click a thought in the graph view to form a link.</p>
-            </Show>
-            <Show when={getCurrentExpState(store).mode !== 'welcome_create'}>
-                <p class={css.hint}>Click a thought in the graph view or select:</p>
-                <button class={css.source_button}>
-                    Bookmarks (todo)
-                </button>
-                <button class={css.source_button}>
-                    Mine (todo)
-                </button>
-            </Show>
-        </Show>
-        <Show when={store.get.contextThoughtInMaking?.linkSelectionState === 'type-select'}>
-            <p class={css.hint}>Select how to display the link:</p>
-            <button class={css.source_button}
-                on:click={() => handleLinkSelected(thoughtToLink()!, thoughtToLink()!.title)}>
-                Name
-            </button>
-            <button class={css.source_button}>
-                Quote (todo)
-            </button>
-            <button class={css.source_button}>
-                Custom (todo)
-            </button>
-        </Show>
-        <button class={css.source_button}
+        <Switch>
+            <Match when={store.get.contextThoughtInMaking?.linkSelectionState === 'link-menu'}>
+                <>
+                    <Show when={getCurrentExpState(store).mode === 'welcome_create'}>
+                        <p class={css.hint}>Click a thought in the graph view to form a link.</p>
+                    </Show>
+                    <Show when={getCurrentExpState(store).mode !== 'welcome_create'}>
+                        <p class={css.hint}>Click a thought in the graph view to link it in yours.</p>
+                        {/* <button class={buttonCss.common_button}>
+                            Bookmarks (todo)
+                        </button>
+                        <button class={buttonCss.common_button}>
+                            Mine (todo)
+                        </button> */}
+                    </Show>
+                </>
+            </Match>
+            <Match when={store.get.contextThoughtInMaking?.linkSelectionState === 'type-select'}>
+                <>
+                    <p class={css.hint}>Select how to display the link:</p>
+                    <button class={buttonCss.common_button}
+                        on:click={() => handleLinkSelected(thoughtToLink()!, thoughtToLink()!.title)}>
+                        Original Title
+                    </button>
+                    <button class={buttonCss.common_button}
+                        on:click={() => store.set('contextThoughtInMaking', 'linkSelectionState', 'quote')}>
+                        Quote
+                    </button>
+                    <button class={buttonCss.common_button}
+                        on:click={() => store.set('contextThoughtInMaking', 'linkSelectionState', 'custom-text')}>
+                        Custom
+                    </button>
+                </>
+            </Match>
+            <Match when={store.get.contextThoughtInMaking?.linkSelectionState === 'custom-text'}>
+                <>
+                    <p class={css.hint}>What will the link say?</p>
+                    <input type='text-area' value={customText()} on:input={e => setCustomText(e.target.value)}></input>
+                    <button class={buttonCss.common_button} on:click={handleCustomTextConfirm}>Confirm</button>
+                </>
+            </Match>
+            <Match when={store.get.contextThoughtInMaking?.linkSelectionState === 'quote'}>
+                <QuoteSelector thoughtId={thoughtToLink()!.id} onSelected={(text) => handleLinkSelected(thoughtToLink()!, text)} />
+            </Match>
+        </Switch>
+        <button class={buttonCss.common_button}
             on:click={disposeLinkAdder}>
             Cancel
         </button>

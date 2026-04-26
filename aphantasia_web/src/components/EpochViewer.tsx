@@ -11,7 +11,7 @@ export const EpochViewer = () => {
         <div class={css.epoch_viewer_container}>
             <h1>Epoch #{store.get.contextEpoch?.id}</h1>
             <div class={css.dates}>
-                {store.get.contextEpoch?.startDate} - {store.get.contextEpoch?.endDate}
+                {store.get.contextEpoch?.startDate} - now
             </div>
             <div class={css.thought_count}>
                 {store.get.contextEpoch?.thoughts.length} thoughts

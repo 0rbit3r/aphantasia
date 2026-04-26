@@ -17,9 +17,15 @@ export default function ContextBanner() {
 
   createEffect(() => {
     const currentMode = getCurrentExpState(store).mode;
-    if (currentMode === 'welcome_create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
-      setText('What\'s on your mind?')
-      setColor(store.get.user?.color ?? '#cccccc');
+    if (currentMode === 'welcome_create' || currentMode === 'create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
+      if (store.get.contextThoughtInMaking?.previewMode) {
+        setText(store.get.contextThoughtInMaking.title);
+        setColor(store.get.user?.color ?? '#cccccc')
+      }
+      else {
+        setText('What\'s on your mind?')
+        setColor('#cccccc');
+      }
       return;
     }
     if (store.get.contextDataLoading) {
@@ -31,11 +37,6 @@ export default function ContextBanner() {
     ) {
       setText(store.get.contextThought?.title ?? '');
       setColor(store.get.contextThought?.color ?? '#cccccc');
-    }
-    if (currentMode === 'create') {
-      setText('What\'s on your mind?')
-      setColor('#a0a0a0')
-      return;
     }
     if (currentMode === 'epochs' && !getCurrentExpState(store).focus) {
       setText(import.meta.env.VITE_APP_TITLE);
@@ -49,7 +50,6 @@ export default function ContextBanner() {
       setText('Inbox');
       setColor(store.get.user?.color ?? '#cccccc');
     }
-
   })
 
   return <div classList={{

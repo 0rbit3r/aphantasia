@@ -9,17 +9,22 @@ export interface ContentProps {
     color?: string;
 }
 
+// renders the content of a thought including links, urls, concepts...
 export const Content = (props: ContentProps) => {
     return <div class={css.content_container}>
         {renderContentWithThoughtLinks(props)}
     </div>
 }
 
-export const LINK_REGEX = /\[(.*?)\]\[(.*?)\]/g;
+// for tutorial and generic purposes this is enough
+export const LINK_REGEX_SIMPLE = /\[(.*?)\]\[(.+?)\]/g;
+
+// for production guid-defined links use this
+export const LINK_REGEX_FULL = /\[([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})\]\[([^\[\]\n]+?)\]/g;
 
 const renderContentWithThoughtLinks = (props: ContentProps) => {
     // thought links first
-    const parts = props.text.split(LINK_REGEX);
+    const parts = props.text.split(LINK_REGEX_SIMPLE);
     //console.log("splittedPartsInLinks : ", parts);
     const result = [];
     for (let i = 0; i < parts.length; i += 3) {

@@ -13,7 +13,7 @@ export function fetchBase<T>(path: string, authorize?: 'authorize'): Promise<T> 
         headers: headers
     }).then(r => r.json()
         // parse result object
-        .catch(_ => Promise.reject('bad json'))
+        .catch(_ => Promise.reject('Server request failed'))
         .then(result => {
             if (result.isSuccess) {
                 return result.payload;
@@ -38,7 +38,7 @@ export function postBase<T>(path: string, body: object, authorize?: 'authorize')
         headers: headers, method: 'POST', body: JSON.stringify(body)
     }).then(r => r.json()
         // parse result object
-        .catch(_ => Promise.reject('bad json'))
+        .catch(_ => Promise.reject('Server request failed'))
         .then(result => {
             if (result.isSuccess) {
                 return result.payload;

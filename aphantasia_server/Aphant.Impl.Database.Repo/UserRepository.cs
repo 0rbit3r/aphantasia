@@ -78,7 +78,7 @@ internal class UserRepository(
                 DateJoined = dateCreated ?? DateTime.UtcNow
             };
             _db.Users.Add(entity);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return Result.Success(entity.Id);
         }
         catch (Exception e)
@@ -119,7 +119,7 @@ internal class UserRepository(
             entity.Color = newSettings.Color;
             entity.Bio = newSettings.Bio;
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return Result.Success(entity.Id);
         }
         catch (Exception e)
@@ -143,8 +143,8 @@ internal class UserRepository(
             {
                 thought.Color = newColor;
             }
-
-            _db.SaveChanges();
+            
+            await _db.SaveChangesAsync();
             return Result.Success(user.Id);
         }
         catch (Exception e)

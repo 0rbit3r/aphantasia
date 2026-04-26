@@ -11,9 +11,9 @@
 :root {
   color-scheme: dark;
 
-  --color-background: #000000;
-  --color-background-secondary: #222222;
-  --color-background-tertiary: #333333;
+  --color-background-primary: #020202;
+  --color-background-secondary: #101010;
+  --color-background-tertiary: #202020;
   --color-text: #ececec;
   --color-text-subtle: #ababab;
 

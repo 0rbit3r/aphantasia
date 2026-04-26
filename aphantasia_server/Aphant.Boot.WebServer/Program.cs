@@ -18,29 +18,24 @@ var allowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(allowSpecificOrigins,
-        builder =>
+        b =>
         {
-            //todo - setorigiallowed should not be in production
-            builder
-            .SetIsOriginAllowed(_ => true)
-            .WithOrigins(
-                "http://192.168.20.49:5173", 
-                "http://localhost:4200", "http://localhost:5173",
-                "https://aphantasia.cz", "https://www.aphantasia.cz",
-                "https://aphantasia.io", "https://www.aphantasia.io"//todo rework this
-                )
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+            if (builder.Environment.IsDevelopment())
+                b.AllowAnyOrigin();
+            else
+                b.WithOrigins(
+                "https://aphant.dev", "https://www.aphant.dev"); //define this based on config later
+            b.AllowAnyHeader()
+            .AllowAnyMethod();
         });
 });
 
-builder.Services.AddSignalR(opts =>
-{
-    //opts.SupportedProtocols = new List<string> { "json" };
-    if (builder.Environment.IsDevelopment())
-        opts.EnableDetailedErrors = true;
-});
+// builder.Services.AddSignalR(opts =>
+// {
+//     //opts.SupportedProtocols = new List<string> { "json" };
+//     if (builder.Environment.IsDevelopment())
+//         opts.EnableDetailedErrors = true;
+// });
 
 // builder.Services.AddLanguageLocalization(builder.Configuration);
 
@@ -51,9 +46,10 @@ builder.Services.RegisterLogicModule();
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o =>
+        o.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null)) //This is an attempt to solve transient failuers on VPS
         .UseSnakeCaseNamingConvention());
-
+ 
 
 builder.Services.AddSerilog();
 

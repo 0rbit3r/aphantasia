@@ -12,4 +12,5 @@ export interface ThoughtInMaking {
     cursorPosition: number;
 
     linkSelectionState: 'hidden' | 'link-menu' | 'bookmarks' | 'mine' | 'type-select' | 'quote' | 'custom-text';
+    previewMode: boolean;
 } 

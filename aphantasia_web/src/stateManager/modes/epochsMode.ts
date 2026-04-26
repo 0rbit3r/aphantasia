@@ -42,7 +42,8 @@ export const EpochsMode = {
         });
 
         store.get.grafika.focusOn('all')
-        if (store.get.splitUiLayout === 'hidden') store.set('splitUiLayout', 'graph');
+        if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph')
+            store.set('splitUiLayout', 'half');
     },
 
     hangleFocusChange: (store, focusId) => {

@@ -73,7 +73,7 @@ public class LayoutBackgroundService : BackgroundService
                 thought.PositionY = node.Y;
             }
 
-            db.SaveChanges();
+            await db.SaveChangesAsync();
 
             return Result.Success();
         }

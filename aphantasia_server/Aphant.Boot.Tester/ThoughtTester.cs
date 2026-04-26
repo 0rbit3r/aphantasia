@@ -17,22 +17,11 @@ public class ThoughtTester : IClassFixture<SeededAppContainer<ThoughtTester>>
     [Theory]
     [InlineData("testtt", "something about dogs", null)] // success
 
-    [InlineData("", "asdfadsfassafsdafdsadsa", ErrorCode.BadRequest)] // content and title too short/long
-    [InlineData("asdfsadfdasf", "", ErrorCode.BadRequest)]
-    [InlineData("asdfsadfdasasdfsfdsfsdsdfdsfdsdsdsdsdsfsfsdfsdssfssd", "sdfdsfds", ErrorCode.BadRequest)]
-    [InlineData("title", tooLongContent, ErrorCode.BadRequest)]
-
-
-
-
-
-    //todo - test multiple same links, trimming, weird links, 
-
-
-
-
-
-    [InlineData("title", "hello, [019c5448-1254-7282-8040-47be31969dbf][this] doesn't exist", ErrorCode.BadRequest)] // malformed thought link
+    [InlineData("", "title is too short", ErrorCode.BadRequest)]
+    [InlineData("no content in title", "", ErrorCode.BadRequest)]
+    [InlineData("Title is waaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaayyyyyyy toooooooo looooooong", "sdfdsfds", ErrorCode.BadRequest)]
+    [InlineData("long content", tooLongContent, ErrorCode.BadRequest)]
+    [InlineData("title", "hello, [019c5448-1254-7282-809dbf][this] doesn't exist", ErrorCode.BadRequest)] // malformed thought link
     public async Task PostLoneThoughtSuccesfully(string title, string content, ErrorCode? expectedCode)
     {
         var thoughtContract = fixture.Services.GetRequiredService<IThoughtLogicContract>();
@@ -79,6 +68,8 @@ public class ThoughtTester : IClassFixture<SeededAppContainer<ThoughtTester>>
         Assert.True(insertedThoughtResult.IsSuccess);
         Assert.Equal(3, insertedThoughtResult.Payload?.Links.Count());
     }
+
+    
     private const string tooLongContent = 
 @"blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah
 blahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblahblah

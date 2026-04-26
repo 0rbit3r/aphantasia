@@ -46,6 +46,8 @@ export const CreateMode = {
                 cursorPosition: 0,
                 color: color
             });
+        else
+            store.set('contextThoughtInMaking', 'linkSelectionState', 'hidden');
     },
 
     hangleFocusChange: (store, _) => {

@@ -64,7 +64,7 @@ export const ThoughtViewer = () => {
             <div class={css.content_container} ref={contentContainerRef}>
                 <Content
                     text={store.get.contextThought?.content ?? ''}
-                    color={store.get.contextThought?.author?.color ?? ''}
+                    color={store.get.contextThought?.color ?? ''}
                     thoughtColors={store.get.contextThought ? new Map(store.get.contextThought.links.map(l => [l.id, l.color])) : undefined}
                     onThoughtLinkClick={id => handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: id })}
                 />

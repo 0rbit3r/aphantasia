@@ -15,7 +15,7 @@ namespace Aphant.Impl.Database
                 .AddJsonFile("migrationsettings.json")
                 .Build();
 
-            var checkConnString =Regex.Replace(config.GetConnectionString("DefaultConnection")!, @"Password=.*","");
+            var checkConnString = Regex.Replace(config.GetConnectionString("DefaultConnection")!, @"Password=.*", "");
             Console.WriteLine(checkConnString);
             Console.WriteLine("Continue? y|n");
             if (Console.ReadLine() != "y")

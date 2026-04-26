@@ -69,6 +69,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return Error.General("Server failed spectacularly");
         }
 
+        var notifiedUsers = new List<Guid>(); // to not send the same notification if same author's thoughts are referenced
         // handle referenced thoughts
         foreach (var targetThought in linkedThoughts)
         {
@@ -84,8 +85,13 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             if (targetThought.Author.Id == creatorId)
                 continue;
 
-            // Then notify
-            await _notificationData.InsertNotification(targetThought.Author.Id, insertedThoughtResult.Payload.Id, creatorId, null);
+            // Then notify if not yet notified this author
+            if (!notifiedUsers.Any(u => u == targetThought.Author.Id))
+            {
+                await _notificationData.InsertNotification(targetThought.Author.Id, insertedThoughtResult.Payload.Id, creatorId, null);
+                notifiedUsers.Add(targetThought.Author.Id);
+            }
+
 
             // check if the creator has already replied to the target thought
             var replies = await _thoughtData.GetRepliesOfThought(targetThought.Id);
@@ -107,7 +113,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
     private Result<List<Guid>> GetLinksAsync(string content)
     {
         var references = new List<Guid>();
-        var regex = new Regex(@"\[([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})\]\[[^\[\]]+?\]", RegexOptions.Compiled);
+        var regex = new Regex(@"\[([0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12})\]\[[^\[\]\n]+?\]", RegexOptions.Compiled);
 
         var matches = regex.Matches(content);
         if (matches.Count == 0)

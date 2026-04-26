@@ -1,5 +1,3 @@
-using Aphant.Impl.Database;
-using Aphant.Core.Contract;
 using Microsoft.Extensions.Logging;
 using Aphant.Core.Contract.Data;
 using Aphant.Core.Dto;
@@ -25,7 +23,6 @@ internal class ThoughtRepository(
         {
             var thought = await _db.Thoughts
                 .Select(ThoughtMapper.ToDtoFullExpr)
-                .AsSplitQuery()
                 .FirstOrDefaultAsync(t => t.Id == id);
 
             if (thought is null) return Error.NotFound();
@@ -86,7 +83,7 @@ internal class ThoughtRepository(
             if (thought is null) return Error.NotFound();
 
             _db.Remove(thought);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return Result.Success();
         }
@@ -132,7 +129,7 @@ internal class ThoughtRepository(
                 DateCreated = DateTime.UtcNow
             };
             _db.Thoughts.Add(entity);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return Result.Success(entity.Id);
         }
         catch (Exception e)

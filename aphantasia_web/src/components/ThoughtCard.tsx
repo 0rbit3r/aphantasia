@@ -27,8 +27,7 @@ export const ThoughtCard = (props: { thought: ThoughtNode }) => {
                 }]);
         }}>
         <div class={css.title_and_shape}>
-            <div class={css.title}
-                style={{ color: props.thought?.color ?? 'white' }}>
+            <div class={css.title}>
                 {props.thought?.title ?? "[null]"}
             </div>
             <div class={css.shape_icon}>
@@ -58,7 +57,7 @@ export const ThoughtCard = (props: { thought: ThoughtNode }) => {
             </div>
         </div>
         <div class={css.date_and_user}>
-            <div>{props.thought.date}</div>
+            <div class={css.date}>{props.thought.date}</div>
             <div class={css.username}
                 style={{ color: props.thought.author.color }}>
                 {props.thought.author.username}</div>

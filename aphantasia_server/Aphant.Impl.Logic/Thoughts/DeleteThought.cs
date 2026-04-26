@@ -14,7 +14,9 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             if (!thought.IsSuccess) return Error.NotFound();
 
             foreach (var linkedThought in thought.Payload!.Links)
-                _ = _thoughtData.DebumpThought(linkedThought.Id);
+            {
+                await _thoughtData.DebumpThought(linkedThought.Id);
+            }
 
             return await _thoughtData.DeleteThought(thoughtId);
         }

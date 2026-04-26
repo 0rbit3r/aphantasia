@@ -29,7 +29,22 @@
 - [x] Fix new thought not linking in graph when re-initialized
 - [x] Not working shape when clicking off and on created thought (and title too)
 
-- [ ] Replies mode
+- [x] Inbox
+
+- [ ] Better links
+    - [ ] Link text
+        - [x] Custom link text
+        - [ ] Quote selector
+        - [ ] Quick link
+            - [ ] Custom quick link text
+    - [ ] Link selection
+        - [ ] Mine
+- [ ] Bugs
+    - [ ] multiline titles
+    - [ ] empty link text
+    - [ ] Duplicate replies when someone associates two or more thoughts of the same author
+    - [ ] Forbid using links with [/] in the text
+    - [ ] 
 
 
 - [ ] Title on tutorial second load is empty on node

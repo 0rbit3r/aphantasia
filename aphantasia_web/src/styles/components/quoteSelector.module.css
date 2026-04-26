@@ -1,0 +1,10 @@
+.quote_selector_container{
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - var(--metadata-bar-height));
+}
+
+.content_container {
+    overflow-y: auto;
+    border: 1px solid white;
+}

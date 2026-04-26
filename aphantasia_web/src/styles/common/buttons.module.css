@@ -5,7 +5,7 @@
     font-size: larger;
     border-radius: 0;
     background-color: var(--color-background-tertiary);
-    margin: 0;
+    margin: 2px;
     cursor: pointer;
     border: 1px solid white;
     color: white;

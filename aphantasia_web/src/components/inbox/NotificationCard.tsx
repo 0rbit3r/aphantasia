@@ -29,8 +29,7 @@ export const NotificationCard = (props: { notification: InboxNotification }) => 
             api_MarkNotificationAsRead(props.notification.id);
         }}>
         <div class={css.title_and_shape}>
-            <div class={css.title}
-                style={{ color: props.notification.thought?.color ?? 'white' }}>
+            <div class={css.title}>
                 {props.notification.text ?? props.notification.thought?.title}
             </div>
             <div class={css.shape_icon}>
@@ -60,7 +59,7 @@ export const NotificationCard = (props: { notification: InboxNotification }) => 
             </div>
         </div>
         <div class={css.date_and_user}>
-            <div>{props.notification.dateCreated}</div>
+            <div class={css.date}>{props.notification.dateCreated}</div>
             <div class={css.username}
                 style={{ color: props.notification.fromUser?.color ?? 'white' }}>
                 {props.notification.fromUser?.username}</div>

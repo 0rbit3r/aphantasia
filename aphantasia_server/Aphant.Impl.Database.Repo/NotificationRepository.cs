@@ -84,7 +84,7 @@ internal class NotificationRepository(
             };
 
             _db.Notifications.Add(entity);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return Result.Success(entity.Id);
         }
@@ -111,7 +111,7 @@ internal class NotificationRepository(
             foreach (var unread in unreadNotifications)
                 unread.IsRead = true;
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return Result.Success();
         }
@@ -134,7 +134,7 @@ internal class NotificationRepository(
 
             entity.IsRead = true;
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return Result.Success();
         }

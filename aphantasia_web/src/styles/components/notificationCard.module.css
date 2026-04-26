@@ -1,5 +1,4 @@
 .notification_card {
-    background-color: var(--color-background-secondary);
     margin: 4px;
     margin-bottom: 8px;
     border: 2px solid;
@@ -10,16 +9,17 @@
     border-left: 16px solid;
 }
 
-.notification_card:hover {
-    background-color: var(--color-background-primary);
+.notification_card:hover .title_and_shape {
+    background-color: var(--color-background-tertiary);
 }
 
-.notification_card:hover * {
-    background-color: var(--color-background-primary);
+.notification_card:hover .date_and_user{
+    background-color: var(--color-background-secondary);
 }
 
 
 .title_and_shape {
+    background-color: var(--color-background-secondary);
     font-weight: bold;
     border-bottom: 1px solid var(--color-text-subtle);
     padding: 4px;
@@ -36,6 +36,7 @@
     word-wrap: break-word;
     max-width: calc(100% - var(--metadata-bar-height));
     text-shadow: 0px 0px 3px black;
+    margin: 4px;
 }
 
 .shape_icon {
@@ -48,7 +49,7 @@
 }
 
 .date_and_user {
-    background-color: var(--color-background-tertiary);
+    background-color: var(--color-background-primary);
 
     display: flex;
     flex-direction: row;
@@ -58,4 +59,9 @@
 
 .username {
     font-weight: bold;
+}
+
+.date {
+    font-style: italic;
+    color: var(--color-text-subtle)
 }

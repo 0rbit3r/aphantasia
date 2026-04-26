@@ -81,7 +81,8 @@ const tutorialCreatedThoughts = [
         shape: 0,
         linkSelectionState: 'hidden',
         cursorPosition: 0,
-        color: '#ffffff'
+        color: '#ffffff',
+        previewMode: false
     },
     {
         title: 'An association',
@@ -96,7 +97,8 @@ const tutorialCreatedThoughts = [
         shape: 0,
         linkSelectionState: 'hidden',
         cursorPosition: 0,
-        color: '#ffffff'
+        color: '#ffffff',
+        previewMode: false
     },
     {
         title: '',
@@ -106,6 +108,8 @@ const tutorialCreatedThoughts = [
         shape: 0,
         linkSelectionState: 'hidden',
         cursorPosition: 0,
-        color: '#ffffff'
+        color: '#ffffff',
+        previewMode: false
+
     }
 ] satisfies ThoughtInMaking[];

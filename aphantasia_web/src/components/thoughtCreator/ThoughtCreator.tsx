@@ -5,7 +5,7 @@ import css from '../../styles/components/thoughtCreator.module.css';
 import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
 import { LinkAdder } from "./LinkAdder";
-import { Content, LINK_REGEX } from "../thoughtViewer/Content";
+import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL } from "../thoughtViewer/Content";
 import { type GraphEdge, type ProxyNode } from "grafika";
 import { AuthContext } from "../../contexts/authContext";
 import { type ThoughtTitle } from "../../model/dto/thought";
@@ -37,14 +37,12 @@ export const ThoughtCreator = () => {
     const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought')!;
     if (graphNode === undefined) { console.error('created graph node not found.'); return; }
 
-
-    const [previewMode, setPreviewMode] = createSignal(false);
-
     // fetch thoughts and modify links array based on content
     createEffect(() => {
         updateCaret()
         const foundIds: string[] = [];
-        const parts = store.get.contextThoughtInMaking?.content.split(LINK_REGEX) ?? [];
+        const parts = store.get.contextThoughtInMaking?.content.split(
+            getCurrentExpState(store).mode.startsWith('welcome') ? LINK_REGEX_SIMPLE : LINK_REGEX_FULL) ?? [];
         for (let i = 0; i < parts.length; i += 3) {
             if (parts[i + 1]) foundIds.push(parts[i + 1]);
         }
@@ -80,7 +78,8 @@ export const ThoughtCreator = () => {
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
 
     return <div class={css.thought_creator_container}>
-        <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden' && !previewMode()}>
+        <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden'
+                && !store.get.contextThoughtInMaking.previewMode}>
             <div class={css.title_and_shape_cont}>
                 <textarea placeholder='Title'
                     class={css.title_input}
@@ -108,11 +107,11 @@ export const ThoughtCreator = () => {
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
                     Link</button>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
-                    on:click={() => setPreviewMode(true)}>
+                    on:click={() => store.set('contextThoughtInMaking', 'previewMode', true)}>
                     Preview</button>
             </div>
         </Show>
-        <Show when={previewMode()}>
+        <Show when={store.get.contextThoughtInMaking?.previewMode}>
             <div class={css.preview_content_container}>
                 <Content text={store.get.contextThoughtInMaking?.content ?? ''}
                     thoughtColors={linkColors()} color={store.get.contextThoughtInMaking?.color} />
@@ -128,7 +127,7 @@ export const ThoughtCreator = () => {
                         : handleThoughtCreation_forReal(store, graphNode)}>
                     Publish</button>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
-                    on:click={() => setPreviewMode(false)}>
+                    on:click={() => store.set('contextThoughtInMaking', 'previewMode', false)}>
                     Edit</button>
             </div>
         </Show>
