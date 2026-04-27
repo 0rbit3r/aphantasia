@@ -5,17 +5,12 @@ using Aphant.Impl.Database;
 using Aphant.Impl.Database.Entity;
 using Aphant.Impl.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Aphant.Impl.Database.Repo;
 
-internal class UserRepository(
-    AphantasiaDataContext db,
-    ILogger<AphantasiaDataContext> log
-    ) : IUserDataContract
+internal class UserRepository(AphantasiaDataContext db) : IUserDataContract
 {
     private readonly AphantasiaDataContext _db = db;
-    private readonly ILogger<AphantasiaDataContext> _log = log;
 
     public async Task<Result<User>> GetUserById(Guid id)
     {
@@ -60,97 +55,84 @@ internal class UserRepository(
         string username, string passHash, string bio,
         DateTime? dateCreated = null, string? email = null, string? color = null)
     {
+        if (_db.Users.Any(u => u.Username == username))
+            return Error.BadRequest("This username is taken.");
+        if (email is not null && _db.Users.Any(u => u.Email == email))
+            return Error.BadRequest("This email is taken. Do you already have an account?");
+
+        var entity = new UserEntity
+        {
+            Id = Guid.CreateVersion7(),
+            Username = username,
+            PassHash = passHash,
+            Bio = bio,
+            Color = color ?? "#e0e0e0",
+            Email = email,
+            DateJoined = dateCreated ?? DateTime.UtcNow
+        };
+        _db.Users.Add(entity);
         try
         {
-            if (_db.Users.Any(u => u.Username == username))
-                return Error.BadRequest("This username is taken.");
-            if (email is not null && _db.Users.Any(u => u.Email == email))
-                return Error.BadRequest("This email is taken. Do you already have an account?");
-
-            var entity = new UserEntity
-            {
-                Id = Guid.CreateVersion7(),
-                Username = username,
-                PassHash = passHash,
-                Bio = bio,
-                Color = color ?? "#e0e0e0",
-                Email = email,
-                DateJoined = dateCreated ?? DateTime.UtcNow
-            };
-            _db.Users.Add(entity);
             await _db.SaveChangesAsync();
-            return Result.Success(entity.Id);
         }
-        catch (Exception e)
+        catch (DbUpdateException)
         {
-            _log.LogError(e, "Failed to insert user to database.");
             return Error.General("Server error");
         }
+        return Result.Success(entity.Id);
     }
 
     //todo - test coverage
     public async Task<Result<UserSettings>> GetSettings(Guid id)
     {
-        try
+        var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+        if (entity is null)
+            return Error.BadRequest("Non-existent user");
+        return Result.Success(new UserSettings
         {
-            var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
-            if (entity is null)
-                return Error.BadRequest("Non-existent user");
-            return Result.Success(new UserSettings
-            {
-                Bio = entity.Bio,
-                Color = entity.Color
-            });
-        }
-        catch (Exception e)
-        {
-            _log.LogError(e, "Failed to fetch user settings");
-            return Error.General("Server error");
-        }
+            Bio = entity.Bio,
+            Color = entity.Color
+        });
     }
     public async Task<Result> UpdateSettings(UserSettings newSettings)
     {
+        var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == newSettings.UserId);
+        if (entity is null)
+            return Error.BadRequest("Non-existent user");
+
+        entity.Color = newSettings.Color;
+        entity.Bio = newSettings.Bio;
+
         try
         {
-            var entity = await _db.Users.FirstOrDefaultAsync(u => u.Id == newSettings.UserId);
-            if (entity is null)
-                return Error.BadRequest("Non-existent user");
-
-            entity.Color = newSettings.Color;
-            entity.Bio = newSettings.Bio;
-
             await _db.SaveChangesAsync();
-            return Result.Success(entity.Id);
         }
-        catch (Exception e)
+        catch (DbUpdateException)
         {
-            _log.LogError(e, "Failed to update settings");
             return Error.General("Server error");
         }
+        return Result.Success(entity.Id);
     }
 
-    public async Task<Result> ChangeThoughtColorsOfUSer(Guid userId, string newColor)
+    public async Task<Result> ChangeThoughtColorsOfUser(Guid userId, string newColor)
     {
+        var user = await _db.Users
+            .Include(u => u.Thoughts)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+        if (user is null)
+            return Error.BadRequest("Non-existent user");
+
+        foreach (var thought in user.Thoughts)
+            thought.Color = newColor;
+
         try
         {
-            var user = await _db.Users
-                .Include(u => u.Thoughts)
-            .FirstOrDefaultAsync(u => u.Id == userId);
-            if (user is null)
-                return Error.BadRequest("Non-existent user");
-
-            foreach(var thought in user.Thoughts)
-            {
-                thought.Color = newColor;
-            }
-            
             await _db.SaveChangesAsync();
-            return Result.Success(user.Id);
         }
-        catch (Exception e)
+        catch (DbUpdateException)
         {
-            _log.LogError(e, "Failed to change thought colors of user {id}", userId);
             return Error.General("Server error");
         }
+        return Result.Success(user.Id);
     }
 }

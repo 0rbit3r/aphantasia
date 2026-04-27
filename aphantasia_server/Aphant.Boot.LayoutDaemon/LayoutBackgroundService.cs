@@ -1,4 +1,5 @@
 using Aphant.Core.Contract;
+using Microsoft.EntityFrameworkCore;
 using Aphant.Core.Contract.Data;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
@@ -75,14 +76,12 @@ public class LayoutBackgroundService : BackgroundService
 
             foreach (var node in nodes)
             {
-                var thought = db.Thoughts.SingleOrDefault(t => t.Id == node.Id);
-                if (thought is null) continue;
-
-                thought.PositionX = node.X;
-                thought.PositionY = node.Y;
+                await db.Thoughts
+                    .Where(t => t.Id == node.Id)
+                    .ExecuteUpdateAsync(s => s
+                        .SetProperty(t => t.PositionX, node.X)
+                        .SetProperty(t => t.PositionY, node.Y));
             }
-
-            await db.SaveChangesAsync();
 
             return Result.Success();
         }

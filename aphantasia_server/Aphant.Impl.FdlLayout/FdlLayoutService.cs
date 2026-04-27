@@ -61,7 +61,7 @@ public partial class FdlLayoutService : ILayoutLogicContract
                 var targetThought = nodes[j];
                 var borderDistance = GetBorderDistance(sourceThought, targetThought);
 
-                if (sourceThought.Links.Contains(targetThought.Id))
+                if (sourceThought.Links.Contains(targetThought.Id) || targetThought.Links.Contains(sourceThought.Id))
                 {
                     PullOrPushConnectedToIdealDistance(sourceThought, targetThought);
                 }
@@ -128,8 +128,8 @@ public partial class FdlLayoutService : ILayoutLogicContract
 
         sourceThought.ForcesX -= dx / centerDistance * force * nodeMassMultiplier;
         sourceThought.ForcesY -= dy / centerDistance * force * nodeMassMultiplier;
-        targetThought.ForcesX += dx / centerDistance * force / nodeMassMultiplier;
-        targetThought.ForcesY += dy / centerDistance * force / nodeMassMultiplier;
+        targetThought.ForcesX += dx / centerDistance * force * nodeMassMultiplier;
+        targetThought.ForcesY += dy / centerDistance * force * nodeMassMultiplier;
     }
 
     private void PullOrPushConnectedToIdealDistance(GraphNode source, GraphNode target)
@@ -156,9 +156,9 @@ public partial class FdlLayoutService : ILayoutLogicContract
         source.ForcesY += dy / centerDistance * force
             * nodeMassMultiplier;
         target.ForcesX -= dx / centerDistance * force
-            / nodeMassMultiplier;
+            * nodeMassMultiplier;
         target.ForcesY -= dy / centerDistance * force
-            / nodeMassMultiplier;
+            * nodeMassMultiplier;
     }
 
     private void GravityPull(GraphNode thought, FdlLayoutOptions opts)

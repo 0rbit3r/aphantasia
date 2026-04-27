@@ -15,7 +15,7 @@ internal partial class UserLogicService : IUserLogicContract
             return Error.BadRequest("Bio can be at most 300 characters long");
 
         var settingsResult = await _userData.UpdateSettings(settings);
-        var colorsResult = await _userData.ChangeThoughtColorsOfUSer(settings.UserId, settings.Color);
+        var colorsResult = await _userData.ChangeThoughtColorsOfUser(settings.UserId, settings.Color);
 
         if (settingsResult.IsSuccess && colorsResult.IsSuccess)
             return Result.Success();

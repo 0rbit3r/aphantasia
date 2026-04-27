@@ -47,7 +47,7 @@ builder.Services.RegisterAuthorizationModule(builder.Configuration);
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o =>
-        o.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null)) //This is an attempt to solve transient failuers on VPS
+        o.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null))
         .UseSnakeCaseNamingConvention());
  
 
