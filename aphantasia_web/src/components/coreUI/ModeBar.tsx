@@ -18,6 +18,7 @@ import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
 import arrowIcon from '../../assets/icons/arrow.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
+import chatIcon from '../../assets/icons/chat.svg';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { api_fetchNotifications } from "../../api/api_notifications";
@@ -62,7 +63,8 @@ export default function ModeBar() {
     create: createIcon,
     concepts: conceptsIcon,
     inbox: arrowIcon,
-    settings: settingsIcon
+    settings: settingsIcon,
+    chat: chatIcon,
   };
 
   return <>

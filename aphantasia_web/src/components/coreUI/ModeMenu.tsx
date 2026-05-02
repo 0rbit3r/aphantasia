@@ -11,7 +11,8 @@ import settingsIcon from '../../assets/icons/settings.svg';
 import notificationsIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
 // import conceptsIcon from '../../assets/icons/concepts.png';
-// import chatIcon from '../../assets/icons/chat.png';
+import chatIcon from '../../assets/icons/chat.svg';
+import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 // import dieIcon from '../../assets/icons/die.svg';
 
 export const ModeMenu = () => {
@@ -60,7 +61,12 @@ export const ModeMenu = () => {
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
                         Bookmarks</div> */}
                         <div class={css.button_container}>
-                            <SymbolButton img={createIcon} action={() => handleForwardExploration(store, { mode: 'create' })} />
+                            <SymbolButton img={createIcon} action={() => {
+                                const currentMode = getCurrentExpState(store).mode;
+                                if (currentMode === 'chat')
+                                    handleForwardExploration(store, { mode: 'epochs' });
+                                handleForwardExploration(store, { mode: 'create' });
+                            }} />
                             Write</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={conceptsIcon} action={() => { }}></SymbolButton>
@@ -68,9 +74,9 @@ export const ModeMenu = () => {
                         <div class={css.button_container}>
                             <SymbolButton img={settingsIcon} action={() => handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
                             Settings</div>
-                        {/* <div class={css.button_container}>
-                        <SymbolButton img={chatIcon} action={() => { }}></SymbolButton>
-                        Chat</div> */}
+                        <div class={css.button_container}>
+                            <SymbolButton img={chatIcon} action={() => handleForwardExploration(store, { mode: 'chat' })}></SymbolButton>
+                            Chat</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={dieIcon} action={() => { }}></SymbolButton>
                         Random</div> */}

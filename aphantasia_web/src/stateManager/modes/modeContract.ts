@@ -8,6 +8,7 @@ import { ExploreMode } from "./exploreMode";
 import { CreateMode } from "./createMode";
 import { SettingsMode } from "./settingsMode";
 import { InboxMode } from "./inboxMode";
+import { ChatMode } from "./chatMode";
 
 export interface ModeContract {
     // settings to initialize grafika with
@@ -16,6 +17,8 @@ export interface ModeContract {
     initialize: (store: AphantasiaStoreGetAndSet) => void;
     // handle change of focus
     // this is also called after every initialization
+    // It is also called before commiting the new state in the history
+    //      -> the previous state is accessible throught getCurrentExpState inside this function
     hangleFocusChange: (store: AphantasiaStoreGetAndSet, focus?: string) => void;
     // get the grafika and state back to state on which a new state can initialize
     dispose: (store: AphantasiaStoreGetAndSet, newState?: ExplorationStateDescriptor) => void;
@@ -31,4 +34,5 @@ export const MODE_CONTRACTS: Record<ModeType, ModeContract> = {
     settings: SettingsMode,
     inbox: InboxMode,
     concepts: null!,
+    chat: ChatMode,
 };

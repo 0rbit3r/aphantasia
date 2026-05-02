@@ -12,7 +12,8 @@ export type ModeType =
     'create' |
     'concepts' |
     'inbox' |
-    'settings'
+    'settings' |
+    'chat'
 
 // TODO: think about the difference between the internal exp state and the external one (ie. url path)
 // Question - do we even need an internal path representation?

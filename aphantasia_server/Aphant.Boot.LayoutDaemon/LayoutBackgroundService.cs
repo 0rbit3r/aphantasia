@@ -1,9 +1,10 @@
 using Aphant.Core.Contract;
-using Microsoft.EntityFrameworkCore;
 using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Aphant.Impl.Database;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -60,11 +61,28 @@ public class LayoutBackgroundService : BackgroundService
                     _log.LogInformation("Layout image exported: {path}", path);
             }
 
+            await LayoutChat();
+
             _log.LogInformation("Finished run {iter}", Iteration);
 
             Iteration++;
             await Task.Delay(_opts.WaitBetweenRuns * 1000);
         }
+    }
+
+    private async Task LayoutChat()
+    {
+        await using var scope = _scopeFactory.CreateAsyncScope();
+        var chatData = scope.ServiceProvider.GetRequiredService<IChatDataContract>();
+        var chatLayout = scope.ServiceProvider.GetRequiredService<IChatLayoutContract>();
+
+        var messagesResult = await chatData.GetActiveMessages();
+        if (!messagesResult.IsSuccess || messagesResult.Payload!.Count == 0)
+            return;
+
+        var laid = await chatLayout.LayoutChatMessages(messagesResult.Payload!, _opts.ChatIterationsPerRun);
+        if (laid.IsSuccess)
+            await chatData.UpdatePositions(laid.Payload!);
     }
 
     private async Task<Result> SavePositions(List<ThoughtNode> nodes)

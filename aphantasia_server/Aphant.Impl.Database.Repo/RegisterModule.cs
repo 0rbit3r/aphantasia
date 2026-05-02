@@ -13,5 +13,6 @@ public static class RegisterModule
         services.AddScoped<IUserDataContract, UserRepository>();
         services.AddScoped<IEpochDataContract, EpochRepository>();
         services.AddScoped<INotificationDataContract, NotificationRepository>();
+        services.AddScoped<IChatDataContract, ChatRepository>();
     }
 }

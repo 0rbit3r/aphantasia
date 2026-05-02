@@ -15,6 +15,7 @@ import MessageOverlay from "./MessageOverlay";
 import { Settings } from "../Settings";
 import { RegisterForm } from "../RegisterForm";
 import { Inbox } from "../inbox/Inbox";
+import { ChatPanel } from "../chat/ChatPanel";
 
 
 export interface BlockyUIProps {
@@ -69,6 +70,9 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
                 </Match>
                 <Match when={getCurrentExpState(store).mode === 'inbox'}>
                     <Inbox />
+                </Match>
+                <Match when={getCurrentExpState(store).mode === 'chat'}>
+                    <ChatPanel />
                 </Match>
             </Switch>
         </div>

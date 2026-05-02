@@ -4,6 +4,7 @@ import { StoreContext } from '../../contexts/storeContext';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 import { ScreenOrientation } from '../../contexts/screenOrientationContext';
 
+const defaultTextColor = '#cccccc';
 
 // This banner will be almost always visible and display the current mode, focused thought title, profile name
 // or any other "current state"
@@ -13,18 +14,18 @@ export default function ContextBanner() {
   const screenOrientation = useContext(ScreenOrientation)
 
   const [text, setText] = createSignal('Aphantasia');
-  const [color, setColor] = createSignal('#cccccc');
+  const [color, setColor] = createSignal(defaultTextColor);
 
   createEffect(() => {
     const currentMode = getCurrentExpState(store).mode;
     if (currentMode === 'welcome_create' || currentMode === 'create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
       if (store.get.contextThoughtInMaking?.previewMode) {
         setText(store.get.contextThoughtInMaking.title);
-        setColor(store.get.user?.color ?? '#cccccc')
+        setColor(store.get.user?.color ?? defaultTextColor)
       }
       else {
         setText('What\'s on your mind?')
-        setColor('#cccccc');
+        setColor(defaultTextColor);
       }
       return;
     }
@@ -36,7 +37,7 @@ export default function ContextBanner() {
     if (currentMode === 'welcome' || currentMode === 'explore'
     ) {
       setText(store.get.contextThought?.title ?? '');
-      setColor(store.get.contextThought?.color ?? '#cccccc');
+      setColor(store.get.contextThought?.color ?? defaultTextColor);
     }
     if (currentMode === 'epochs' && !getCurrentExpState(store).focus) {
       setText(import.meta.env.VITE_APP_TITLE);
@@ -44,11 +45,15 @@ export default function ContextBanner() {
     }
     if (currentMode === 'settings') {
       setText('Settings');
-      setColor('#cccccc')
+      setColor(defaultTextColor)
     }
     if (currentMode === 'inbox') {
       setText('Inbox');
-      setColor(store.get.user?.color ?? '#cccccc');
+      setColor(store.get.user?.color ?? defaultTextColor);
+    }
+    if (currentMode === 'chat') {
+      setText('Chat');
+      setColor(defaultTextColor);
     }
   })
 

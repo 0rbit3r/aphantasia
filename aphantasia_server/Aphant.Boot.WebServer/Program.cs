@@ -1,4 +1,6 @@
 using Aphant.Client.WebApi;
+using Aphant.Boot.WebServer;
+using Aphant.Boot.WebServer.Hubs;
 using Aphant.Impl.Database.Repo;
 using Aphant.Impl.Logic;
 using Aphant.Impl.Database;
@@ -21,29 +23,27 @@ builder.Services.AddCors(options =>
         b =>
         {
             if (builder.Environment.IsDevelopment())
-                b.AllowAnyOrigin();
+                b.SetIsOriginAllowed(_ => true).AllowCredentials();
             else
-                b.WithOrigins(
-                "https://aphant.dev", "https://www.aphant.dev"); //define this based on config later
+                b.WithOrigins("https://aphant.dev", "https://www.aphant.dev")
+                 .AllowCredentials();
             b.AllowAnyHeader()
-            .AllowAnyMethod();
+             .AllowAnyMethod();
         });
 });
 
-// builder.Services.AddSignalR(opts =>
-// {
-//     //opts.SupportedProtocols = new List<string> { "json" };
-//     if (builder.Environment.IsDevelopment())
-//         opts.EnableDetailedErrors = true;
-// });
-
-// builder.Services.AddLanguageLocalization(builder.Configuration);
+builder.Services.AddSignalR(opts =>
+{
+    if (builder.Environment.IsDevelopment())
+        opts.EnableDetailedErrors = true;
+});
 
 // // Add modules
 builder.Services.RegisterWebApiModule();
 builder.Services.RegisterDbRepositoryModule(builder.Configuration);
 builder.Services.RegisterLogicModule();
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
+builder.Services.AddHostedService<ChatCleanupService>();
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o =>
@@ -59,8 +59,6 @@ app.Logger.LogInformation("Aplication built with language {language}", builder.C
 
 //app.UseHttpsRedirection();
 
-app.UseCors(allowSpecificOrigins);
-
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
@@ -70,15 +68,12 @@ app.UseCors(allowSpecificOrigins);
 
 app.UseRouting();
 
+app.UseCors(allowSpecificOrigins);
+
+app.UseAuthentication();
 app.UseAuthorization();
 
-//app.UseMiddleware<JwtBearerSignalRMiddleware>();
-// app.MapHub<ChatHub>("hub/chat", opts =>
-// {
-
-// });
-// app.MapHub<StatsHub>("hub/stats");
-
+app.MapHub<ChatHub>("/hub/chat");
 app.MapControllers();
 
 try

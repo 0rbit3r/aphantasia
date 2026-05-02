@@ -23,7 +23,7 @@ export const EpochsMode = {
                 url: "backdrop.png"
             }
         },
-        simulation: { pushThreshold: 3000 },
+        simulation: { pushThreshold: 1000 },
         debug: { showFps: true },
         data: {}
     },
@@ -57,7 +57,6 @@ export const EpochsMode = {
             .then(epoch => {
                 epoch.thoughts.sort((a, b)=> (a.id < b.id) ? 1 : -1)
                 store.set('contextEpoch', epoch); 
-                console.log(getEdgesFromNodes(epoch.thoughts))
                 store.get.grafika.addData({
                     nodes: convertThoughtsToNodes(epoch.thoughts),
                     edges: getEdgesFromNodes(epoch.thoughts)

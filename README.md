@@ -1,10 +1,15 @@
 # Aphantasia
 
-Aphantasia is a virtual graph-based social space focused on exploration and association of colorful pieces of text called thoughts.
+Aphantasia is a colorful graph-based social space focused on exploration and association of thoughts.
 
-**NOTICE! :** Aphantasia alpha has been shut down, big thank you to all who participated and stay tuned for Aphantasia 2.0 Beta!
-In the meantime, there is a Development Preview available at https://aphant.dev
+The project is still in development. You can participate in development preveiw at https://aphant.dev 
+Once ready Aphantasia will launch at https://aphantasia.io
 
-Official instance has been and will be hosted at https://aphantasia.io
+See complementary youtube channel: https://www.youtube.com/@AphantasticChannel
 
-Complementary youtube channel: https://www.youtube.com/@AphantasticChannel
+## To do before launch
+
+- [ ] Chat
+- [ ] Concepts
+- [ ] Profiles
+- [ ] Epochs

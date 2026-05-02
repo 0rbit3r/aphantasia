@@ -41,6 +41,16 @@ The frontend is built around a **mode system** — each screen state is a `ModeC
 
 The graph is rendered by the **grafika** library (external package); `GraphExplorer.tsx` bridges between mode state and grafika's API.
 
+#### Exploration state and navigation history
+
+The exploration state is `ExplorationStateDescriptor = { mode: ModeType, focus?: string }`. The store holds `explorationHistory: ExplorationStateDescriptor[]` + `explorationIndex`, enabling back/forward navigation.
+
+**`handleForwardExploration(store, newState)`** is the entry point for all user-initiated navigation — it transitions state, truncates forward history, and appends the new entry. Call it on deliberate user actions (node clicks, mode switches). Do not call it for incidental grafika events like viewport pan/zoom.
+
+**`hangleFocusChange(store, focusId)`** on `ModeContract` is where all visual changes tied to focus live (node highlight, side-panel data load). It is called after every `handleForwardExploration`.
+
+**`grafika.focusOn(node | null)`** only controls the grafika camera — it is separate from the Aphantasia exploration state and does not trigger `hangleFocusChange`. A `viewportMoved` handler should only call `focusOn(null)`; any visual cleanup that depends on the previous focus belongs in `hangleFocusChange`.
+
 ### Backend (.NET 10 — Clean Architecture)
 
 Projects and their roles:

@@ -17,6 +17,7 @@ public class AphantasiaDataContext : DbContext
     public DbSet<UserFollowEntity> UserFollows { get; set; }
     public DbSet<ConceptFollowEntity> ConceptFollows { get; set; }
     public DbSet<EpochEntity> Epochs { get; set; }
+    public DbSet<ChatMessageEntity> ChatMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -105,5 +106,19 @@ public class AphantasiaDataContext : DbContext
             .HasMany(e => e.Thoughts)
             .WithOne(t => t.Epoch)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // chat
+        modelBuilder.Entity<ChatMessageEntity>()
+            .HasOne(m => m.Author)
+            .WithMany()
+            .HasForeignKey(m => m.AuthorId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ChatMessageEntity>()
+            .HasOne(m => m.Parent)
+            .WithMany()
+            .HasForeignKey(m => m.ParentId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ChatMessageEntity>()
+            .HasIndex(m => m.CreatedAt);
     }
 }

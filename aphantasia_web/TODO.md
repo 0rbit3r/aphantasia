@@ -1,51 +1,38 @@
-# Closed beta plan
+# Granular todo
 
-- [x] Stabilize all the modes
-    - [x] Remove Home from logged in modes
-- [x] Add 'logged-in' thought creation
-- [ ] Find other things absolutely necessary before closed beta release
-    - [x] Validation messages
-        - [x] On login fail
-        - [x] On attempt to reply to created thought
-        - [x] On create fail
-        - [x] On auth fail
-    - [x] Nicer login form
-    - [x] Add the registration form too, why the hell not...
-        - [x] Form
-        - [x] Api call
-    - [x] Cursor position respecting links
-- [x] Finish the tutorial
-    - [x] Written part
-    - [x] Logic
-    - [x] Fix Welcome not showing created thoughts in the replies bar
-- [x] Add Settings
-    - [x] Color
-    - [x] Logout
-    - [ ] Delete account
-    - [x] Make it look good
+# Current task
+- [ ] Chat
+    - [ ] Check the ai slop
+        - [x] ChatHub
+            - [x] fe
+            - [x] be
+        - [ ] Chat panel - component and styles
+        - [ ] Chat mode
+        - [ ] Everything else
+    - [ ] Bend it to my will
+        - [ ] Better distinction of the two layouters (+ prepare for the third one)
+    - [ ] Incremental improvements
+        - [ ] Figure out selection in chat mode
+            - [ ] Add control bar
+        - [ ] Positions postage (to a point?)
+        - [ ] Grafika
+            - [ ] Background clicked interactionEvent
+                - [ ] Proper dispose of viewport when at it
+            - [x] Focus "distance" parameter
+            - [x] break word and tweak default textbox sizes
+        - [ ] svg icon
+        - [ ] Downflow
+        - [ ] 
 
-- [x] Release closed beta
+## Features
 
-- [x] Fix new thought not linking in graph when re-initialized
-- [x] Not working shape when clicking off and on created thought (and title too)
-
-- [x] Inbox
+- [ ] Delete account
 
 - [ ] Better links
-    - [ ] Link text
-        - [x] Custom link text
-        - [ ] Quote selector
-        - [ ] Quick link
-            - [ ] Custom quick link text
+    - [ ] Quick link
     - [ ] Link selection
         - [ ] Mine
-- [ ] Bugs
-    - [ ] multiline titles
-    - [ ] empty link text
-    - [ ] Duplicate replies when someone associates two or more thoughts of the same author
-    - [ ] Forbid using links with [/] in the text
-    - [ ] 
-
-
-- [ ] Title on tutorial second load is empty on node
-- [x] Cannot link thought a second time (anebo to povolit...)
+        - [ ] Epoch+scroll
+        - [ ] Bookmarked
+# Bugs
+- [ ] multiline titles (check resolution)
