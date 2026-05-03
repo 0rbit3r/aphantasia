@@ -1,7 +1,7 @@
 
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore";
 import { handleStateChange } from "./handleStateChange";
-import type { ExplorationStateDescriptor } from "../model/explorationMode";
+import type { ExplorationStateDescriptor } from "./explorationMode";
 
 // It will then append that new path to the end of exploration history
 export const handleForwardExploration = (store: AphantasiaStoreGetAndSet, newState: ExplorationStateDescriptor) => {

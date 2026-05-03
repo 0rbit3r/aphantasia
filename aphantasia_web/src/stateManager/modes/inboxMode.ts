@@ -7,7 +7,7 @@ import { api_fetchNotifications } from "../../api/api_notifications";
 // inbox mode will show the replies to user's thoughts 
 // (In the future it might show more such as thoughts from followed users, concepts etc.)
 export const InboxMode = {
-    grafikaSettings: null!,
+    grafikaInitType: 'main',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

@@ -12,5 +12,6 @@ public static class RegisterModule
     {
         services.AddScoped<IThoughtLogicContract, ThoughtLogicService>();
         services.AddScoped<IUserLogicContract, UserLogicService>();
+        services.AddHostedService<ChatCleanupService>();
     }
 }

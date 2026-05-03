@@ -7,7 +7,7 @@ import { createSignal } from "solid-js";
 export const [tutorialCreatedThoughtIndex, setTutorialCreatedThoughtIndex] = createSignal(0);
 
 export const WelcomeCreateMode = {
-    grafikaSettings: null!,
+    grafikaInitType: 'main',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

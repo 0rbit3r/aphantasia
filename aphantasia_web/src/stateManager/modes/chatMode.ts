@@ -1,10 +1,11 @@
-import { NodeShape, EdgeType, type GraphNode } from 'grafika';
+import { NodeShape, type GraphNode } from 'grafika';
 import type { ModeContract } from './modeContract';
 import type { ChatMessage } from '../../model/dto/chatMessage';
 import {
     buildChatConnection,
     onInitialMessages,
     onReceiveMessage,
+    onMessageDeleted,
     stopChatConnection
 } from '../../api/chatConnection';
 import { handleForwardExploration } from '../handleForwardExploration';
@@ -14,7 +15,7 @@ import type { AphantasiaStoreGetAndSet } from '../aphantasiaStore';
 function messageToNode(msg: ChatMessage) {
     return {
         id: msg.id,
-        text: `[${msg.authorUsername}]\n${msg.content}`,
+        text: `[${msg.authorUsername}]\n\n${msg.content}`,
         color: msg.authorColor,
         shape: NodeShape.TextBox,
         x: msg.x || 0,
@@ -37,20 +38,7 @@ function loadMessages(store: AphantasiaStoreGetAndSet, messages: ChatMessage[]) 
 }
 
 export const ChatMode: ModeContract = {
-    grafikaSettings: {
-        graphics: {
-            antialiasing: true,
-            backgroundColor: '#020202',
-            initialZoom: 1 / 20,
-            defaultEdgeColor: 'source',
-            defaultEdgeAlpha: 0.5,
-            colorfulText: true,
-            defaultEdgeType: EdgeType.Tapered,
-        },
-        simulation: { pushThreshold: 2000 },
-        debug: { showFps: true },
-        data: {}
-    },
+    grafikaInitType: 'chat',
 
     initialize: (store) => {
         store.get.grafika.removeData();
@@ -58,7 +46,7 @@ export const ChatMode: ModeContract = {
 
         onInitialMessages((messages) => {
             loadMessages(store, messages);
-            store.get.grafika.focusOn('all');
+            store.get.grafika.focusOn('all', 0.2);
         });
 
         onReceiveMessage((message) => {
@@ -71,6 +59,13 @@ export const ChatMode: ModeContract = {
 
         conn.start().catch(e => console.error('Chat connection failed:', e));
 
+        onMessageDeleted((messageId) => {
+            store.set('contextChatMessages', prev => prev?.filter(m => m.id !== messageId) ?? []);
+            store.get.grafika.removeData({ nodes: [{ id: messageId }] });
+            if (getCurrentExpState(store).focus === messageId)
+                handleForwardExploration(store, { mode: 'chat', focus: undefined });
+        });
+
         store.get.grafika.interactionEvents.on('nodeClicked', (node: any) => {
             handleForwardExploration(store, { mode: 'chat', focus: node.id });
         });
@@ -79,7 +74,8 @@ export const ChatMode: ModeContract = {
             store.get.grafika.focusOn(null);
         });
         store.get.grafika.interactionEvents.on('backgroundClicked', () => {
-            handleForwardExploration(store, { mode: 'chat', focus: undefined })
+            if (getCurrentExpState(store).focus !== undefined)
+                handleForwardExploration(store, { mode: 'chat', focus: undefined })
         });
 
         store.set('splitUiLayout', 'graph');

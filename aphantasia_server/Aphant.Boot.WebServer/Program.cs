@@ -1,6 +1,5 @@
+using Aphant.Client.Chat;
 using Aphant.Client.WebApi;
-using Aphant.Boot.WebServer;
-using Aphant.Boot.WebServer.Hubs;
 using Aphant.Impl.Database.Repo;
 using Aphant.Impl.Logic;
 using Aphant.Impl.Database;
@@ -32,18 +31,12 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddSignalR(opts =>
-{
-    if (builder.Environment.IsDevelopment())
-        opts.EnableDetailedErrors = true;
-});
-
 // // Add modules
+builder.Services.RegisterChatModule(builder.Environment.IsDevelopment());
 builder.Services.RegisterWebApiModule();
 builder.Services.RegisterDbRepositoryModule(builder.Configuration);
 builder.Services.RegisterLogicModule();
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
-builder.Services.AddHostedService<ChatCleanupService>();
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), o =>

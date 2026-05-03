@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Impl.FdlLayout", "Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Boot.LayoutDaemon", "Aphant.Boot.LayoutDaemon\Aphant.Boot.LayoutDaemon.csproj", "{60B1FD7F-0EC2-499F-A4FA-FED6BF841BFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aphant.Client.Chat", "Aphant.Client.Chat\Aphant.Client.Chat.csproj", "{13E648A2-9C50-4670-B5C4-DEC4870BD743}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,18 @@ Global
 		{60B1FD7F-0EC2-499F-A4FA-FED6BF841BFE}.Release|x64.Build.0 = Release|Any CPU
 		{60B1FD7F-0EC2-499F-A4FA-FED6BF841BFE}.Release|x86.ActiveCfg = Release|Any CPU
 		{60B1FD7F-0EC2-499F-A4FA-FED6BF841BFE}.Release|x86.Build.0 = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|x64.Build.0 = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Debug|x86.Build.0 = Debug|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|x64.ActiveCfg = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|x64.Build.0 = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|x86.ActiveCfg = Release|Any CPU
+		{13E648A2-9C50-4670-B5C4-DEC4870BD743}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

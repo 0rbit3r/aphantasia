@@ -4,7 +4,7 @@ import { handleForwardExploration } from "../handleForwardExploration";
 
 
 export const SettingsMode = {
-    grafikaSettings: null!,
+    grafikaInitType: 'main',
 
 
     initialize: (store) => {

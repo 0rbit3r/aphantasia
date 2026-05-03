@@ -1,6 +1,5 @@
-import type { GrafikaSettings } from "grafika";
 import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
-import type { ExplorationStateDescriptor, ModeType } from "../../model/explorationMode";
+import type { ExplorationStateDescriptor, ModeType } from "../explorationMode";
 import { WelcomeMode } from "./welcome/welcomeMode";
 import { WelcomeCreateMode } from "./welcome/welcomeCreateMode";
 import { EpochsMode } from "./epochsMode";
@@ -9,10 +8,14 @@ import { CreateMode } from "./createMode";
 import { SettingsMode } from "./settingsMode";
 import { InboxMode } from "./inboxMode";
 import { ChatMode } from "./chatMode";
+import type { GrafikaInitType } from "./grafikaInitializers/grafikaInitTypes";
 
 export interface ModeContract {
-    // settings to initialize grafika with
-    grafikaSettings: GrafikaSettings;
+    // Grafika settings to initialize the mode with
+    // When moving from one mode to another, when this type is different, the grafika instance is disposed and reinitialized
+    // This is useful to changing the simulation parameters, backdrop image etc. wthout having to do al of that manually
+    // (which is also not yet supported by grafika, so this hack will save some time:-D)
+    grafikaInitType: GrafikaInitType;
     // operations to do on initialized grafika (load data, set focus, handle interaction events...)
     initialize: (store: AphantasiaStoreGetAndSet) => void;
     // handle change of focus

@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="10.0.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
   </ItemGroup>
@@ -29,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Aphant.Client.Chat\Aphant.Client.Chat.csproj" />
     <ProjectReference Include="..\Aphant.Client.WebApi\Aphant.Client.WebApi.csproj" />
     <ProjectReference Include="..\Aphant.Impl.Database.Repo\Aphant.Impl.Database.Repo.csproj" />
     <ProjectReference Include="..\Aphant.Impl.Logic\Aphant.Impl.Logic.csproj" />

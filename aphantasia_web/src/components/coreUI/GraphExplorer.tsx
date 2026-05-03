@@ -15,6 +15,7 @@ export const GraphExplorer = (props: ExplorerProps) => {
 
     const handleGrafikaRef = (element: HTMLDivElement) => {
         if (!element) return;
+        store.set('grafikaElement', element);
         store.set('grafika', addGrafika(element, props.grafikaSettings));
         props.handleGrafikaInitialized(store.get.grafika);
     };

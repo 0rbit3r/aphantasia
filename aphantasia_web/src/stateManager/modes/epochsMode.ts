@@ -1,4 +1,4 @@
-import { EdgeType, type ProxyNode } from "grafika";
+import { type ProxyNode } from "grafika";
 import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { api_fetchEpoch } from "../../api/fetchEpoch";
@@ -6,28 +6,7 @@ import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 
 export const EpochsMode = {
-    grafikaSettings: {
-        graphics: {
-            antialiasing: true,
-            backgroundColor: '#020202',
-            initialZoom: 1 / 100,
-            defaultEdgeColor: "source",
-            defaultEdgeAlpha: 0.6,
-            colorfulText: true,
-            defaultEdgeType: EdgeType.Tapered,
-            backdrop: {
-                startAppearingAt: 0.001,
-                fullyVisibleAt: 0.1,
-                parallax: 0.75,
-                scale: 5,
-                url: "backdrop.png"
-            }
-        },
-        simulation: { pushThreshold: 1000 },
-        debug: { showFps: true },
-        data: {}
-    },
-
+    grafikaInitType: 'main',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

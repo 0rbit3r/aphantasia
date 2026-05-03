@@ -36,3 +36,12 @@ export function onInitialMessages(handler: (messages: ChatMessage[]) => void): v
 export function onReceiveMessage(handler: (message: ChatMessage) => void): void {
     connection?.on('ReceiveMessage', handler);
 }
+
+export async function deleteChatMessage(messageId: string): Promise<void> {
+    if (!connection) return;
+    await connection.invoke('DeleteMessage', messageId);
+}
+
+export function onMessageDeleted(handler: (messageId: string) => void): void {
+    connection?.on('MessageDeleted', handler);
+}

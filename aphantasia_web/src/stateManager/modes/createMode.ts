@@ -3,7 +3,7 @@ import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
 
 export const CreateMode = {
-    grafikaSettings: null!,
+    grafikaInitType: 'main',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

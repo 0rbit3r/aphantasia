@@ -10,6 +10,7 @@ public static class ChatMessageMapper
         m => new ChatMessage
         {
             Id = m.Id,
+            AuthorId = m.AuthorId,
             AuthorUsername = m.Author.Username,
             AuthorColor = m.Author.Color,
             Content = m.Content,

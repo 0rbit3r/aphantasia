@@ -51,6 +51,7 @@ internal class ChatRepository(AphantasiaDataContext _db) : IChatDataContract
         return new ChatMessage
         {
             Id = entity.Id,
+            AuthorId = userId,
             AuthorUsername = user.Username,
             AuthorColor = user.Color,
             Content = entity.Content,
@@ -59,6 +60,12 @@ internal class ChatRepository(AphantasiaDataContext _db) : IChatDataContract
             X = x,
             Y = y
         };
+    }
+
+    public async Task<Result> DeleteMessage(Guid messageId)
+    {
+        await _db.ChatMessages.Where(m => m.Id == messageId).ExecuteDeleteAsync();
+        return Result.Success();
     }
 
     public async Task<Result> DeleteExpiredMessages()

@@ -1,5 +1,5 @@
 import type { ModeContract } from "../modeContract";
-import { EdgeType, type ProxyNode } from "grafika";
+import { type ProxyNode } from "grafika";
 import { getCurrentExpState } from "../../getCurrentExpState";
 import { handleForwardExploration } from "../../handleForwardExploration";
 import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
@@ -8,35 +8,7 @@ import { welcome_data } from "./welcomeData";
 
 
 export const WelcomeMode = {
-    grafikaSettings: {
-        graphics: {
-            antialiasing: true,
-            backgroundColor: '#020202',
-            initialZoom: 1 / 10,
-            floatingNodes: true,
-            defaultEdgeColor: "source",
-            defaultEdgeAlpha: 0.6,
-            colorfulText: true,
-            defaultEdgeType: EdgeType.Tapered,
-            backdrop: {
-                startAppearingAt: 0.001,
-                fullyVisibleAt: 0.1,
-                parallax: 0.75,
-                scale: 5,
-                url: "backdrop.png"
-            }
-        },
-        simulation: { pushThreshold: 1500 },
-        debug: { showFps: true },
-        data: {
-            nodes: [{
-                ...welcome_data.nodes.find(n => n.id === "hello_explorer")!,
-                hollowEffect: true, blinkEffect: true, radius: 80
-            }],
-            edges: welcome_data.edges
-        }
-    },
-
+    grafikaInitType: 'main',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

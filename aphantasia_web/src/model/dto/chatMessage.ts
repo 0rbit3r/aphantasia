@@ -1,5 +1,6 @@
 export interface ChatMessage {
     id: string;
+    authorId: string;
     authorUsername: string;
     authorColor: string;
     content: string;

@@ -4,7 +4,7 @@ import type { SplitLayout } from "../components/coreUI/SplitUI";
 import type { Thought } from "../model/dto/thought";
 import type { Concept } from "../model/dto/concept";
 import type { User } from "../model/dto/user";
-import type { ExplorationStateDescriptor } from "../model/explorationMode";
+import type { ExplorationStateDescriptor } from "./explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 import type { AuthorizedUser } from "../contexts/authContext";
 import type { Epoch } from "../model/dto/epoch";
@@ -14,6 +14,7 @@ import type { ChatMessage } from "../model/dto/chatMessage";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
+    grafikaElement: HTMLDivElement;
 
     // this array holds history of browsing 
     explorationHistory: ExplorationStateDescriptor[];
@@ -49,6 +50,7 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         explorationHistory: [],
         splitUiLayout: 'graph',
         grafika: null!,
+        grafikaElement: null!,
         contextDataLoading: false,
         modeMenuOpen: false,
         screenMessages: []

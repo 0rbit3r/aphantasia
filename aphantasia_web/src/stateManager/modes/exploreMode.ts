@@ -1,31 +1,11 @@
-import { EdgeType, type ProxyNode } from "grafika";
+import { type ProxyNode } from "grafika";
 import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { getCurrentExpState } from "../getCurrentExpState";
 import { api_fetchThought } from "../../api/fetchThought";
 
 export const ExploreMode = {
-    grafikaSettings: {
-        graphics: {
-            antialiasing: true,
-            backgroundColor: '#020202',
-            initialZoom: 1 / 100,
-            defaultEdgeColor: "source",
-            defaultEdgeAlpha: 0.6,
-            colorfulText: true,
-            defaultEdgeType: EdgeType.Tapered,
-            backdrop: {
-                startAppearingAt: 0.05,
-                fullyVisibleAt: 2,
-                parallax: 0.5,
-                scale: 15,
-                url: "temp.jpg"
-            }
-        },
-        simulation: { pushThreshold: 7000 },
-        debug: { showFps: true },
-        data: {}
-    },
+    grafikaInitType: 'main',
 
 
     initialize: (store) => {

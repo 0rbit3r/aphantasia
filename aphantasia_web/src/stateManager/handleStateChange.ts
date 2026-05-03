@@ -1,21 +1,34 @@
-import { type ExplorationStateDescriptor} from "../model/explorationMode";
+import { type ExplorationStateDescriptor} from "./explorationMode";
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
 import { getCurrentExpState } from "./getCurrentExpState";
 import { MODE_CONTRACTS } from "./modes/modeContract";
+import { addGrafika } from "grafika";
+import { GRAFIKA_INITIALIZERS } from "./modes/grafikaInitializers/grafikaInitTypes";
 
 
 export const handleStateChange = (store: AphantasiaStoreGetAndSet,
     newState: ExplorationStateDescriptor) => {
 
-    const contract = MODE_CONTRACTS[newState.mode];
-    const prevMode = getCurrentExpState(store).mode;
+        const newModeContract = MODE_CONTRACTS[newState.mode];
+        const prevMode = getCurrentExpState(store).mode;
 
     if (prevMode === newState.mode) {
-        contract.hangleFocusChange(store, newState.focus);
+        newModeContract.hangleFocusChange(store, newState.focus);
     } else {
-        MODE_CONTRACTS[prevMode].dispose(store);
-        contract.initialize(store);
-        contract.hangleFocusChange(store, newState.focus)
+        handleChangeToDifferentMode(store, getCurrentExpState(store), newState);
     }
 }
 
+const handleChangeToDifferentMode = async (store: AphantasiaStoreGetAndSet, oldState: ExplorationStateDescriptor, newState: ExplorationStateDescriptor) => {
+        const newModeContract = MODE_CONTRACTS[newState.mode];
+        const oldModeContract = MODE_CONTRACTS[oldState.mode];
+
+        if (oldModeContract.grafikaInitType !== newModeContract.grafikaInitType){
+            await store.get.grafika.dispose();
+            store.set('grafika', addGrafika(store.get.grafikaElement, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType]));
+            store.get.grafika.simStart();
+        }
+        oldModeContract.dispose(store);
+        newModeContract.initialize(store);
+        newModeContract.hangleFocusChange(store, newState.focus)
+}

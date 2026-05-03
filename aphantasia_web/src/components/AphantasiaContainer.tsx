@@ -2,12 +2,13 @@ import { GraphExplorer } from "./coreUI/GraphExplorer"
 import { createEffect, createSignal, onCleanup, Show, useContext } from "solid-js";
 import { AuthContext } from "../contexts/authContext";
 import { StoreContext } from "../contexts/storeContext";
-import { parsePathToExplorationState, type ExplorationStateDescriptor } from "../model/explorationMode";
+import { parsePathToExplorationState, type ExplorationStateDescriptor } from "../stateManager/explorationMode";
 import type { GrafikaInstance } from "grafika";
 import { LogoAndQuip } from "./LogoAndQuip";
 import { getCurrentExpState } from "../stateManager/getCurrentExpState";
 import { MODE_CONTRACTS } from "../stateManager/modes/modeContract";
 import { Loading } from "./Loading";
+import { GRAFIKA_INITIALIZERS } from "../stateManager/modes/grafikaInitializers/grafikaInitTypes";
 
 let firstLoad = true;
 
@@ -15,7 +16,7 @@ export const AphantasiaContainer = () => {
     const auth = useContext(AuthContext)!;
     const store = useContext(StoreContext)!;
     const [grafikaInst, setGrafikaInst] = createSignal<GrafikaInstance>();
-    const [initialExpState, setInitialExpState] = createSignal<ExplorationStateDescriptor | undefined>(undefined);
+    const [initialExpState, setInitialExpState] = createSignal<ExplorationStateDescriptor>(undefined!);
 
 
     // setInitialState when the authorizedUser call loads
@@ -54,7 +55,7 @@ export const AphantasiaContainer = () => {
                     MODE_CONTRACTS[initialExpState()!.mode].initialize(store);
                     MODE_CONTRACTS[initialExpState()!.mode].hangleFocusChange(store, initialExpState()!.focus)
                 }}
-                grafikaSettings={MODE_CONTRACTS[initialExpState()!.mode].grafikaSettings}
+                grafikaSettings={GRAFIKA_INITIALIZERS[MODE_CONTRACTS[initialExpState().mode].grafikaInitType]}
             ></GraphExplorer>
         </Show>
         <Show when={!auth.authStatusLoaded()}>

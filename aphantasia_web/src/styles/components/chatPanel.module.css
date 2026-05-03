@@ -5,6 +5,32 @@
     padding: 4px;
 }
 
+.context_bar {
+    height: var(--action-buttons-bar);
+    flex: none;
+    display: flex;
+    align-items: center;
+    background-color: var(--color-background-secondary);
+    border: 1px solid white;
+    border-bottom: none;
+}
+
+.context_label {
+    flex: 1;
+    padding: 0 8px;
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.context_action_button {
+    width: var(--action-buttons-bar);
+    height: var(--action-buttons-bar);
+    flex: none;
+}
+
 .message_input {
     width: 100%;
     flex: 1 1 auto;
