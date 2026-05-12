@@ -66,7 +66,7 @@ app.UseCors(allowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapHub<ChatHub>("/hub/chat");
+app.MapHub<ChatHub>("/hub/chat").RequireCors(allowSpecificOrigins);
 app.MapControllers();
 
 try

@@ -28,9 +28,7 @@ export const CreateMode = {
                 color: color,
                 x: viewport.position.x, y: viewport.position.y
              }]
-        })
-
-        console.log(store.get.grafika.getData());
+        });
 
         store.get.grafika.focusOn({ id: 'created_thought' });
 

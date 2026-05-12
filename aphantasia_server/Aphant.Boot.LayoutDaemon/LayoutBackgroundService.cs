@@ -1,6 +1,5 @@
 using Aphant.Core.Contract;
 using Aphant.Core.Contract.Data;
-using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Aphant.Impl.Database;
@@ -17,75 +16,114 @@ public class LayoutBackgroundService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<LayoutBackgroundService> _log;
     private readonly LayoutDaemonOptions _opts;
+    private readonly IOptionsMonitor<FdlLayoutOptions> _layoutOpts;
 
-    private int Iteration { get; set; }
+    private int _iteration;
 
-    public LayoutBackgroundService(IServiceScopeFactory scopeFactory, ILogger<LayoutBackgroundService> log,
-        IOptions<LayoutDaemonOptions> opts)
+    public LayoutBackgroundService(
+        IServiceScopeFactory scopeFactory,
+        ILogger<LayoutBackgroundService> log,
+        IOptions<LayoutDaemonOptions> opts,
+        IOptionsMonitor<FdlLayoutOptions> layoutOpts)
     {
         _scopeFactory = scopeFactory;
         _log = log;
         _opts = opts.Value;
+        _layoutOpts = layoutOpts;
     }
+
     protected override async Task ExecuteAsync(CancellationToken cancelToken)
     {
         while (!cancelToken.IsCancellationRequested)
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
 
-            var epochRepo = scope.ServiceProvider.GetRequiredService<IEpochDataContract>();
+            var thoughtOpts = _layoutOpts.Get("Thought");
+            var chatOpts = _layoutOpts.Get("Chat");
 
-            var lastEpochResult = await epochRepo.GetEpochAsync();
-            if (!lastEpochResult.IsSuccess)
-            {
-                _log.LogError("Failed to get last epoch: {err}", lastEpochResult.Error!.Message);
-                return;
-            }
+            await LayoutThoughts(scope, thoughtOpts);
+            await LayoutChat(scope, chatOpts);
 
-            var layoutService = scope.ServiceProvider.GetRequiredService<ILayoutLogicContract>();
-
-            var result = await layoutService.LayoutThoughts(lastEpochResult.Payload!.Thoughts, _opts.IterationsPerRun);
-
-            if (result.IsSuccess)
-            {
-                await SavePositions(result.Payload!);
-            }
-
-            if (_opts.ExportImageAfterXRuns > 0 && Iteration % _opts.ExportImageAfterXRuns == 0)
-            {
-                var path = $"{_opts.LayoutPNGsPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
-                var printResult = await layoutService.PrintLayout(path, null);
-                if (!printResult.IsSuccess)
-                    _log.LogWarning("Failed to export layout image: {err}", printResult.Error!.Message);
-                else
-                    _log.LogInformation("Layout image exported: {path}", path);
-            }
-
-            await LayoutChat();
-
-            _log.LogInformation("Finished run {iter}", Iteration);
-
-            Iteration++;
-            await Task.Delay(_opts.WaitBetweenRuns * 1000);
+            _log.LogInformation("Finished run {iter}", _iteration++);
+            await Task.Delay(_opts.WaitBetweenRuns * 1000, cancelToken);
         }
     }
 
-    private async Task LayoutChat()
+    private async Task LayoutThoughts(AsyncServiceScope scope, FdlLayoutOptions opts)
     {
-        await using var scope = _scopeFactory.CreateAsyncScope();
+        var epochRepo = scope.ServiceProvider.GetRequiredService<IEpochDataContract>();
+        var layoutService = scope.ServiceProvider.GetRequiredService<ILayoutLogicContract>();
+
+        var epochResult = await epochRepo.GetEpochAsync();
+        if (!epochResult.IsSuccess)
+        {
+            _log.LogError("Failed to get last epoch: {err}", epochResult.Error!.Message);
+            return;
+        }
+
+        var thoughts = epochResult.Payload!.Thoughts;
+        var nodes = thoughts.Select(t => new LayoutNode
+        {
+            Id = t.Id,
+            X = t.X,
+            Y = t.Y,
+            Size = t.Size,
+            Color = t.Color,
+            Shape = t.Shape,
+            Links = t.Links.ToList(),
+            BackLinks = t.Replies.ToList(),
+        }).ToList();
+
+        var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
+
+        await SaveThoughtPositions(laid);
+    }
+
+    private async Task LayoutChat(AsyncServiceScope scope, FdlLayoutOptions opts)
+    {
         var chatData = scope.ServiceProvider.GetRequiredService<IChatDataContract>();
-        var chatLayout = scope.ServiceProvider.GetRequiredService<IChatLayoutContract>();
+        var layoutService = scope.ServiceProvider.GetRequiredService<ILayoutLogicContract>();
 
         var messagesResult = await chatData.GetActiveMessages();
         if (!messagesResult.IsSuccess || messagesResult.Payload!.Count == 0)
             return;
 
-        var laid = await chatLayout.LayoutChatMessages(messagesResult.Payload!, _opts.ChatIterationsPerRun);
-        if (laid.IsSuccess)
-            await chatData.UpdatePositions(laid.Payload!);
+        var messages = messagesResult.Payload!;
+        var nodes = messages.Select(m => new LayoutNode
+        {
+            Id = m.Id,
+            X = m.X,
+            Y = m.Y,
+            Size = 3,// todo on fe this is dynamically computed and this is just temporary fix if even that
+            Links = m.ParentId.HasValue ? [m.ParentId.Value] : [],
+        }).ToList();
+
+        var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
+
+        // if (_opts.ExportImageAfterXRuns > 0 && _iteration % _opts.ExportImageAfterXRuns == 0)
+        // {
+        //     var path = $"{_opts.LayoutPNGsPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+        //     var printResult = await layoutService.PrintLayout(path, laid, opts);
+        //     if (!printResult.IsSuccess)
+        //         _log.LogWarning("Failed to export layout image: {err}", printResult.Error!.Message);
+        //     else
+        //         _log.LogInformation("Layout image exported: {path}", path);
+        // } //todo - move this into separate method and make it configurable for multiple modes
+
+        var nodeMap = laid.ToDictionary(n => n.Id);
+        foreach (var msg in messages)
+        {
+            if (nodeMap.TryGetValue(msg.Id, out var node))
+            {
+                msg.X = node.X;
+                msg.Y = node.Y;
+            }
+        }
+
+        await chatData.UpdatePositions(messages);
     }
 
-    private async Task<Result> SavePositions(List<ThoughtNode> nodes)
+    private async Task<Result> SaveThoughtPositions(List<LayoutNode> nodes)
     {
         try
         {

@@ -19,12 +19,12 @@ export const handleStateChange = (store: AphantasiaStoreGetAndSet,
     }
 }
 
-const handleChangeToDifferentMode = async (store: AphantasiaStoreGetAndSet, oldState: ExplorationStateDescriptor, newState: ExplorationStateDescriptor) => {
+const handleChangeToDifferentMode = (store: AphantasiaStoreGetAndSet, oldState: ExplorationStateDescriptor, newState: ExplorationStateDescriptor) => {
         const newModeContract = MODE_CONTRACTS[newState.mode];
         const oldModeContract = MODE_CONTRACTS[oldState.mode];
 
         if (oldModeContract.grafikaInitType !== newModeContract.grafikaInitType){
-            await store.get.grafika.dispose();
+            store.get.grafika.dispose();
             store.set('grafika', addGrafika(store.get.grafikaElement, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType]));
             store.get.grafika.simStart();
         }

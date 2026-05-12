@@ -10,35 +10,31 @@ namespace Aphant.Impl.FdlLayout;
 
 public partial class FdlLayoutService
 {
-    public async Task<Result> PrintLayout(string path, int? epoch)
+    public async Task<Result> PrintLayout(string path, List<LayoutNode> nodes, FdlLayoutOptions options)
     {
-        var epochResult = await _epochData.GetEpochAsync(epoch);
-        if (!epochResult.IsSuccess) return epochResult.Error!;
+        var nodesDict = nodes.ToDictionary(n => n.Id);
 
-        var thoughts = epochResult.Payload!.Thoughts;
-        var thoughtsDict = thoughts.ToDictionary(t => t.Id);
-
-        var resolution = _options.Resolution;
-        var scale = _options.Scale;
-        var viewportX = _options.ViewportPositionX;
-        var viewportY = _options.ViewportPositionY;
+        var resolution = options.Resolution;
+        var scale = options.Scale;
+        var viewportX = options.ViewportPositionX;
+        var viewportY = options.ViewportPositionY;
         var center = resolution / 2.0;
 
         using var image = new Image<Rgba32>(resolution, resolution);
-        image.Mutate(ctx => ctx.Fill(Color.Black));
+        image.Mutate(ctx => ctx.Fill(Color.ParseHex("#020202")));
 
-        foreach (var thought in thoughts)
+        foreach (var node in nodes)
         {
-            var cx = (float)(center + (thought.X - viewportX) * scale);
-            var cy = (float)(center - (thought.Y - viewportY) * scale);
-            var r = (float)Math.Min(GetRadius(thought.Size) * scale, _options.MaxRadius * scale);
+            var cx = (float)(center + (node.X - viewportX) * scale);
+            var cy = (float)(center - (node.Y - viewportY) * scale);
+            var r = (float)Math.Min(GetRadius(node.Size, options) * scale, options.MaxRadius * scale);
 
-            var shape = GetShape(cx, cy, r, thought.Shape);
-            image.Mutate(ctx => ctx.Fill(Color.ParseHex(thought.Color), shape));
+            var shape = GetShape(cx, cy, r, node.Shape);
+            image.Mutate(ctx => ctx.Fill(Color.ParseHex(node.Color), shape));
 
-            foreach (var linkId in thought.Links)
+            foreach (var linkId in node.Links)
             {
-                if (!thoughtsDict.TryGetValue(linkId, out var target)) continue;
+                if (!nodesDict.TryGetValue(linkId, out var target)) continue;
 
                 var targetCx = (float)(center + (target.X - viewportX) * scale);
                 var targetCy = (float)(center - (target.Y - viewportY) * scale);

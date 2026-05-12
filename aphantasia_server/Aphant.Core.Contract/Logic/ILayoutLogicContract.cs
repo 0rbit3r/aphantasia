@@ -5,6 +5,6 @@ namespace Aphant.Core.Contract;
 
 public interface ILayoutLogicContract
 {
-    Task<Result<List<ThoughtNode>>> LayoutThoughts(List<ThoughtNode> thoughts, int iterations = 1);
-    Task<Result> PrintLayout(string path, int? epoch);
+    List<LayoutNode> LayoutNodes(List<LayoutNode> nodes, FdlLayoutOptions options, int iterations = 1);
+    Task<Result> PrintLayout(string path, List<LayoutNode> nodes, FdlLayoutOptions options);
 }

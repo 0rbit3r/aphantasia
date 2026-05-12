@@ -65,7 +65,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
             defaultEdgeColor: "source",
             defaultEdgeAlpha: 0.6,
             colorfulText: true,
-            defaultEdgeType: EdgeType.CurvedLine,
+            defaultEdgeType: EdgeType.Tapered,
             backdrop: {
                 startAppearingAt: 0.001,
                 fullyVisibleAt: 0.1,
@@ -74,7 +74,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 url: "backdrop.png"
             }
         },
-        simulation: { pushThreshold: 1500, defaultEdgeLength: 100 },
+        simulation: { pushThreshold: 500, defaultEdgeLength: 10, downflowEnabled: true },
         debug: { showFps: true },
         data: {}
     },

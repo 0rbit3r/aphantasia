@@ -1,5 +1,5 @@
 using Aphant.Core.Contract;
-using Aphant.Core.Contract.Logic;
+using Aphant.Core.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,9 +10,7 @@ public static class RegisterModule
     public static void RegisterFdlLayoutModule(this IServiceCollection services, IConfiguration config)
     {
         services.AddTransient<ILayoutLogicContract, FdlLayoutService>();
-        services.Configure<FdlLayoutOptions>(config.GetSection("FdlLayout"));
-
-        services.AddTransient<IChatLayoutContract, ChatFdlLayoutService>();
-        services.Configure<ChatFdlLayoutOptions>(config.GetSection("ChatFdlLayout"));
+        services.Configure<FdlLayoutOptions>("Thought", config.GetSection("ThoughtLayout"));
+        services.Configure<FdlLayoutOptions>("Chat", config.GetSection("ChatLayout"));
     }
 }

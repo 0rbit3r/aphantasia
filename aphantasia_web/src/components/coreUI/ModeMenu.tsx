@@ -55,7 +55,12 @@ export const ModeMenu = () => {
                             <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epochs' })}></SymbolButton>
                             Epochs</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={notificationsIcon} action={() => handleForwardExploration(store, { mode: 'inbox' })}></SymbolButton>
+                            <SymbolButton img={notificationsIcon} action={() => {
+                                const currentMode = getCurrentExpState(store).mode;
+                                if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
+                                    handleForwardExploration(store, { mode: 'epochs' });
+                                handleForwardExploration(store, { mode: 'inbox' })
+                            }}></SymbolButton>
                             Inbox</div>
                         {/*<div class={css.button_container}>
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
@@ -63,7 +68,7 @@ export const ModeMenu = () => {
                         <div class={css.button_container}>
                             <SymbolButton img={createIcon} action={() => {
                                 const currentMode = getCurrentExpState(store).mode;
-                                if (currentMode === 'chat')
+                                if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
                                     handleForwardExploration(store, { mode: 'epochs' });
                                 handleForwardExploration(store, { mode: 'create' });
                             }} />

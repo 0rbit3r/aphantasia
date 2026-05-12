@@ -1,13 +1,11 @@
-namespace Aphant.Impl.FdlLayout;
+namespace Aphant.Core.Dto;
 
 public class FdlLayoutOptions
 {
-
     public int Resolution { get; set; }
     public double Scale { get; set; }
     public int ViewportPositionX { get; set; }
     public int ViewportPositionY { get; set; }
-
 
     public double PullForce { get; set; }
     public double PushForce { get; set; }
@@ -26,16 +24,21 @@ public class FdlLayoutOptions
     public bool GravityEnabled { get; set; }
     public double GravityForce { get; set; }
     public double GravityFreeRadius { get; set; }
-
     public double MaxGravityForce { get; set; }
+
     public bool NodeMassOn { get; set; }
     public double MaxMassDifferencePullForceMultiplier { get; set; }
     public double MinMassDifferencePullForceMultiplier { get; set; }
     public double MaxMassDifferencePushForceMultiplier { get; set; }
     public double MinMassDifferencePushForceMultiplier { get; set; }
-    public double IdealEdgeLength { get; set; }
 
-    // values of this can only ever increase the length, ie. the first few sizes dont affect it. if set under
+    public double IdealEdgeLength { get; set; }
+    // values of this can only ever increase the length, ie. the first few sizes dont affect it. if set under 1
     public double IdealDistSizeMultiplier { get; set; }
     public double DampeningRate { get; set; }
+
+    public int IterationsPerRun { get; set; } = 10;
+
+    public bool DownflowEnabled { get; set; }
+    public double DownflowForce { get; set; }
 }

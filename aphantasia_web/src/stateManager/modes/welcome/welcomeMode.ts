@@ -8,7 +8,7 @@ import { welcome_data } from "./welcomeData";
 
 
 export const WelcomeMode = {
-    grafikaInitType: 'main',
+    grafikaInitType: 'welcome',
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
