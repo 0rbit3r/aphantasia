@@ -10,6 +10,10 @@ h2 {
     margin: 4px
 }
 
+.username{
+    cursor: pointer;
+}
+
 .settings_section {
     border: 1px solid white;
     padding: 4px;
@@ -34,14 +38,23 @@ h2 {
     justify-content: space-between;
 }
 
+.bio_section{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
 .bio_input{
     width: 100%;
     min-height: 80px;
+    flex: 1 1 auto;
 }
 
 .settings_content_container {
     flex: 1 1 auto;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
 }
 
 .button_bar {
@@ -54,4 +67,12 @@ h2 {
 
 .button_bar_button {
     flex: 1;
+}
+
+.char_counter {
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+    text-align: right;
+    line-height: 1.4;
+    margin: 1px 4px;
 }

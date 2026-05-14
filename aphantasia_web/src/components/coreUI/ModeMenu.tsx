@@ -52,13 +52,13 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() !== null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epochs' })}></SymbolButton>
+                            <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epoch' })}></SymbolButton>
                             Epochs</div>
                         <div class={css.button_container}>
                             <SymbolButton img={notificationsIcon} action={() => {
                                 const currentMode = getCurrentExpState(store).mode;
                                 if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
-                                    handleForwardExploration(store, { mode: 'epochs' });
+                                    handleForwardExploration(store, { mode: 'epoch' });
                                 handleForwardExploration(store, { mode: 'inbox' })
                             }}></SymbolButton>
                             Inbox</div>
@@ -69,7 +69,7 @@ export const ModeMenu = () => {
                             <SymbolButton img={createIcon} action={() => {
                                 const currentMode = getCurrentExpState(store).mode;
                                 if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
-                                    handleForwardExploration(store, { mode: 'epochs' });
+                                    handleForwardExploration(store, { mode: 'epoch' });
                                 handleForwardExploration(store, { mode: 'create' });
                             }} />
                             Write</div>

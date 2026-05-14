@@ -2,13 +2,14 @@ import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
 import type { ExplorationStateDescriptor, ModeType } from "../explorationMode";
 import { WelcomeMode } from "./welcome/welcomeMode";
 import { WelcomeCreateMode } from "./welcome/welcomeCreateMode";
-import { EpochsMode } from "./epochsMode";
+import { EpochMode } from "./epochMode";
 import { ExploreMode } from "./exploreMode";
 import { CreateMode } from "./createMode";
 import { SettingsMode } from "./settingsMode";
 import { InboxMode } from "./inboxMode";
 import { ChatMode } from "./chatMode";
 import type { GrafikaInitType } from "./grafikaInitializers/grafikaInitTypes";
+import { ProfileMode } from "./profileMode";
 
 export interface ModeContract {
     // Grafika settings to initialize the mode with
@@ -31,11 +32,12 @@ export interface ModeContract {
 export const MODE_CONTRACTS: Record<ModeType, ModeContract> = {
     welcome: WelcomeMode,
     welcome_create: WelcomeCreateMode,
-    epochs: EpochsMode,
+    epoch: EpochMode,
     explore: ExploreMode,
     create: CreateMode,
     settings: SettingsMode,
     inbox: InboxMode,
-    concepts: null!,
+    concept: null!,
     chat: ChatMode,
+    profile: ProfileMode
 };

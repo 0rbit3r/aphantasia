@@ -39,7 +39,7 @@ export default function ContextBanner() {
       setText(store.get.contextThought?.title ?? '');
       setColor(store.get.contextThought?.color ?? defaultTextColor);
     }
-    if (currentMode === 'epochs' && !getCurrentExpState(store).focus) {
+    if (currentMode === 'epoch' && !getCurrentExpState(store).focus) {
       setText(import.meta.env.VITE_APP_TITLE);
       setColor('#eeeeee');
     }
@@ -55,6 +55,10 @@ export default function ContextBanner() {
       setText('Chat');
       setColor(defaultTextColor);
     }
+    if (currentMode === 'profile'){
+      setText((store.get.contextProfile?.user.username ?? 'NULL_USER'));
+      setColor(store.get.contextProfile?.user.color ?? defaultTextColor);
+    }
   })
 
   return <div classList={{
@@ -67,7 +71,7 @@ export default function ContextBanner() {
       const currentState = getCurrentExpState(store);
       if (currentState.mode === 'explore' || currentState.mode === 'welcome')
         store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' });
-      if (currentState.mode === 'epochs' && !currentState.focus)
+      if (currentState.mode === 'epoch' && !currentState.focus)
         store.get.grafika.focusOn('all');
       if (currentState.mode === 'welcome_create' || currentState.mode === 'create')
         store.get.grafika.focusOn({ id: 'created_thought' })

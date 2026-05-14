@@ -5,6 +5,7 @@ import { handleForwardExploration } from "../../handleForwardExploration";
 import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
+import { removeOldHighlightGlowEffect } from "../../../utility/removeOldHighlight";
 
 
 export const WelcomeMode = {
@@ -27,14 +28,7 @@ export const WelcomeMode = {
     hangleFocusChange: (store, focusId) => {
         const grafikaData = store.get.grafika.getData();
 
-        // remove old highlight
-        if (getCurrentExpState(store).focus) {
-            const highlightedNodeProxy = store.get.grafika.getData().nodes
-                .find(n => n.id === getCurrentExpState(store).focus);
-            if (highlightedNodeProxy) {
-                highlightedNodeProxy.glowEffect = false;
-            }
-        }
+        removeOldHighlightGlowEffect(store)
 
         const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
         handleHighlightAndContext(store, focusId);
@@ -80,14 +74,7 @@ export const WelcomeMode = {
 
     dispose: (store) => {
         store.get.grafika.interactionEvents.all.clear();
-        // remove old highlight
-        if (getCurrentExpState(store).focus) {
-            const highlightedNodeProxy = store.get.grafika.getData().nodes
-                .find(n => n.id === getCurrentExpState(store).focus);
-            if (highlightedNodeProxy) {
-                highlightedNodeProxy.glowEffect = false;
-            }
-        }
+        removeOldHighlightGlowEffect(store);
     }
 
 } satisfies ModeContract
@@ -122,12 +109,3 @@ const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: st
             store.get.grafika.focusOn('all');
     }
 }
-
-
-// to print positions of thoughts
-// console.log(JSON.stringify(grafikaData, (key, value) => { 
-//     console.log(key)
-//     if (key === 'nodes' || key === 'id' || key === 'x' || key === 'y' || key === '' || !Number.isNaN(Number.parseInt(key)))
-//         return value;
-//     return undefined;
-// }))

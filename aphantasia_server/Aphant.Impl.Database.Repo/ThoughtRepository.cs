@@ -4,6 +4,7 @@ using Aphant.Core.Dto.Results;
 using Aphant.Impl.Database.Mapping;
 using Microsoft.EntityFrameworkCore;
 using Aphant.Impl.Database.Entity;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Aphant.Impl.Database.Repo;
 
@@ -145,5 +146,26 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
             return Error.General("Server error");
         }
         return Result.Success();
+    }
+
+    public async Task<Result<List<ThoughtNode>>> GetUserProfileThoughts(Guid userId, int? page, int? pageSize)
+    {
+        pageSize ??= 500; // todo - config
+
+        IQueryable<ThoughtEntity> query = _db.Thoughts
+            .Where(t => t.AuthorId == userId || t.Backlinks.Count(bl => bl.SourceThought.AuthorId == userId) > 0)
+            .OrderBy(t => t.Id);
+
+        if (page is not null)
+            query = query
+                .Skip((page.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value);
+        else
+            query = query
+                .OrderByDescending(t => t.Id)
+                .Take(pageSize.Value)
+                .OrderBy(t => t.Id);
+
+        return await query.Distinct().Select(ThoughtMapper.ToDtoNodeExpr).ToListAsync();
     }
 }

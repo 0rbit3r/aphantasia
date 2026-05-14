@@ -28,7 +28,7 @@ export const AphantasiaContainer = () => {
         const loggedIn = auth.getAuthorizedUser() !== null;
         location.pathname;//...
 
-        const initialPath = loggedIn ? '/epochs' : '/welcome';
+        const initialPath = loggedIn ? '/epoch' : '/welcome';
         const state = parsePathToExplorationState(initialPath);
         console.log(initialPath)
         store.set("explorationHistory", [state]);

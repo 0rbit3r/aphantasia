@@ -11,6 +11,7 @@ import type { Epoch } from "../model/dto/epoch";
 import type { ScreenMessage } from "../components/coreUI/MessageOverlay";
 import type { InboxNotification } from "../model/dto/inboxNotification";
 import type { ChatMessage } from "../model/dto/chatMessage";
+import type { UserProfile } from "../model/dto/userProfile";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -23,11 +24,11 @@ export interface AphantasiaStore {
 
     contextThought?: Thought;
     contextConcept?: Concept;
-    contextUser?: User;
     contextThoughtInMaking?: ThoughtInMaking;
     contextEpoch?: Epoch;
     contextInbox?: InboxNotification[];
     contextChatMessages?: ChatMessage[];
+    contextProfile?: UserProfile;
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;

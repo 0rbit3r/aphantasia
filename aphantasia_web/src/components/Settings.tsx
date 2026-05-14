@@ -5,6 +5,7 @@ import css_buttons from '../styles/common/buttons.module.css';
 import { StoreContext } from '../contexts/storeContext';
 import { AuthContext } from '../contexts/authContext';
 import { api_fetchUserSettings, api_postUserSettings } from '../api/api_userSettings';
+import { handleForwardExploration } from '../stateManager/handleForwardExploration';
 
 export const Settings = () => {
     const store = useContext(StoreContext)!;
@@ -25,6 +26,8 @@ export const Settings = () => {
             )
     })
 
+    const bioContentLength = () => bio().length;
+
     const handleSave = () => api_postUserSettings({ bio: bio(), color: color(), userId: authContext.getAuthorizedUser()?.id ?? '' })
         .then(_ => {
             store.set('screenMessages', prev => [...prev, { color: 'green', text: 'Settings saved' }]);
@@ -38,7 +41,10 @@ export const Settings = () => {
     return <Show when={authContext.getAuthorizedUser()}>
         <div class={css.settings_container}>
             <div class={css.settings_content_container}>
-                <h2 style={{ color: color() }}>{authContext.getAuthorizedUser()?.username}</h2>
+                <h2 class={css.username} style={{ color: color() }}
+                    on:click={()=> handleForwardExploration(store, 
+                        {mode: 'profile', focus: authContext.getAuthorizedUser()?.id})}
+                    >{authContext.getAuthorizedUser()?.username}</h2>
                 <div class={css.settings_section}>
                     <div class={css.color_picker_container}>
                         <div class={css.label}>Color</div>
@@ -46,10 +52,11 @@ export const Settings = () => {
                         <input class={css.color_input} type='color' value={color()} on:change={e => setColor(e.target.value)} />
                     </div>
                 </div>
-                <div class={css.settings_section}>
+                <div class={css.settings_section + ' ' + css.bio_section}>
                     <div class={css.label}>Bio</div>
                     <textarea class={css.bio_input}
-                        value={bio()} on:change={e => setBio(e.target.value)}></textarea>
+                        value={bio()} on:input={e => setBio(e.target.value)}></textarea>
+                    <div class={css.char_counter}>{bioContentLength()} / 300</div>
                 </div>
             </div>
             <div class={css.button_bar}>

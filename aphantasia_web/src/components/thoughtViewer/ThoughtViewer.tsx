@@ -71,7 +71,8 @@ export const ThoughtViewer = () => {
             </div>
             <div class={css.metadata_bar}>
                 <div class={css.date}>{store.get.contextThought?.date}</div>
-                <div class={css.author} style={{ color: store.get.contextThought?.author.color ?? '#eeeeee' }}>
+                <div class={css.author} style={{ color: store.get.contextThought?.author.color ?? '#eeeeee' }}
+                    on:click={()=>handleForwardExploration(store, {mode: 'profile', focus: store.get.contextThought?.author.id})}>
                     {store.get.contextThought?.author.username}</div>
             </div>
             <RepliesScroller />

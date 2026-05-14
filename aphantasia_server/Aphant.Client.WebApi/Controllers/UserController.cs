@@ -21,6 +21,12 @@ namespace Aphant.Client.WebApi.Controllers
             return ResponseFromResult(await _userData.GetUserById(id));
         }
 
+        [HttpGet("{id}/profile")]
+        public async Task<ActionResult<Result<UserProfile>>> GetUserProfile([FromRoute] Guid id)
+        {
+            return ResponseFromResult(await _userLogic.GetUserProfile(id));
+        }
+
         [HttpGet("{id}/settings")]
         [Authorize]
         public async Task<ActionResult<Result<UserSettings>>> GetUserSettings([FromRoute] Guid id)

@@ -1,0 +1,30 @@
+.profile_viewer_container {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 4px);
+}
+
+.user_info_container {
+    height: var(--metadata-bar-height);
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--color-background-secondary);
+
+    padding: 8px;
+}
+
+.date_joined {
+    color: var(--color-text-subtle);
+}
+
+.user_bio {
+    overflow-y: auto;
+    border: 1px solid var(--color-text-subtle);
+    flex: 1 0 auto;
+}
+
+.scroll_container {
+    margin-top: 16px;
+    overflow-y: scroll;
+}

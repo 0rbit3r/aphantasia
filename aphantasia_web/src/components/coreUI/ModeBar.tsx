@@ -17,11 +17,13 @@ import conceptsIcon from '../../assets/icons/concepts.png';
 import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
 import arrowIcon from '../../assets/icons/arrow.svg';
-import settingsIcon from '../../assets/icons/settings.svg';
 import chatIcon from '../../assets/icons/chat.svg';
+import settingsIcon from '../../assets/icons/settings.svg';
+import personIcon from '../../assets/icons/user.svg';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { api_fetchNotifications } from "../../api/api_notifications";
+import type { ModeType } from "../../stateManager/explorationMode";
 
 export default function ModeBar() {
   const authContext = useContext(AuthContext);
@@ -55,16 +57,17 @@ export default function ModeBar() {
     if (isFullscreen()) closeFullscreen();
   });
 
-  const icons = {
-    epochs: epochIcon,
+  const icons: Record<ModeType, string> = {
+    epoch: epochIcon,
     welcome: homeIcon,
     welcome_create: createIcon,
     explore: exploreIcon,
     create: createIcon,
-    concepts: conceptsIcon,
+    concept: conceptsIcon,
     inbox: arrowIcon,
     settings: settingsIcon,
     chat: chatIcon,
+    profile: personIcon
   };
 
   return <>

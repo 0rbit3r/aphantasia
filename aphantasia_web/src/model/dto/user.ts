@@ -3,6 +3,7 @@ export interface User {
     username: string;
     color: string;
     bio: string;
+    dateJoined: string;
 }
 
 export interface UserColorName {

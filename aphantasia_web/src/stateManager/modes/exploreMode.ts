@@ -1,8 +1,8 @@
 import { type ProxyNode } from "grafika";
 import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
-import { getCurrentExpState } from "../getCurrentExpState";
 import { api_fetchThought } from "../../api/fetchThought";
+import { removeOldHighlightGlowEffect } from "../../utility/removeOldHighlight";
 
 export const ExploreMode = {
     grafikaInitType: 'main',
@@ -26,21 +26,14 @@ export const ExploreMode = {
 
         const grafikaData = store.get.grafika.getData();
 
-        // remove old highlight
-        if (getCurrentExpState(store).focus) {
-            const highlightedNodeProxy = store.get.grafika.getData().nodes
-                .find(n => n.id === getCurrentExpState(store).focus);
-            if (highlightedNodeProxy) {
-                highlightedNodeProxy.glowEffect = false;
-            }
-        }
+        removeOldHighlightGlowEffect(store)
 
         if (focusId === undefined)
             return; // todo - ???
         store.set('contextDataLoading', true);
         api_fetchThought(focusId).then(thought => {
             store.set('contextThought', thought);
-            })
+        })
             .catch(e => console.error(e))
             .finally(() => store.set('contextDataLoading', false));
 
@@ -71,14 +64,7 @@ export const ExploreMode = {
     dispose: (store) => {
         store.get.grafika.interactionEvents.all.clear();
 
-        // remove old highlight
-        if (getCurrentExpState(store).focus) {
-            const highlightedNodeProxy = store.get.grafika.getData().nodes
-                .find(n => n.id === getCurrentExpState(store).focus);
-            if (highlightedNodeProxy) {
-                highlightedNodeProxy.glowEffect = false;
-            }
-        }
+        removeOldHighlightGlowEffect(store)
     }
 
 } satisfies ModeContract

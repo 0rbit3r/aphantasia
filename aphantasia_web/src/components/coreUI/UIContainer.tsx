@@ -16,16 +16,17 @@ import { Settings } from "../Settings";
 import { RegisterForm } from "../RegisterForm";
 import { Inbox } from "../inbox/Inbox";
 import { ChatPanel } from "../chat/ChatPanel";
+import { ProfileViewer } from "../ProfileViewer";
 
 
-export interface BlockyUIProps {
+export interface UIContainerProps {
     onGrafikaRef: (element: HTMLDivElement) => void;
 }
 
 // This component holds almost all of Aphantasia's experience
 // - the graph view, content view, control bars, validation messages...
 // all dynamically rendering based on the current exploration state
-export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
+export function BlockyUI({ onGrafikaRef }: UIContainerProps) {
     const screenOrientation = useContext(ScreenOrientation);
     const store = useContext(StoreContext)!;
 
@@ -51,7 +52,7 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
                     <LoginForm />
                 </Match>
                 <Match when={getCurrentExpState(store).focus === 'register'}>
-                    <RegisterForm/>
+                    <RegisterForm />
                 </Match>
                 <Match when={store.get.contextThought
                     && (getCurrentExpState(store).mode === 'welcome' || getCurrentExpState(store).mode === 'explore')}>
@@ -62,7 +63,7 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
                     <ThoughtCreator />
                 </Match>
                 <Match when={store.get.contextEpoch
-                    && (getCurrentExpState(store).mode === 'epochs')}>
+                    && (getCurrentExpState(store).mode === 'epoch')}>
                     <EpochViewer />
                 </Match>
                 <Match when={getCurrentExpState(store).mode === 'settings'}>
@@ -73,6 +74,9 @@ export function BlockyUI({ onGrafikaRef }: BlockyUIProps) {
                 </Match>
                 <Match when={getCurrentExpState(store).mode === 'chat'}>
                     <ChatPanel />
+                </Match>
+                <Match when={getCurrentExpState(store).mode === 'profile'}>
+                    <ProfileViewer />
                 </Match>
             </Switch>
         </div>

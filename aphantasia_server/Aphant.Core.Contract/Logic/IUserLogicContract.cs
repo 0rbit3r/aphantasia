@@ -5,5 +5,6 @@ namespace Aphant.Core.Contract.Logic;
 
 public interface IUserLogicContract
 {
+    Task<Result<UserProfile>> GetUserProfile(Guid id);
     Task<Result> UpdateUserSettings(UserSettings settings);
 }

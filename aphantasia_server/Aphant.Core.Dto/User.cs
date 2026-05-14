@@ -16,3 +16,9 @@ public class UserColorName
     public required string Username { get; set; }
     public required string Color { get; set; }
 }
+
+public class UserProfile
+{
+    public required User User { get; set; }
+    public required List<ThoughtNode> Thoughts { get; set; }
+}

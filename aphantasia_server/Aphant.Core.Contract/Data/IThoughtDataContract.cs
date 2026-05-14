@@ -1,4 +1,4 @@
-﻿using Aphant.Core.Dto;
+using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 
 namespace Aphant.Core.Contract.Data;
@@ -23,4 +23,9 @@ public interface IThoughtDataContract
     Task<Result> BumpThought(Guid id);
 
     Task<Result> DebumpThought(Guid id);
+
+    /// <summary>
+    /// Returns thoughts of the given user with any thoughts they replied to.
+    /// </summary>
+    Task<Result<List<ThoughtNode>>> GetUserProfileThoughts(Guid userId, int? count, int? pageSize);
 }

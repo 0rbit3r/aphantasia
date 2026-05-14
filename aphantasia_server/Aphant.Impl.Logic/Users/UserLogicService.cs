@@ -9,11 +9,13 @@ internal partial class UserLogicService : IUserLogicContract
 {
     private readonly ILogger<ThoughtLogicService> _log;
     private readonly IUserDataContract _userData;
+    private readonly IThoughtDataContract _thoughtData; 
 
-    public UserLogicService(ILogger<ThoughtLogicService> log, IUserDataContract userData)
+    public UserLogicService(ILogger<ThoughtLogicService> log, IUserDataContract userData, IThoughtDataContract thoughtData)
     {
         _log = log;
         _userData = userData;
+        _thoughtData = thoughtData;
     }
 
 }

@@ -41,7 +41,7 @@
 }
 
 .date {
-    color: #aaaaaa;
+    color: var(--color-text-subtle);
 }
 
 .author {

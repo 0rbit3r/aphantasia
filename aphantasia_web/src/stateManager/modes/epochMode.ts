@@ -5,7 +5,7 @@ import { api_fetchEpoch } from "../../api/fetchEpoch";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 
-export const EpochsMode = {
+export const EpochMode = {
     grafikaInitType: 'main',
 
     initialize: (store) => {
