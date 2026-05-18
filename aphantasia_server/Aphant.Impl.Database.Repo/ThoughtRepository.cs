@@ -135,7 +135,7 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
         thought.SizeMultiplier -= 1;
 
         if (thought.SizeMultiplier < 0)
-            thought.SizeMultiplier = 0; // Should not happen ...often
+            thought.SizeMultiplier = 0; // Should not happen, but still...
 
         try
         {

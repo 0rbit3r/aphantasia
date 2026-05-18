@@ -117,7 +117,7 @@ public class AphantasiaDataContext : DbContext
             .HasOne(m => m.Parent)
             .WithMany()
             .HasForeignKey(m => m.ParentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<ChatMessageEntity>()
             .HasIndex(m => m.CreatedAt);
     }

@@ -81,7 +81,8 @@ export const ThoughtCreator = () => {
         <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden'
                 && !store.get.contextThoughtInMaking.previewMode}>
             <div class={css.title_and_shape_cont}>
-                <textarea placeholder='Title'
+                <input placeholder='Title'
+                    type='text'
                     class={css.title_input}
                     value={store.get.contextThoughtInMaking?.title ?? ''}
                     on:input={e => {

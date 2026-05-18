@@ -1,5 +1,5 @@
-using Aphant.Core.Contract;
-using Aphant.Core.Dto;
+using Aphant.Core.Contract.Configuration;
+using Aphant.Core.Contract.Logic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

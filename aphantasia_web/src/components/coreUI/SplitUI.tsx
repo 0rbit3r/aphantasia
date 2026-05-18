@@ -21,7 +21,10 @@ export default function SplitUI(props: SplitViewProps) {
 
   createEffect(() => {
     if (!handleHeld())
-      setInternalRatio(convertForcedLayoutToRatio(store?.get.splitUiLayout ?? "graph", screenOrientation.isLandscape()))
+      store?.get.splitUiLayout;
+      setTimeout(() =>
+        setInternalRatio(convertForcedLayoutToRatio(store?.get.splitUiLayout ?? "graph", screenOrientation.isLandscape()))
+      , 50); // timeout to avoid window of grafika heavy code -> makes the animation (a little bit) smoother, albeit later...
   });
 
   const handleHandleGrab = (e: PointerEvent & { currentTarget: HTMLDivElement; target: Element; }) => {
@@ -86,7 +89,7 @@ export default function SplitUI(props: SplitViewProps) {
           transition: handleHeld() ? "none" : "height 0.65s ease"
         }}>
       {props.first}</div>
-    <Show when={store.get.splitUiLayout!="hidden"}><div classList={{
+    <Show when={store.get.splitUiLayout != "hidden"}><div classList={{
       [css.handle_port]: !screenOrientation.isLandscape(),
       [css.handle_land]: screenOrientation.isLandscape(),
       [css.handle_left]: !screenOrientation.isLandscape()

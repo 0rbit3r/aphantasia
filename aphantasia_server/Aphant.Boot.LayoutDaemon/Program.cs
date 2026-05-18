@@ -26,7 +26,7 @@ builder.Services.RegisterDbRepositoryModule(builder.Configuration);
 builder.Services.RegisterFdlLayoutModule(builder.Configuration);
 builder.Services.AddHostedService<LayoutBackgroundService>();
 
-builder.Services.Configure<LayoutDaemonOptions>(builder.Configuration.GetSection("LayoutDaemon"));
+builder.Services.Configure<LayoutServiceOptions>(builder.Configuration.GetSection("LayoutDaemon"));
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

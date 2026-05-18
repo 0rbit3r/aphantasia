@@ -9,12 +9,13 @@ export const EpochViewer = () => {
     return <Show when={!store.get.contextDataLoading
         && store.get.contextEpoch}>
         <div class={css.epoch_viewer_container}>
-            <h1>Epoch #{store.get.contextEpoch?.id}</h1>
-            <div class={css.dates}>
-                {store.get.contextEpoch?.startDate} - now
-            </div>
-            <div class={css.thought_count}>
-                {store.get.contextEpoch?.thoughts.length} thoughts
+            <div class={css.epoch_info_container}>
+                <div class={css.thought_count}>
+                    {store.get.contextEpoch?.thoughts.length} thoughts
+                </div>
+                <div class={css.dates}>
+                    {store.get.contextEpoch?.startDate} <span class={css.date_dash}>-</span> {store.get.contextEpoch?.endDate}
+                </div>
             </div>
             <div class={css.scroll_container}>
                 {store.get.contextEpoch?.thoughts.map(t => <ThoughtCard thought={t} />)}

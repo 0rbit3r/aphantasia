@@ -1,4 +1,4 @@
-namespace Aphant.Core.Dto;
+namespace Aphant.Core.Contract.Configuration;
 
 public class FdlLayoutOptions
 {

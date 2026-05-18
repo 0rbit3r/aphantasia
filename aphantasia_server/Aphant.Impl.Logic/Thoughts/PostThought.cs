@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Microsoft.Extensions.Logging;
-using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 
 namespace Aphant.Impl.Logic.Thoughts;
 
@@ -148,6 +148,8 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         {
             errors.AppendLine("Title cannot contain characters [ and ]");
         }
+        if (title.Contains('\n'))
+            errors.AppendLine("Title cannot contain new lines");
         if (errors.Length > 0)
         {
             return Error.BadRequest(errors.ToString());

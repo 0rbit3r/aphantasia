@@ -1,7 +1,7 @@
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 
-namespace Aphant.Core.Contract.Data;
+namespace Aphant.Core.Contract.Logic;
 
 public interface IThoughtLogicContract
 {

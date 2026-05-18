@@ -39,9 +39,15 @@ export default function ContextBanner() {
       setText(store.get.contextThought?.title ?? '');
       setColor(store.get.contextThought?.color ?? defaultTextColor);
     }
-    if (currentMode === 'epoch' && !getCurrentExpState(store).focus) {
-      setText(import.meta.env.VITE_APP_TITLE);
-      setColor('#eeeeee');
+    if (currentMode === 'epoch') {
+      if (!getCurrentExpState(store).focus) {
+        setText(import.meta.env.VITE_APP_TITLE);
+        setColor('#eeeeee');
+      }
+      else {
+        setText(import.meta.env.VITE_APP_TITLE);
+        setColor('#eeeeee');
+      }
     }
     if (currentMode === 'settings') {
       setText('Settings');
@@ -55,8 +61,8 @@ export default function ContextBanner() {
       setText('Chat');
       setColor(defaultTextColor);
     }
-    if (currentMode === 'profile'){
-      setText((store.get.contextProfile?.user.username ?? 'NULL_USER'));
+    if (currentMode === 'profile') {
+      setText('~' + (store.get.contextProfile?.user.username ?? 'NULL_USER'));
       setColor(store.get.contextProfile?.user.color ?? defaultTextColor);
     }
   })

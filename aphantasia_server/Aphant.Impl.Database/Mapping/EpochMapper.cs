@@ -10,8 +10,8 @@ public static class EpochMapper
         new Epoch
         {
             Id = entity.Id,
-            EndDate = entity.EndDate.ToString(),
-            StartDate = entity.StartDate.ToString(),
+            EndDate = entity.EndDate.ToString("yyyy-MM-dd"),
+            StartDate = entity.StartDate.ToString("yyyy-MM-dd"),
             Thoughts = entity.Thoughts.AsQueryable().Select(ThoughtMapper.ToDtoNodeExpr).ToList()  
         };
 

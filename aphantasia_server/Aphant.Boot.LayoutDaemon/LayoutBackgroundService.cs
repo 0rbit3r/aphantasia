@@ -1,5 +1,6 @@
-using Aphant.Core.Contract;
+using Aphant.Core.Contract.Configuration;
 using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Aphant.Impl.Database;
@@ -15,7 +16,7 @@ public class LayoutBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<LayoutBackgroundService> _log;
-    private readonly LayoutDaemonOptions _opts;
+    private readonly LayoutServiceOptions _thoughtLayoutOpts;
     private readonly IOptionsMonitor<FdlLayoutOptions> _layoutOpts;
 
     private int _iteration;
@@ -23,12 +24,12 @@ public class LayoutBackgroundService : BackgroundService
     public LayoutBackgroundService(
         IServiceScopeFactory scopeFactory,
         ILogger<LayoutBackgroundService> log,
-        IOptions<LayoutDaemonOptions> opts,
+        IOptions<LayoutServiceOptions> opts,
         IOptionsMonitor<FdlLayoutOptions> layoutOpts)
     {
         _scopeFactory = scopeFactory;
         _log = log;
-        _opts = opts.Value;
+        _thoughtLayoutOpts = opts.Value;
         _layoutOpts = layoutOpts;
     }
 
@@ -36,16 +37,24 @@ public class LayoutBackgroundService : BackgroundService
     {
         while (!cancelToken.IsCancellationRequested)
         {
-            await using var scope = _scopeFactory.CreateAsyncScope();
+            try
+            {
+                await using var scope = _scopeFactory.CreateAsyncScope();
 
-            var thoughtOpts = _layoutOpts.Get("Thought");
-            var chatOpts = _layoutOpts.Get("Chat");
+                var thoughtOpts = _layoutOpts.Get("Thought");
+                var chatOpts = _layoutOpts.Get("Chat");
 
-            await LayoutThoughts(scope, thoughtOpts);
-            await LayoutChat(scope, chatOpts);
+                await LayoutThoughts(scope, thoughtOpts);
+                await LayoutChat(scope, chatOpts);
 
-            _log.LogInformation("Finished run {iter}", _iteration++);
-            await Task.Delay(_opts.WaitBetweenRuns * 1000, cancelToken);
+                _log.LogInformation("Finished run {iter}", _iteration++);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _log.LogError(ex, "Layout run failed, will retry after delay");
+            }
+
+            await Task.Delay(_thoughtLayoutOpts.WaitBetweenRuns * 1000, cancelToken);
         }
     }
 

@@ -1,6 +1,6 @@
-namespace Aphant.Boot.LayoutDaemon;
+namespace Aphant.Core.Contract.Configuration;
 
-public class LayoutDaemonOptions
+public class LayoutServiceOptions
 {
     public string LayoutPNGsPath { get; set; } = "";
     public int ExportImageAfterXRuns { get; set; } = 10;

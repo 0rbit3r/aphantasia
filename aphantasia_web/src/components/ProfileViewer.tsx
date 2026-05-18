@@ -25,6 +25,7 @@ export const ProfileViewer = () => {
             <div class={css.scroll_container}>
                 {store.get.contextProfile?.thoughts
                     .filter(t => t.author.id === store.get.contextProfile?.user.id)
+                    .sort((a, b) => (a.id < b.id) ? 1 : -1)
                     .map(t => <ThoughtCard thought={t} />)}
             </div>
             <div class={css.action_buttons_bar}>

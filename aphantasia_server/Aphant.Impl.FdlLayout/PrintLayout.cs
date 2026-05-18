@@ -1,3 +1,4 @@
+using Aphant.Core.Contract.Configuration;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using SixLabors.ImageSharp;
