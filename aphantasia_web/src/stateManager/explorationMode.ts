@@ -1,3 +1,4 @@
+import { EpochPseudoId } from '../model/dto/epoch';
 
 export interface ExplorationStateDescriptor {
     mode: ModeType;
@@ -31,7 +32,7 @@ export function parsePathToExplorationState(path: string): ExplorationStateDescr
             case 'welcome':
                 return { mode: 'welcome' }
             case 'epoch':
-                return { mode: 'epoch' }
+                return { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) }
 
 
         }

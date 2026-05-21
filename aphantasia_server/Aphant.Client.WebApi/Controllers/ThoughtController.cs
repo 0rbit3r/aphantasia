@@ -1,10 +1,10 @@
 ﻿using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
-using Aphant.Core.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Aphant.Core.Contract.Data;
 using Microsoft.Extensions.Logging;
+using Aphant.Core.Contract.Logic;
 
 namespace Aphant.Client.WebApi.Controllers
 {
@@ -20,6 +20,15 @@ namespace Aphant.Client.WebApi.Controllers
         public async Task<ActionResult<Result<Thought>>> GetThoughtById([FromRoute] Guid id)
         {
             return ResponseFromResult(await _thoughtData.GetThoughtById(id));
+        }
+
+        [HttpGet("{id}/neighborhood")]
+        public async Task<ActionResult<Result<List<ThoughtNode>>>> GetThoughtNeighborhood(
+            [FromRoute] Guid id,
+            [FromQuery] int depth = 1,
+            [FromQuery] int limit = 100)
+        {
+            return ResponseFromResult(await _thoughtData.GetThoughtNeighborhood(id, depth, limit));
         }
 
         [HttpPost]

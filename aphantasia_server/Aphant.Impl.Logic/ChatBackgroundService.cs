@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Aphant.Impl.Logic;
 
-public class ChatCleanupService(IServiceScopeFactory _scopeFactory, ILogger<ChatCleanupService> _log)
+public class ChatBackgroundService(IServiceScopeFactory _scopeFactory, ILogger<ChatBackgroundService> _log)
     : BackgroundService
 {
     private static readonly TimeSpan Interval = TimeSpan.FromMinutes(15);

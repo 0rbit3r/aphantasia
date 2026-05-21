@@ -148,6 +148,47 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
         return Result.Success();
     }
 
+    public async Task<Result<List<ThoughtNode>>> GetThoughtNeighborhood(Guid id, int depth = 1, int limit = 100)
+    {
+        depth = Math.Clamp(depth, 1, 3);
+        limit = Math.Clamp(limit, 1, 3000);
+
+        var visited = new HashSet<Guid> { id };
+        var frontier = new HashSet<Guid> { id };
+
+        for (int d = 0; d < depth && visited.Count < limit; d++)
+        {
+            var neighborPairs = await _db.ThoughtReferences
+                .Where(r => frontier.Contains(r.SourceId) || frontier.Contains(r.TargetId))
+                .Select(r => new { r.SourceId, r.TargetId })
+                .ToListAsync();
+
+            var nextFrontier = new HashSet<Guid>();
+            foreach (var pair in neighborPairs)
+            {
+                if (!visited.Contains(pair.SourceId)) nextFrontier.Add(pair.SourceId);
+                if (!visited.Contains(pair.TargetId)) nextFrontier.Add(pair.TargetId);
+            }
+
+            var remaining = limit - visited.Count;
+            foreach (var n in nextFrontier.Take(remaining))
+                visited.Add(n);
+
+            frontier = nextFrontier.Where(visited.Contains).ToHashSet();
+            if (frontier.Count == 0) break;
+        }
+
+        var result = await _db.Thoughts
+            .Where(t => visited.Contains(t.Id))
+            .Select(ThoughtMapper.ToDtoNodeExpr)
+            .ToListAsync();
+
+        if (!result.Any())
+            return Error.NotFound();
+
+        return result;
+    }
+
     public async Task<Result<List<ThoughtNode>>> GetUserProfileThoughts(Guid userId, int? page, int? pageSize)
     {
         pageSize ??= 500; // todo - config

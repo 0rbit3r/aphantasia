@@ -13,8 +13,8 @@ namespace Aphant.Client.WebApi.Controllers
         IEpochDataContract epochDataContract
     ) : ApiControllerBase
     {
-        [HttpGet("{id?}")]
-        public async Task<ActionResult<Result<Epoch>>> GetEpoch([FromRoute] int? id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Result<Epoch>>> GetEpoch([FromRoute] int id)
         {
             return ResponseFromResult(await epochDataContract.GetEpochAsync(id));
         }

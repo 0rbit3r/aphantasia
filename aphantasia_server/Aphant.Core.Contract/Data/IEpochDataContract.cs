@@ -10,8 +10,11 @@ public interface IEpochDataContract
     /// </summary>
     Task<Result<Epoch>> CreateEpoch(int numberOfThoughts);
 
-    // returns either the desired epoch or, when id is null, epoch-less thoughts
-    Task<Result<Epoch>> GetEpochAsync(int? id = null);
+    /// <summary>
+    /// Returns desired epoch with thoughts belonging to it.
+    /// </summary>
+    /// <param name="id">Either id of existing epoch or -1 or -2 for latest context and epochless thoughts only respectively</param>
+    Task<Result<Epoch>> GetEpochAsync(int id);
 
     /// <summary>
     /// Returns the latest N thougths - for the main entry point to the website

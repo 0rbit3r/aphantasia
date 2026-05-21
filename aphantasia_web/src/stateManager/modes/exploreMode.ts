@@ -2,6 +2,9 @@ import { type ProxyNode } from "grafika";
 import type { ModeContract } from "./modeContract";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { api_fetchThought } from "../../api/fetchThought";
+import { api_fetchNeighborhood } from "../../api/fetchNeighborhood";
+import { convertThoughtToNode } from "../../utility/thoughtToNodeConvertor";
+import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { removeOldHighlightGlowEffect } from "../../utility/removeOldHighlight";
 
 export const ExploreMode = {
@@ -47,18 +50,26 @@ export const ExploreMode = {
         store.get.grafika.focusOn(focusedNode);
         focusedNode.glowEffect = true;
 
-        // // add neighbors
-        // let timeToLiveFrom = 0;
-        // const nodesToAdd = welcome_data.nodes
-        //     .filter(n => welcome_data.edges.some(e =>
-        //         (e.sourceId === n.id && e.targetId === focusedNode.id)
-        //         || (e.sourceId === focusedNode.id && e.targetId === n.id)))
-        //     .filter(nodeToAdd => !grafikaData.nodes.find(existingNode => existingNode.id === nodeToAdd.id))
-        //     .map(d => ({
-        //         ...d, hollowEffect: true, timeToLiveFrom: -30 * timeToLiveFrom++,
-        //         x: focusedNode.x + (Math.random() - 0.5) * 20, y: focusedNode.y + (Math.random() - 0.5) * 20
-        //     }));
-        // store.get.grafika.addData({ nodes: nodesToAdd });
+        api_fetchNeighborhood(focusId).then(neighbors => {
+            const existingIds = new Set(grafikaData.nodes.map(n => n.id));
+            const neighborIds = new Set(neighbors.map(n => n.id));
+            const allIds = new Set([...existingIds, ...neighborIds]);
+
+            const isHollow = (n: { links: string[], replies: string[] }) =>
+                [...n.links, ...n.replies].some(id => !allIds.has(id));
+
+            const existingById = new Map(grafikaData.nodes.map(gn => [gn.id, gn]));
+            neighbors.forEach(n => {
+                const existing = existingById.get(n.id);
+                if (existing) existing.hollowEffect = isHollow(n);
+            });
+
+            const nodesToAdd = neighbors
+                .filter(n => !existingIds.has(n.id))
+                .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n) }));
+
+            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) });
+        }).catch(e => console.error(e));
     },
 
     dispose: (store) => {

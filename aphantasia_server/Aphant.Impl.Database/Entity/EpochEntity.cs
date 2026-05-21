@@ -10,5 +10,10 @@ public class EpochEntity
     public DateTime EndDate { get; set; }
     public string? Name { get; set; }
     public ICollection<ThoughtEntity> Thoughts { get; set; } = [];
+
+    public int? PreviousEpochId { get; set; }
+    public EpochEntity? PreviousEpoch { get; set; }
+    public int? NextEpochId { get; set; }
+    public EpochEntity? NextEpoch { get; set; }
 }
 

@@ -4,6 +4,7 @@ import { createEffect, createSignal, Show, useContext } from 'solid-js';
 import { AuthContext } from '../../contexts/authContext';
 import { StoreContext } from '../../contexts/storeContext';
 import { handleForwardExploration } from '../../stateManager/handleForwardExploration';
+import type { ExplorationStateDescriptor } from '../../stateManager/explorationMode';
 import welcomeIcon from '../../assets/icons/home.svg';
 import epochIcon from '../../assets/icons/galaxy.svg';
 import createIcon from '../../assets/icons/create_thought.svg';
@@ -13,6 +14,7 @@ import notificationsIcon from '../../assets/icons/envelope.svg';
 // import conceptsIcon from '../../assets/icons/concepts.png';
 import chatIcon from '../../assets/icons/chat.svg';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
+import { EpochPseudoId } from '../../model/dto/epoch';
 // import dieIcon from '../../assets/icons/die.svg';
 
 export const ModeMenu = () => {
@@ -21,6 +23,12 @@ export const ModeMenu = () => {
 
     const [visible, setVisible] = createSignal(false);
     const [faded, setFaded] = createSignal(true);
+
+    const navigateFromChat = (target: ExplorationStateDescriptor) => {
+        if (getCurrentExpState(store).mode === 'chat')
+            handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) });
+        handleForwardExploration(store, target);
+    };
 
     createEffect(() => {
         if (store.get.modeMenuOpen === false) {
@@ -52,26 +60,16 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() !== null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epoch' })}></SymbolButton>
+                            <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) })}></SymbolButton>
                             Epochs</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={notificationsIcon} action={() => {
-                                const currentMode = getCurrentExpState(store).mode;
-                                if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
-                                    handleForwardExploration(store, { mode: 'epoch' });
-                                handleForwardExploration(store, { mode: 'inbox' })
-                            }}></SymbolButton>
+                            <SymbolButton img={notificationsIcon} action={() => navigateFromChat({ mode: 'inbox' })}></SymbolButton>
                             Inbox</div>
                         {/*<div class={css.button_container}>
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
                         Bookmarks</div> */}
                         <div class={css.button_container}>
-                            <SymbolButton img={createIcon} action={() => {
-                                const currentMode = getCurrentExpState(store).mode;
-                                if (currentMode === 'chat') //todo - decide based on type of grafika, not this if...
-                                    handleForwardExploration(store, { mode: 'epoch' });
-                                handleForwardExploration(store, { mode: 'create' });
-                            }} />
+                            <SymbolButton img={createIcon} action={() => navigateFromChat({ mode: 'create' })} />
                             Write</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={conceptsIcon} action={() => { }}></SymbolButton>

@@ -34,8 +34,10 @@ builder.Services.AddCors(options =>
 // // Add modules
 builder.Services.RegisterChatModule(builder.Environment.IsDevelopment());
 builder.Services.RegisterWebApiModule();
-builder.Services.RegisterDbRepositoryModule(builder.Configuration);
+builder.Services.RegisterDbRepositoryModule();
 builder.Services.RegisterLogicModule();
+builder.Services.RegisterEpochBackgroundService();
+
 builder.Services.RegisterAuthorizationModule(builder.Configuration);
 
 builder.Services.AddDbContext<AphantasiaDataContext>(options =>

@@ -14,7 +14,7 @@ namespace Aphant.Impl.Database.Entity
         [MaxLength(7)]
         public string Color { get; set; } = null!;
         
-        [MaxLength(300)]
+        [MaxLength(1000)]
         public string Bio { get; set; } = null!;
         public DateTime DateJoined { get; set; }
 

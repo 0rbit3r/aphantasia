@@ -21,3 +21,7 @@
     background-color: var(--color-background-primary);
     color: var(--color-background-tertiary)
 }
+
+.common_button:disabled:hover {
+    cursor: default;
+}

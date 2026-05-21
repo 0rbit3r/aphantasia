@@ -12,7 +12,10 @@ public static class EpochMapper
             Id = entity.Id,
             EndDate = entity.EndDate.ToString("yyyy-MM-dd"),
             StartDate = entity.StartDate.ToString("yyyy-MM-dd"),
-            Thoughts = entity.Thoughts.AsQueryable().Select(ThoughtMapper.ToDtoNodeExpr).ToList()  
+            Thoughts = entity.Thoughts.AsQueryable().Select(ThoughtMapper.ToDtoNodeExpr).ToList(),
+            Name = entity.Name,
+            NextEpochId = entity.NextEpochId ?? EpochPseudoId.LatestContext,
+            PreviousEpochId = entity.PreviousEpochId 
         };
 
     public static Epoch ToDtoFull(this EpochEntity entity)

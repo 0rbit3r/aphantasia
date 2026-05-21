@@ -1,5 +1,7 @@
-using Aphant.Core.Contract.Data;
+using Aphant.Boot.LayoutDaemon;
 using Aphant.Core.Contract.Logic;
+using Aphant.Core.Contracta.Configuration;
+using Aphant.Impl.Logic.Epochs;
 using Aphant.Impl.Logic.Thoughts;
 using Aphant.Impl.Logic.Users;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,16 @@ public static class RegisterModule
     {
         services.AddScoped<IThoughtLogicContract, ThoughtLogicService>();
         services.AddScoped<IUserLogicContract, UserLogicService>();
-        services.AddHostedService<ChatCleanupService>();
+        services.AddScoped<IEpochLogicContract, EpochLogicService>();
+        services.AddHostedService<ChatBackgroundService>();
+    }
+    
+    public static void RegisterEpochBackgroundService(this IServiceCollection services) //todo - do the same for Chat Service
+    {
+        services.AddHostedService<EpochBackgroundService>();
+        services.AddOptions<EpochOptions>()
+            .BindConfiguration("Epochs") 
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
     }
 }

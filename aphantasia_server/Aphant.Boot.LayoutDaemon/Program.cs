@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Aphant.Boot.LayoutDaemon;
+using Aphant.Core.Contract.Configuration;
 
 var options = new HostApplicationBuilderSettings
 {

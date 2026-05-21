@@ -3,6 +3,7 @@ using System;
 using Aphant.Impl.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Aphant.Impl.Database.Migrations
 {
     [DbContext(typeof(AphantasiaDataContext))]
-    partial class AphantasiaDataContextModelSnapshot : ModelSnapshot
+    [Migration("20260521101907_EpochNavigationAndBioLength")]
+    partial class EpochNavigationAndBioLength
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

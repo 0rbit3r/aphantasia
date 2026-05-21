@@ -23,30 +23,36 @@ export const EpochMode = {
         store.get.grafika.focusOn('all')
         if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph')
             store.set('splitUiLayout', 'half');
+
+        store.get.grafika.removeData();
     },
 
     hangleFocusChange: (store, focusId) => {
         store.get.grafika.focusOn('all');
 
-        // todo solve reload on every time?
-
-        store.get.grafika.removeData();
         store.set('contextDataLoading', true);
         api_fetchEpoch(focusId)
             .then(epoch => {
-                epoch.thoughts.sort((a, b)=> (a.id < b.id) ? 1 : -1)
-                store.set('contextEpoch', epoch); 
-                store.get.grafika.addData({
-                    nodes: convertThoughtsToNodes(epoch.thoughts),
-                    edges: getEdgesFromNodes(epoch.thoughts)
-                });
+                epoch.thoughts.sort((a, b) => (a.id < b.id) ? 1 : -1)
+                store.set('contextEpoch', epoch);
+
+                const currentIds = new Set(store.get.grafika.getData().nodes.map(n => n.id));
+                const newNodes = convertThoughtsToNodes(epoch.thoughts);
+                const newIds = new Set(newNodes.map(n => n.id));
+
+                const toAdd = newNodes.filter(n => !currentIds.has(n.id));
+                const toRemove = [...currentIds].filter(id => !newIds.has(id)).map(id => ({ id }));
+
+                if (toRemove.length) store.get.grafika.removeData({ nodes: toRemove });
+                store.get.grafika.addData({ nodes: toAdd, edges: getEdgesFromNodes(epoch.thoughts) });
             })
             .catch(e => console.error(e))
-            .finally(()=>store.set('contextDataLoading', false));
+            .finally(() => store.set('contextDataLoading', false));
     },
 
     dispose: (store) => {
         store.get.grafika.interactionEvents.all.clear();
+        store.set('contextEpoch', undefined);
     }
 
 } satisfies ModeContract

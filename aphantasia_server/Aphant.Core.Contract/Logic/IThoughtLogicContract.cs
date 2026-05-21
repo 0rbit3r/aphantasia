@@ -10,4 +10,5 @@ public interface IThoughtLogicContract
 
     // Will attempt to delete a thought and debump linked thoughts
     Task<Result> DeleteThought(Guid thoughtId);
+
 }

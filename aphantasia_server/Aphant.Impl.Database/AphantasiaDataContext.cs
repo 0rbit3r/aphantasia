@@ -59,8 +59,8 @@ public class AphantasiaDataContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         // User
-        modelBuilder.Entity<UserEntity>().HasIndex(t=> t.Email).IsUnique();
-        modelBuilder.Entity<UserEntity>().HasIndex(t=> t.Username).IsUnique();
+        modelBuilder.Entity<UserEntity>().HasIndex(t => t.Email).IsUnique();
+        modelBuilder.Entity<UserEntity>().HasIndex(t => t.Username).IsUnique();
         modelBuilder.Entity<UserEntity>()
             .HasMany(u => u.Bookmarks)
             .WithOne(b => b.User)
@@ -106,6 +106,14 @@ public class AphantasiaDataContext : DbContext
             .HasMany(e => e.Thoughts)
             .WithOne(t => t.Epoch)
             .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<EpochEntity>()
+            .HasOne(e => e.PreviousEpoch)
+            .WithMany()
+            .HasForeignKey(e => e.PreviousEpochId);
+        modelBuilder.Entity<EpochEntity>()
+            .HasOne(e => e.NextEpoch)
+            .WithMany()
+            .HasForeignKey(e => e.NextEpochId);
 
         // chat
         modelBuilder.Entity<ChatMessageEntity>()

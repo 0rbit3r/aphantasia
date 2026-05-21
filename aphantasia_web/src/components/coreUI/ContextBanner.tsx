@@ -3,6 +3,7 @@ import css from '../../styles/components/contextBanner.module.css';
 import { StoreContext } from '../../contexts/storeContext';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 import { ScreenOrientation } from '../../contexts/screenOrientationContext';
+import { EpochPseudoId } from '../../model/dto/epoch';
 
 const defaultTextColor = '#cccccc';
 
@@ -21,10 +22,10 @@ export default function ContextBanner() {
     if (currentMode === 'welcome_create' || currentMode === 'create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
       if (store.get.contextThoughtInMaking?.previewMode) {
         setText(store.get.contextThoughtInMaking.title);
-        setColor(store.get.user?.color ?? defaultTextColor)
+        setColor(store.get.user?.color ?? defaultTextColor);
       }
       else {
-        setText('What\'s on your mind?')
+        setText('What\'s on your mind?');
         setColor(defaultTextColor);
       }
       return;
@@ -40,14 +41,14 @@ export default function ContextBanner() {
       setColor(store.get.contextThought?.color ?? defaultTextColor);
     }
     if (currentMode === 'epoch') {
-      if (!getCurrentExpState(store).focus) {
+      const focus = getCurrentExpState(store).focus;
+      setColor('#eeeeee');
+      if (focus === String(EpochPseudoId.LATEST_CONTEXT))
         setText(import.meta.env.VITE_APP_TITLE);
-        setColor('#eeeeee');
-      }
-      else {
-        setText(import.meta.env.VITE_APP_TITLE);
-        setColor('#eeeeee');
-      }
+      else if (focus === String(EpochPseudoId.EPOCHLESS))
+        setText('Epoch to be');
+      else
+        setText(store.get.contextEpoch?.name ?? 'Epoch #' + store.get.contextEpoch?.id);
     }
     if (currentMode === 'settings') {
       setText('Settings');

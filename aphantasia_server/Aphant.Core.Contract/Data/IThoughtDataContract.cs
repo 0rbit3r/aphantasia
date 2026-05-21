@@ -6,6 +6,7 @@ namespace Aphant.Core.Contract.Data;
 public interface IThoughtDataContract
 {
     Task<Result<Thought>> GetThoughtById(Guid id);
+    Task<Result<List<ThoughtNode>>> GetThoughtNeighborhood(Guid id, int depth = 1, int limit = 100);
     Task<Result<ThoughtTitle>> GetThoughtTitleById(Guid id);
     Task<Result<ThoughtNode>> GetThoughtNodeById(Guid id);
     Task<Result<List<ThoughtNode>>> GetRepliesOfThought(Guid id);
