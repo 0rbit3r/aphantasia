@@ -28,6 +28,7 @@
 
 
 # Repo Refactoring
+
   ---
   We are refactoring the Aphantasia backend to remove the Repository layer entirely. The project is a .NET 10 clean architecture monorepo (aphantasia_server/).
 
@@ -49,7 +50,18 @@
 
   Discuss approach with the user before making changes if anything is ambiguous. Do not make broad architectural changes beyond the scope above.
 
+
+
+
   The prompt above needs some work - Instead of removing data, lets leave data for simple crud (or at crud-like enough) opereations and simply give Logic access to the DbContext.
 
   THe point is to have Data for a simple operations (CRUD, Inserts with creation of automatic names, dates... stuff like that), 
   while the logic layer handles the truly non-trivial operations, such as Thought creation, Epoch managmemnt, Deletion, etc. etc.
+
+
+
+  Furthermore,
+  - [ ] let's use AddOptions instead of Configure to allow for validating options.
+  - [ ] Let claude write as many tests as possible
+  - [ ] then refactor the repo layer
+  - [ ] 

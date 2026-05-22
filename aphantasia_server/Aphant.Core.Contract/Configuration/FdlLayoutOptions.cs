@@ -2,6 +2,7 @@ namespace Aphant.Core.Contract.Configuration;
 
 public class FdlLayoutOptions
 {
+    public string? RenderPath { get; set; }
     public int Resolution { get; set; }
     public double Scale { get; set; }
     public int ViewportPositionX { get; set; }

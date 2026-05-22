@@ -6,7 +6,7 @@ import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
 import { LinkAdder } from "./LinkAdder";
 import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL } from "../thoughtViewer/Content";
-import { type GraphEdge, type ProxyNode } from "grafika";
+import { type GraphEdge } from "grafika";
 import { AuthContext } from "../../contexts/authContext";
 import { type ThoughtTitle } from "../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../stateManager/aphantasiaStore";
@@ -33,9 +33,6 @@ export const ThoughtCreator = () => {
 
     const [titleLen, setTitleLen] = createSignal(store.get.contextThoughtInMaking?.title?.length ?? 0);
     const [contentLen, setContentLen] = createSignal(store.get.contextThoughtInMaking?.content?.length ?? 0);
-
-    const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought')!;
-    if (graphNode === undefined) { console.error('created graph node not found.'); return; }
 
     // fetch thoughts and modify links array based on content
     createEffect(() => {
@@ -79,7 +76,7 @@ export const ThoughtCreator = () => {
 
     return <div class={css.thought_creator_container}>
         <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden'
-                && !store.get.contextThoughtInMaking.previewMode}>
+            && !store.get.contextThoughtInMaking.previewMode}>
             <div class={css.title_and_shape_cont}>
                 <input placeholder='Title'
                     type='text'
@@ -88,6 +85,7 @@ export const ThoughtCreator = () => {
                     on:input={e => {
                         store.set('contextThoughtInMaking', 'title', e.target.value);
                         setTitleLen(e.target.value.length);
+                        const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
                         if (graphNode) graphNode.text = e.target.value;
                     }} />
                 <div class={css.char_counter}>{titleLen()} / 50</div>
@@ -124,8 +122,8 @@ export const ThoughtCreator = () => {
                         color: authContext.getAuthorizedUser()?.color || "white"
                     }}
                     on:click={() => getCurrentExpState(store).mode === 'welcome_create'
-                        ? handleThoughtCreation_Welcome(store, graphNode)
-                        : handleThoughtCreation_forReal(store, graphNode)}>
+                        ? handleThoughtCreation_Welcome(store)
+                        : handleThoughtCreation_forReal(store)}>
                     Publish</button>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', 'previewMode', false)}>
@@ -143,9 +141,10 @@ export const ThoughtCreator = () => {
 
 let userCreatedId = 0;
 
-const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNode: ProxyNode) => {
+const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet) => {
     try {
-
+        const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+        if (!graphNode) { console.error('Could not find thought in the graph'); return; };
         const newData = {
             nodes: [{
                 id: userCreatedId.toString(), color: graphNode.color, x: graphNode.x, y: graphNode.y,
@@ -194,7 +193,11 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet, graphNod
     }
 }
 
-const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet, graphNode: ProxyNode) => {
+const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
+
+    const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+    if (!graphNode) { console.error('Could not find thought in the graph'); return; };
+
     const newThought = store.get.contextThoughtInMaking;
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }

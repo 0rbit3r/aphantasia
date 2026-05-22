@@ -5,6 +5,8 @@ import { api_fetchEpoch } from "../../api/fetchEpoch";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 
+let generation = 0;
+
 export const EpochMode = {
     grafikaInitType: 'main',
 
@@ -30,9 +32,11 @@ export const EpochMode = {
     hangleFocusChange: (store, focusId) => {
         store.get.grafika.focusOn('all');
 
+        const myGen = ++generation;
         store.set('contextDataLoading', true);
         api_fetchEpoch(focusId)
             .then(epoch => {
+                if (myGen !== generation) return;
                 epoch.thoughts.sort((a, b) => (a.id < b.id) ? 1 : -1)
                 store.set('contextEpoch', epoch);
 

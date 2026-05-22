@@ -16,7 +16,7 @@ public class LayoutBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<LayoutBackgroundService> _log;
-    private readonly LayoutServiceOptions _thoughtLayoutOpts;
+    private readonly LayoutServiceOptions _serviceOpts;
     private readonly IOptionsMonitor<FdlLayoutOptions> _layoutOpts;
 
     private int _iteration;
@@ -29,7 +29,7 @@ public class LayoutBackgroundService : BackgroundService
     {
         _scopeFactory = scopeFactory;
         _log = log;
-        _thoughtLayoutOpts = opts.Value;
+        _serviceOpts = opts.Value;
         _layoutOpts = layoutOpts;
     }
 
@@ -54,7 +54,7 @@ public class LayoutBackgroundService : BackgroundService
                 _log.LogError(ex, "Layout run failed, will retry after delay");
             }
 
-            await Task.Delay(_thoughtLayoutOpts.WaitBetweenRuns * 1000, cancelToken);
+            await Task.Delay(_serviceOpts.WaitBetweenRuns * 1000, cancelToken);
         }
     }
 
@@ -63,7 +63,7 @@ public class LayoutBackgroundService : BackgroundService
         var epochRepo = scope.ServiceProvider.GetRequiredService<IEpochDataContract>();
         var layoutService = scope.ServiceProvider.GetRequiredService<ILayoutLogicContract>();
 
-        var epochResult = await epochRepo.GetEpochAsync();
+        var epochResult = await epochRepo.GetEpochAsync(-2);
         if (!epochResult.IsSuccess)
         {
             _log.LogError("Failed to get last epoch: {err}", epochResult.Error!.Message);
@@ -85,6 +85,14 @@ public class LayoutBackgroundService : BackgroundService
 
         var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
 
+        if (_iteration % _serviceOpts.ExportImageAfterXRuns == 0 && _serviceOpts.ExportImageAfterXRuns > 0)
+        {
+            var path = $"{opts.RenderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+            var printResult = await layoutService.PrintLayout(path, laid, opts);
+            if (!printResult.IsSuccess)
+                _log.LogWarning("Failed to export thought layout image: {err}", printResult.Error!.Message);
+        }
+
         await SaveThoughtPositions(laid);
     }
 
@@ -103,21 +111,11 @@ public class LayoutBackgroundService : BackgroundService
             Id = m.Id,
             X = m.X,
             Y = m.Y,
-            Size = 3,// todo on fe this is dynamically computed and this is just temporary fix if even that
+            Size = 1,// todo on fe this is dynamically computed and this is just temporary fix if even that
             Links = m.ParentId.HasValue ? [m.ParentId.Value] : [],
         }).ToList();
 
         var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
-
-        // if (_opts.ExportImageAfterXRuns > 0 && _iteration % _opts.ExportImageAfterXRuns == 0)
-        // {
-        //     var path = $"{_opts.LayoutPNGsPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
-        //     var printResult = await layoutService.PrintLayout(path, laid, opts);
-        //     if (!printResult.IsSuccess)
-        //         _log.LogWarning("Failed to export layout image: {err}", printResult.Error!.Message);
-        //     else
-        //         _log.LogInformation("Layout image exported: {path}", path);
-        // } //todo - move this into separate method and make it configurable for multiple modes
 
         var nodeMap = laid.ToDictionary(n => n.Id);
         foreach (var msg in messages)
@@ -130,6 +128,14 @@ public class LayoutBackgroundService : BackgroundService
         }
 
         await chatData.UpdatePositions(messages);
+
+        if (_serviceOpts.ExportImageAfterXRuns > 0 && _iteration % _serviceOpts.ExportImageAfterXRuns == 0)
+        {
+            var path = $"{opts.RenderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+            var printResult = await layoutService.PrintLayout(path, laid, opts);
+            if (!printResult.IsSuccess)
+                _log.LogWarning("Failed to export chat layout image: {err}", printResult.Error!.Message);
+        } 
     }
 
     private async Task<Result> SaveThoughtPositions(List<LayoutNode> nodes)

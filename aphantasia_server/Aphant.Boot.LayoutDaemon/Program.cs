@@ -23,8 +23,8 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 // Add modules
-builder.Services.RegisterDbRepositoryModule(builder.Configuration);
-builder.Services.RegisterFdlLayoutModule(builder.Configuration);
+builder.Services.RegisterDbRepositoryModule();
+builder.Services.RegisterFdlLayoutModule();
 builder.Services.AddHostedService<LayoutBackgroundService>();
 
 builder.Services.Configure<LayoutServiceOptions>(builder.Configuration.GetSection("LayoutDaemon"));

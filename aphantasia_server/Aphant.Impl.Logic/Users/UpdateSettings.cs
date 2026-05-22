@@ -11,8 +11,8 @@ internal partial class UserLogicService : IUserLogicContract
     {
         if (!Regex.IsMatch(settings.Color, @"^\#[0-9a-f]{6}$"))
             return Error.BadRequest("Malformed color code");
-        if (settings.Bio.Length > 300)
-            return Error.BadRequest("Bio can be at most 300 characters long");
+        if (settings.Bio.Length > 1000)
+            return Error.BadRequest("Bio can be at most 1000 characters long");
 
         var settingsResult = await _userData.UpdateSettings(settings);
         var colorsResult = await _userData.ChangeThoughtColorsOfUser(settings.UserId, settings.Color);

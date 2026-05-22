@@ -18,7 +18,7 @@ public class ChatBackgroundService(IServiceScopeFactory _scopeFactory, ILogger<C
 
             await using var scope = _scopeFactory.CreateAsyncScope();
             var chatData = scope.ServiceProvider.GetRequiredService<IChatDataContract>();
-            var result = await chatData.DeleteExpiredMessages();
+            var result = await chatData.DeleteExpiredMessages(TimeSpan.FromHours(33));
             if (!result.IsSuccess)
                 _log.LogWarning("Chat cleanup failed: {err}", result.Error!.Message);
         }

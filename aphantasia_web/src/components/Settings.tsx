@@ -56,7 +56,7 @@ export const Settings = () => {
                     <div class={css.label}>Bio</div>
                     <textarea class={css.bio_input}
                         value={bio()} on:input={e => setBio(e.target.value)}></textarea>
-                    <div class={css.char_counter}>{bioContentLength()} / 300</div>
+                    <div class={css.char_counter}>{bioContentLength()} / 1000</div>
                 </div>
             </div>
             <div class={css.button_bar}>

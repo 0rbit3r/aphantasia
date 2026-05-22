@@ -42,13 +42,11 @@ export const ExploreMode = {
 
 
         const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
-        // handleHighlightAndContext(store, focusId);
-        if (!focusedNode) {
-            return;
-        }
 
-        store.get.grafika.focusOn(focusedNode);
-        focusedNode.glowEffect = true;
+        if (focusedNode) {
+            store.get.grafika.focusOn(focusedNode);
+            focusedNode.glowEffect = true;
+        }
 
         api_fetchNeighborhood(focusId).then(neighbors => {
             const existingIds = new Set(grafikaData.nodes.map(n => n.id));
@@ -69,6 +67,14 @@ export const ExploreMode = {
                 .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n) }));
 
             store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) });
+
+            if (!focusedNode) {
+                const addedNode = store.get.grafika.getData().nodes.find(n => n.id === focusId);
+                if (addedNode) {
+                    store.get.grafika.focusOn(addedNode);
+                    addedNode.glowEffect = true;
+                }
+            }
         }).catch(e => console.error(e));
     },
 

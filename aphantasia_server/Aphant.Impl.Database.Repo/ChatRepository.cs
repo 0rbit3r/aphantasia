@@ -68,9 +68,9 @@ internal class ChatRepository(AphantasiaDataContext _db) : IChatDataContract
         return Result.Success();
     }
 
-    public async Task<Result> DeleteExpiredMessages()
+    public async Task<Result> DeleteExpiredMessages(TimeSpan messageLifeTime)
     {
-        var cutoff = DateTime.UtcNow - MessageLifetime;
+        var cutoff = DateTime.UtcNow - messageLifeTime;
         await _db.ChatMessages
             .Where(m => m.CreatedAt <= cutoff)
             .ExecuteDeleteAsync();
