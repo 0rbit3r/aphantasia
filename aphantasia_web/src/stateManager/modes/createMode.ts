@@ -29,8 +29,11 @@ export const CreateMode = {
                 x: viewport.position.x, y: viewport.position.y
              }]
         });
-
-        store.get.grafika.focusOn({ id: 'created_thought' });
+        const focusOnCreatedThought = (node: ProxyNode)=>{
+            store.get.grafika.focusOn(node);
+            store.get.grafika.interactionEvents.off('nodeAdded', focusOnCreatedThought)
+        };
+        store.get.grafika.interactionEvents.on('nodeAdded', focusOnCreatedThought);
 
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking)

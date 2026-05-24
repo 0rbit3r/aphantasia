@@ -65,7 +65,7 @@ export const WelcomeMode = {
                 || (e.sourceId === focusedNode.id && e.targetId === n.id)))
             .filter(nodeToAdd => !grafikaData.nodes.find(existingNode => existingNode.id === nodeToAdd.id))
             .map(n => ({
-                ...n, hollowEffect: true, timeToLiveFrom: -30 * timeToLiveFrom++,
+                ...n, hollowEffect: true, timeToLiveFrom: 30 * timeToLiveFrom++,
                 x: n.x ?? focusedNode.x + (Math.random() - 0.5) * 20,
                 y: n.y ?? focusedNode.y + (Math.random() - 0.5) * 20
             }));

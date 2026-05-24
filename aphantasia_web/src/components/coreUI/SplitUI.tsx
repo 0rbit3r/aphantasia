@@ -22,9 +22,7 @@ export default function SplitUI(props: SplitViewProps) {
   createEffect(() => {
     if (!handleHeld())
       store?.get.splitUiLayout;
-      setTimeout(() =>
-        setInternalRatio(convertForcedLayoutToRatio(store?.get.splitUiLayout ?? "graph", screenOrientation.isLandscape()))
-      , 50); // timeout to avoid window of grafika heavy code -> makes the animation (a little bit) smoother, albeit later...
+    setInternalRatio(convertForcedLayoutToRatio(store?.get.splitUiLayout ?? "graph", screenOrientation.isLandscape())) 
   });
 
   const handleHandleGrab = (e: PointerEvent & { currentTarget: HTMLDivElement; target: Element; }) => {

@@ -97,7 +97,7 @@ export const ChatMode: ModeContract = {
         const focused = data.nodes.find((n: GraphNode) => n.id === focusId);
         if (focused) {
             focused.shape = NodeShape.TextOnlyHighlighted;
-            store.get.grafika.focusOn(focused, 0.5);
+            store.get.grafika.focusOn(focused, 0.7);
         }
 
         store.set('splitUiLayout', 'half');

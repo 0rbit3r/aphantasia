@@ -21,7 +21,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 startAppearingAt: 0.001,
                 fullyVisibleAt: 0.1,
                 parallax: 0.75,
-                scale: 5,
+                scale: 20,
                 url: "backdrop.png"
             }
         },
@@ -43,7 +43,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 startAppearingAt: 0.001,
                 fullyVisibleAt: 0.1,
                 parallax: 0.75,
-                scale: 5,
+                scale: 20,
                 url: "backdrop.png"
             }
         },
@@ -70,7 +70,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 startAppearingAt: 0.001,
                 fullyVisibleAt: 0.1,
                 parallax: 0.75,
-                scale: 5,
+                scale: 20,
                 url: "generic_space.jpg"
             }
         },

@@ -30,7 +30,13 @@ export const WelcomeCreateMode = {
                 shape: currentTutorialThought.shape ?? NodeShape.Circle,
                 color: color, x: viewport.position.x, y: viewport.position.y
             }]
-        })
+        });
+        const focusOnCreatedThought = (node: ProxyNode)=>{
+            store.get.grafika.focusOn(node);
+            store.get.grafika.interactionEvents.off('nodeAdded', focusOnCreatedThought)
+        };
+        store.get.grafika.interactionEvents.on('nodeAdded', focusOnCreatedThought);
+
 
         store.get.grafika.focusOn({ id: 'created_thought' });
 

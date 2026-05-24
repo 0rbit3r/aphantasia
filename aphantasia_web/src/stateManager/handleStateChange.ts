@@ -1,16 +1,16 @@
-import { type ExplorationStateDescriptor} from "./explorationMode";
+import { type ExplorationStateDescriptor } from "./explorationMode";
 import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
 import { getCurrentExpState } from "./getCurrentExpState";
-import { MODE_CONTRACTS } from "./modes/modeContract";
-import { addGrafika } from "grafika";
+import { MODE_CONTRACTS, type ModeContract } from "./modes/modeContract";
 import { GRAFIKA_INITIALIZERS } from "./modes/grafikaInitializers/grafikaInitTypes";
+import { handleAddGrafika } from "../utility/ handleAddGrafika";
 
 
 export const handleStateChange = (store: AphantasiaStoreGetAndSet,
     newState: ExplorationStateDescriptor) => {
 
-        const newModeContract = MODE_CONTRACTS[newState.mode];
-        const prevMode = getCurrentExpState(store).mode;
+    const newModeContract = MODE_CONTRACTS[newState.mode];
+    const prevMode = getCurrentExpState(store).mode;
 
     if (prevMode === newState.mode) {
         newModeContract.hangleFocusChange(store, newState.focus);
@@ -20,15 +20,21 @@ export const handleStateChange = (store: AphantasiaStoreGetAndSet,
 }
 
 const handleChangeToDifferentMode = (store: AphantasiaStoreGetAndSet, oldState: ExplorationStateDescriptor, newState: ExplorationStateDescriptor) => {
-        const newModeContract = MODE_CONTRACTS[newState.mode];
-        const oldModeContract = MODE_CONTRACTS[oldState.mode];
+    const newModeContract = MODE_CONTRACTS[newState.mode];
+    const oldModeContract = MODE_CONTRACTS[oldState.mode];
 
-        if (oldModeContract.grafikaInitType !== newModeContract.grafikaInitType){
-            store.get.grafika.dispose();
-            store.set('grafika', addGrafika(store.get.grafikaElement, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType]));
-            store.get.grafika.simStart();
-        }
-        oldModeContract.dispose(store);
-        newModeContract.initialize(store);
-        newModeContract.hangleFocusChange(store, newState.focus)
+    if (oldModeContract.grafikaInitType !== newModeContract.grafikaInitType) {
+        handleAddGrafika(store, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType], grafika => {
+            grafika.simStart();
+            switchMode(store, oldModeContract, newModeContract, newState);
+        });
+    } else {
+        switchMode(store, oldModeContract, newModeContract, newState);
+    }
+}
+
+const switchMode = (store: AphantasiaStoreGetAndSet, oldModeContract: ModeContract, newModeContract: ModeContract, newState: ExplorationStateDescriptor) => {
+    oldModeContract.dispose(store);
+    newModeContract.initialize(store);
+    newModeContract.hangleFocusChange(store, newState.focus);
 }
