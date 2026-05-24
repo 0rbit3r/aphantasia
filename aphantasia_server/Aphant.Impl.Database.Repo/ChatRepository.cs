@@ -10,7 +10,7 @@ namespace Aphant.Impl.Database.Repo;
 
 internal class ChatRepository(AphantasiaDataContext _db) : IChatDataContract
 {
-    private static readonly TimeSpan MessageLifetime = TimeSpan.FromHours(3);
+    private static readonly TimeSpan MessageLifetime = TimeSpan.FromHours(33);// todo - config
 
     public async Task<Result<List<ChatMessage>>> GetActiveMessages()
     {

@@ -172,9 +172,9 @@ public partial class FdlLayoutService : ILayoutLogicContract
 
     private static double GravityForce(double centerDistance, FdlLayoutOptions options)
     {
-        if (centerDistance < options.GravityFreeRadius)
-            return -options.GravityForce / (centerDistance - options.GravityFreeRadius);
-        return options.MaxGravityForce;
+        if (centerDistance > options.GravityFreeRadius)
+            return options.GravityForce * Math.Log(centerDistance - options.GravityFreeRadius + 1);
+        return 0;
     }
 
     private static double BacklinksNumberForceDivisor(int bl)

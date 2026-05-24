@@ -32,7 +32,7 @@ export function ChatPanel() {
         const text = content().trim();
         if (!text || text.length > MAX_CHAT_LENGTH) return;
         const parentId = getCurrentExpState(store).focus ?? null;
-        await sendChatMessage(text, parentId, viewport.position.x, viewport.position.y - 20);
+        await sendChatMessage(text, parentId, viewport.position.x, viewport.position.y + 20);
         setContent('');
     };
 
@@ -56,16 +56,17 @@ export function ChatPanel() {
     };
 
     const contextLabel = () => {
+
         const msg = focusedMessage();
         if (!msg) return 'New message';
-        const preview = msg.content.length > 40 ? msg.content.slice(0, 40) + '...' : msg.content;
-        return `Replying to "${preview}"`;
+        const preview = msg.content.length > 30 ? msg.content.slice(0, 30) + '...' : msg.content;
+        return <span>Replying to <span style={{ color: msg.authorColor }}>{`"${preview}"`}</span></span>;
     };
 
     return (
         <div class={css.chat_panel_container}>
             <div class={css.context_bar}>
-                <span class={css.context_label}>{contextLabel()}</span>
+                {contextLabel()}
                 <Show when={isOwnMessage()}>
                     <div class={css.context_action_button}>
                         <SymbolButton action={handleDelete} img={trashIcon} />
@@ -74,7 +75,12 @@ export function ChatPanel() {
             </div>
             <textarea
                 class={css.message_input}
-                placeholder="Write a message... (Ctrl+Enter to send)"
+                placeholder="
+ Click on text = reply
+ Click on background = new message
+ CLick on background again = hide ui
+ Click the trash icon = delete your message
+ Ctrl+Enter = send"
                 value={content()}
                 onInput={e => setContent(e.currentTarget.value)}
                 onKeyDown={handleKeyDown}

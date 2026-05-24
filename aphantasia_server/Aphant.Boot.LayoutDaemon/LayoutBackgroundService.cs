@@ -54,7 +54,7 @@ public class LayoutBackgroundService : BackgroundService
                 _log.LogError(ex, "Layout run failed, will retry after delay");
             }
 
-            await Task.Delay(_serviceOpts.WaitBetweenRuns * 1000, cancelToken);
+            await Task.Delay(_serviceOpts.WaitSecondsBetweenRuns * 1000, cancelToken);
         }
     }
 
@@ -63,14 +63,15 @@ public class LayoutBackgroundService : BackgroundService
         var epochRepo = scope.ServiceProvider.GetRequiredService<IEpochDataContract>();
         var layoutService = scope.ServiceProvider.GetRequiredService<ILayoutLogicContract>();
 
-        var epochResult = await epochRepo.GetEpochAsync(-2);
-        if (!epochResult.IsSuccess)
-        {
-            _log.LogError("Failed to get last epoch: {err}", epochResult.Error!.Message);
-            return;
-        }
+        var latestContextResult = await epochRepo.GetEpochAsync(-2);
+        if (!latestContextResult.IsSuccess)
+        { _log.LogError("Failed to get last epoch: {err}", latestContextResult.Error!.Message); return; }
 
-        var thoughts = epochResult.Payload!.Thoughts;
+        var epochlessResult = await epochRepo.GetEpochAsync(-1);
+        if (!epochlessResult.IsSuccess)
+        { _log.LogError("Failed to get epochless pseudoepoch: {err}", epochlessResult.Error!.Message); return; }
+
+        var thoughts = latestContextResult.Payload!.Thoughts;
         var nodes = thoughts.Select(t => new LayoutNode
         {
             Id = t.Id,
@@ -81,6 +82,7 @@ public class LayoutBackgroundService : BackgroundService
             Shape = t.Shape,
             Links = t.Links.ToList(),
             BackLinks = t.Replies.ToList(),
+            IsFixed = !epochlessResult.Payload!.Thoughts.Any(elt => elt.Id == t.Id)
         }).ToList();
 
         var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
@@ -113,6 +115,8 @@ public class LayoutBackgroundService : BackgroundService
             Y = m.Y,
             Size = 1,// todo on fe this is dynamically computed and this is just temporary fix if even that
             Links = m.ParentId.HasValue ? [m.ParentId.Value] : [],
+            Color = m.AuthorColor,
+            Shape = ThoughtShape.Square
         }).ToList();
 
         var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
@@ -135,7 +139,7 @@ public class LayoutBackgroundService : BackgroundService
             var printResult = await layoutService.PrintLayout(path, laid, opts);
             if (!printResult.IsSuccess)
                 _log.LogWarning("Failed to export chat layout image: {err}", printResult.Error!.Message);
-        } 
+        }
     }
 
     private async Task<Result> SaveThoughtPositions(List<LayoutNode> nodes)
@@ -145,7 +149,7 @@ public class LayoutBackgroundService : BackgroundService
             await using var scope = _scopeFactory.CreateAsyncScope();
             var db = scope.ServiceProvider.GetRequiredService<AphantasiaDataContext>();
 
-            foreach (var node in nodes)
+            foreach (var node in nodes.Where(n => !n.IsFixed))
             {
                 await db.Thoughts
                     .Where(t => t.Id == node.Id)

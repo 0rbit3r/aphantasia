@@ -6,6 +6,7 @@ using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using Path = System.IO.Path;
 
 namespace Aphant.Impl.FdlLayout;
 
@@ -58,6 +59,11 @@ public partial class FdlLayoutService
         }
 
         image.Mutate(img => img.Flip(FlipMode.Vertical));
+
+        var dir = Path.GetDirectoryName(path);
+        if (!string.IsNullOrEmpty(dir))
+            Directory.CreateDirectory(dir);
+
         await image.SaveAsPngAsync(path);
 
         return Result.Success();
@@ -67,14 +73,14 @@ public partial class FdlLayoutService
     // flipped vertically at the end, so negating here ensures correct orientation in the final PNG.
     private static IPath GetShape(float cx, float cy, float r, ThoughtShape shape) => shape switch
     {
-        ThoughtShape.Circle           => DrawCircle(cx, cy, r),
-        ThoughtShape.Square           => DrawSquare(cx, cy, r),
-        ThoughtShape.Diamond          => DrawDiamond(cx, cy, r),
-        ThoughtShape.Triangle         => DrawTriangle(cx, cy, r),
+        ThoughtShape.Circle => DrawCircle(cx, cy, r),
+        ThoughtShape.Square => DrawSquare(cx, cy, r),
+        ThoughtShape.Diamond => DrawDiamond(cx, cy, r),
+        ThoughtShape.Triangle => DrawTriangle(cx, cy, r),
         ThoughtShape.ReversedTriangle => DrawReversedTriangle(cx, cy, r),
-        ThoughtShape.Cross            => DrawCross(cx, cy, r),
-        ThoughtShape.Heart            => DrawHeart(cx, cy, r),
-        _                             => DrawCircle(cx, cy, r)
+        ThoughtShape.Cross => DrawCross(cx, cy, r),
+        ThoughtShape.Heart => DrawHeart(cx, cy, r),
+        _ => DrawCircle(cx, cy, r)
     };
 
     private static IPath DrawCircle(float cx, float cy, float r) =>
@@ -102,9 +108,9 @@ public partial class FdlLayoutService
 
     private static IPath DrawDiamond(float cx, float cy, float r) =>
         new Polygon(new LinearLineSegment(
-            new PointF(cx,     cy + r),
+            new PointF(cx, cy + r),
             new PointF(cx + r, cy),
-            new PointF(cx,     cy - r),
+            new PointF(cx, cy - r),
             new PointF(cx - r, cy)));
 
     private static IPath DrawTriangle(float cx, float cy, float r)
@@ -112,7 +118,7 @@ public partial class FdlLayoutService
         // Pixi UpTriangle: apex (0,-r), base (±r√3/2, r/2) — negate Y deltas for pre-flip image
         float h = r * MathF.Sqrt(3f) / 2f;
         return new Polygon(new LinearLineSegment(
-            new PointF(cx,     cy + r),
+            new PointF(cx, cy + r),
             new PointF(cx - h, cy - r / 2f),
             new PointF(cx + h, cy - r / 2f)));
     }
@@ -122,7 +128,7 @@ public partial class FdlLayoutService
         // Pixi DownTriangle: apex (0,r), base (±r√3/2, -r/2) — negate Y deltas for pre-flip image
         float h = r * MathF.Sqrt(3f) / 2f;
         return new Polygon(new LinearLineSegment(
-            new PointF(cx,     cy - r),
+            new PointF(cx, cy - r),
             new PointF(cx - h, cy + r / 2f),
             new PointF(cx + h, cy + r / 2f)));
     }
@@ -132,18 +138,18 @@ public partial class FdlLayoutService
         // Pixi cross gridSize = r/7*3 — 4-way symmetric, Y negation irrelevant
         float g = r / 7f * 3f;
         return new Polygon(new LinearLineSegment(
-            new PointF(cx,         cy + g),
-            new PointF(cx - g,     cy + g * 2),
+            new PointF(cx, cy + g),
+            new PointF(cx - g, cy + g * 2),
             new PointF(cx - g * 2, cy + g),
-            new PointF(cx - g,     cy),
+            new PointF(cx - g, cy),
             new PointF(cx - g * 2, cy - g),
-            new PointF(cx - g,     cy - g * 2),
-            new PointF(cx,         cy - g),
-            new PointF(cx + g,     cy - g * 2),
+            new PointF(cx - g, cy - g * 2),
+            new PointF(cx, cy - g),
+            new PointF(cx + g, cy - g * 2),
             new PointF(cx + g * 2, cy - g),
-            new PointF(cx + g,     cy),
+            new PointF(cx + g, cy),
             new PointF(cx + g * 2, cy + g),
-            new PointF(cx + g,     cy + g * 2)));
+            new PointF(cx + g, cy + g * 2)));
     }
 
     private static IPath DrawHeart(float cx, float cy, float r)
@@ -159,11 +165,11 @@ public partial class FdlLayoutService
         var mid = new PointF(cx, cy + r * 0.5f);
         return new Polygon(new CubicBezierLineSegment(
             tip,
-            new PointF(cx - r * 1.7f,  cy - r * 0.05f),
+            new PointF(cx - r * 1.7f, cy - r * 0.05f),
             new PointF(cx - r * 0.93f, cy + r * 1.45f),
             mid,
             new PointF(cx + r * 0.93f, cy + r * 1.45f),
-            new PointF(cx + r * 1.7f,  cy - r * 0.05f),
+            new PointF(cx + r * 1.7f, cy - r * 0.05f),
             tip));
     }
 }

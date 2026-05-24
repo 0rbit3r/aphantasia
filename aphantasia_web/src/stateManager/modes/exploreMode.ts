@@ -1,11 +1,14 @@
 import { type ProxyNode } from "grafika";
 import type { ModeContract } from "./modeContract";
+import type { ThoughtNode } from "../../model/dto/thought";
 import { handleForwardExploration } from "../handleForwardExploration";
 import { api_fetchThought } from "../../api/fetchThought";
 import { api_fetchNeighborhood } from "../../api/fetchNeighborhood";
 import { convertThoughtToNode } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { removeOldHighlightGlowEffect } from "../../utility/removeOldHighlight";
+
+const nodeThoughtData = new WeakMap<ProxyNode, ThoughtNode>();
 
 export const ExploreMode = {
     grafikaInitType: 'main',
@@ -62,14 +65,33 @@ export const ExploreMode = {
                 if (existing) existing.hollowEffect = isHollow(n);
             });
 
+            let gradualAddIndex = 0;
             const nodesToAdd = neighbors
                 .filter(n => !existingIds.has(n.id))
-                .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n) }));
+                .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n), timeToLiveFrom: 20 * gradualAddIndex++ }));
 
             store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) });
 
+            const allCurrentById = new Map(store.get.grafika.getData().nodes.map(n => [n.id, n]));
+
+            neighbors.forEach(n => {
+                const proxy = allCurrentById.get(n.id);
+                if (proxy) nodeThoughtData.set(proxy, n);
+            });
+
+            neighbors.forEach(n => {
+                [...n.links, ...n.replies].forEach(nnId => {
+                    const nn = allCurrentById.get(nnId);
+                    if (nn?.hollowEffect) {
+                        const nnData = nodeThoughtData.get(nn);
+                        if (nnData && ![...nnData.links, ...nnData.replies].some(id => !allIds.has(id)))
+                            nn.hollowEffect = false;
+                    }
+                });
+            });
+
             if (!focusedNode) {
-                const addedNode = store.get.grafika.getData().nodes.find(n => n.id === focusId);
+                const addedNode = allCurrentById.get(focusId);
                 if (addedNode) {
                     store.get.grafika.focusOn(addedNode);
                     addedNode.glowEffect = true;

@@ -24,10 +24,12 @@ import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { api_fetchNotifications } from "../../api/api_notifications";
 import type { ModeType } from "../../stateManager/explorationMode";
+import { ScreenOrientation } from "../../contexts/screenOrientationContext";
 
 export default function ModeBar() {
   const authContext = useContext(AuthContext);
   const store = useContext(StoreContext)!;
+  const scrOrientation = useContext(ScreenOrientation);
 
   const [notificationsInterval, setNotificationsInterval] = createSignal<number | undefined>();
   onMount(() => {
@@ -88,7 +90,8 @@ export default function ModeBar() {
           ['border-left']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
         }}>
         <SymbolButton
-          action={() => { store.set('modeMenuOpen', !store.get.modeMenuOpen); store.set('splitUiLayout', 'graph'); }}
+          action={() => { store.set('modeMenuOpen', !store.get.modeMenuOpen);
+            if (store.get.splitUiLayout === 'content' && !scrOrientation.isLandscape()) store.set('splitUiLayout', 'half'); }}
           img={store.get.modeMenuOpen
             ? nothing
             : icons[getCurrentExpState(store).mode]} />

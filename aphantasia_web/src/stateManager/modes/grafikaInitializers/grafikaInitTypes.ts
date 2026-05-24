@@ -25,7 +25,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 url: "backdrop.png"
             }
         },
-        simulation: { pushThreshold: 1000 },
+        simulation: { pushThreshold: 1000, defaultEdgeLength: 350 },
         debug: { showFps: true },
         data: {}
     },
@@ -63,7 +63,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
             backgroundColor: '#020202',
             initialZoom: 1 / 20,
             defaultEdgeColor: "source",
-            defaultEdgeAlpha: 0.6,
+            defaultEdgeAlpha: 0.3,
             colorfulText: true,
             defaultEdgeType: EdgeType.Tapered,
             backdrop: {
@@ -71,10 +71,10 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 fullyVisibleAt: 0.1,
                 parallax: 0.75,
                 scale: 5,
-                url: "backdrop.png"
+                url: "generic_space.jpg"
             }
         },
-        simulation: { pushThreshold: 500, defaultEdgeLength: 10, downflowEnabled: true },
+        simulation: { pushThreshold: 500, defaultEdgeLength: 10, downflowEnabled: true},
         debug: { showFps: true },
         data: {}
     },

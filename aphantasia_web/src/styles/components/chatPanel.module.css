@@ -6,13 +6,15 @@
 }
 
 .context_bar {
-    height: var(--action-buttons-bar);
+    height: auto;
     flex: none;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background-color: var(--color-background-secondary);
     border: 1px solid white;
     border-bottom: none;
+    padding: 8px;
 }
 
 .context_label {

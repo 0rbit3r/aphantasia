@@ -6,7 +6,7 @@ import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
 import { LinkAdder } from "./LinkAdder";
 import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL } from "../thoughtViewer/Content";
-import { type GraphEdge } from "grafika";
+import { type GraphEdge, type ProxyNode } from "grafika";
 import { AuthContext } from "../../contexts/authContext";
 import { type ThoughtTitle } from "../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../stateManager/aphantasiaStore";
@@ -145,11 +145,12 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet) => {
     try {
         const graphNode = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
         if (!graphNode) { console.error('Could not find thought in the graph'); return; };
+        const expectedId = userCreatedId.toString();
         const newData = {
             nodes: [{
-                id: userCreatedId.toString(), color: graphNode.color, x: graphNode.x, y: graphNode.y,
+                id: expectedId, color: graphNode.color, x: graphNode.x, y: graphNode.y,
                 shape: graphNode.shape, text: graphNode.text
-            }], edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: userCreatedId.toString() })))
+            }], edges: (Array.from(graphNode.inEdges).map(e => ({ sourceId: e.sourceId, targetId: expectedId })))
         };
 
 
@@ -184,10 +185,21 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet) => {
 
         store.set('contextThoughtInMaking', undefined);
 
-        handleForwardExploration(store, { mode: "welcome", focus: userCreatedId.toString() });
+
 
         userCreatedId++;
         setTutorialCreatedThoughtIndex(prev => prev + 1);
+
+        // WelcomeCreateMode.dispose cleared all events — register after the transition so the handler survives.
+        // hangleFocusChange needs the node in getData(), which only happens on the next tick.
+        const grafika = store.get.grafika;
+        const handler = (node: ProxyNode) => {
+            if (node.id === expectedId) {
+                grafika.interactionEvents.off('nodeAdded', handler);
+                handleForwardExploration(store, { mode: "welcome", focus: expectedId });
+            }
+        };
+        grafika.interactionEvents.on('nodeAdded', handler);
     } catch (e: any) {
         store.set('screenMessages', prev => [...prev, { text: e.toString(), color: 'red' }])
     }
@@ -222,7 +234,18 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
             store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] })
             store.get.grafika.addData(newData);
 
-            handleForwardExploration(store, { mode: "explore", focus: newId });
+
+
+            // CreateMode.dispose cleared all events — register after the transition.
+            // hangleFocusChange can't find the node yet; do the focus once it's processed.
+            const grafika = store.get.grafika;
+            const handler = (node: ProxyNode) => {
+                if (node.id === newId) {
+                    grafika.interactionEvents.off('nodeAdded', handler);
+                    handleForwardExploration(store, { mode: "explore", focus: newId });
+                }
+            };
+            grafika.interactionEvents.on('nodeAdded', handler);
 
             store.set('contextThoughtInMaking', undefined);
             setPublishInProgress(false);

@@ -3,6 +3,8 @@ namespace Aphant.Core.Contract.Configuration;
 public class FdlLayoutOptions
 {
     public string? RenderPath { get; set; }
+    public int IterationsPerRun { get; set; } = 10;
+
     public int Resolution { get; set; }
     public double Scale { get; set; }
     public int ViewportPositionX { get; set; }
@@ -37,8 +39,6 @@ public class FdlLayoutOptions
     // values of this can only ever increase the length, ie. the first few sizes dont affect it. if set under 1
     public double IdealDistSizeMultiplier { get; set; }
     public double DampeningRate { get; set; }
-
-    public int IterationsPerRun { get; set; } = 10;
 
     public bool DownflowEnabled { get; set; }
     public double DownflowForce { get; set; }

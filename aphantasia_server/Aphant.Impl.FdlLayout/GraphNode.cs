@@ -2,7 +2,6 @@ namespace Aphant.Impl.FdlLayout;
 
 internal class GraphNode
 {
-
     public Guid Id;
     public double PositionX;
     public double PositionY;

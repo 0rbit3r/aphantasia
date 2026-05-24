@@ -3,7 +3,7 @@ import { createEffect, createSignal, onCleanup, Show, useContext } from "solid-j
 import { AuthContext } from "../contexts/authContext";
 import { StoreContext } from "../contexts/storeContext";
 import { parsePathToExplorationState, type ExplorationStateDescriptor } from "../stateManager/explorationMode";
-import type { GrafikaInstance } from "grafika";
+import type { GrafikaInstance, ProxyNode } from "grafika";
 import { LogoAndQuip } from "./LogoAndQuip";
 import { getCurrentExpState } from "../stateManager/getCurrentExpState";
 import { MODE_CONTRACTS } from "../stateManager/modes/modeContract";
@@ -48,7 +48,13 @@ export const AphantasiaContainer = () => {
                     setGrafikaInst(g);
                     g.simStart();
                     if (initialExpState()?.mode === 'welcome') {
-                        g.focusOn({ id: "hello_explorer" });
+                        const handler = (node: ProxyNode) => {
+                            if (node.id === 'hello_explorer') {
+                                g.interactionEvents.off('nodeAdded', handler);
+                                g.focusOn(node, 0.9);
+                            }
+                        };
+                        g.interactionEvents.on('nodeAdded', handler);
                         store.set('splitUiLayout', 'hidden');
                     }
                     //Initialize the initial store

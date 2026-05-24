@@ -15,9 +15,9 @@ import type { AphantasiaStoreGetAndSet } from '../aphantasiaStore';
 function messageToNode(msg: ChatMessage) {
     return {
         id: msg.id,
-        text: `[${msg.authorUsername}]\n\n${msg.content}`,
+        text: `${msg.content}\n\n   ~${msg.authorUsername}`,
         color: msg.authorColor,
-        shape: NodeShape.TextBox,
+        shape: NodeShape.TextOnly,
         x: msg.x || 0,
         y: msg.y || 0
     };
@@ -76,6 +76,8 @@ export const ChatMode: ModeContract = {
         store.get.grafika.interactionEvents.on('backgroundClicked', () => {
             if (getCurrentExpState(store).focus !== undefined)
                 handleForwardExploration(store, { mode: 'chat', focus: undefined })
+            else
+                store.set('splitUiLayout', 'graph');
         });
 
         store.set('splitUiLayout', 'graph');
@@ -87,15 +89,15 @@ export const ChatMode: ModeContract = {
         const prevFocus = getCurrentExpState(store).focus;
         if (prevFocus) {
             const prevNode = data.nodes.find((n: GraphNode) => n.id === prevFocus);
-            if (prevNode) prevNode.color = store.get.contextChatMessages?.find(c => c.id === prevNode.id)?.authorColor ?? '#eeeeee';
+            if (prevNode) prevNode.shape = NodeShape.TextOnly;
         }
 
         if (!focusId) return;
 
         const focused = data.nodes.find((n: GraphNode) => n.id === focusId);
         if (focused) {
-            focused.color = '#eeeeee';
-            store.get.grafika.focusOn(focused, 0.4);
+            focused.shape = NodeShape.TextOnlyHighlighted;
+            store.get.grafika.focusOn(focused, 0.5);
         }
 
         store.set('splitUiLayout', 'half');

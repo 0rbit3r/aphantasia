@@ -34,7 +34,7 @@ export const ThoughtViewer = () => {
             prev => [...prev, { color: 'yellow', text: 'Tap the delete button two more times to delete this thought.' }])
         if (tripleDeleteTap() === 1) store.set('screenMessages',
             prev => [...prev, { color: 'red', text: 'Are you sure to delete this thought?' }])
-        if (tripleDeleteTap() === 2 && store.get.contextThought?.id) { 
+        if (tripleDeleteTap() === 2 && store.get.contextThought?.id) {
             store.set('contextDataLoading', true);
             api_deleteThought(store.get.contextThought?.id)
                 .then(_ => {
@@ -47,7 +47,7 @@ export const ThoughtViewer = () => {
                     store.set('screenMessages',
                         prev => [...prev, { color: 'red', text: e }])
                 })
-                .finally(()=>store.set('contextDataLoading', false));
+                .finally(() => store.set('contextDataLoading', false));
         }
 
         setTripleDeleteTap(prev => prev + 1);
@@ -70,9 +70,11 @@ export const ThoughtViewer = () => {
                 />
             </div>
             <div class={css.metadata_bar}>
-                <div class={css.date}>{store.get.contextThought?.date}</div>
+                <div class={css.date}
+                    on:click={() => (getCurrentExpState(store).mode !== 'welcome') && handleForwardExploration(store, { mode: 'profile', focus: store.get.contextThought?.author.id })}>
+                    {store.get.contextThought?.date}</div>
                 <div class={css.author} style={{ color: store.get.contextThought?.author.color ?? '#eeeeee' }}
-                    on:click={()=> (getCurrentExpState(store).mode !=='welcome') && handleForwardExploration(store, {mode: 'profile', focus: store.get.contextThought?.author.id})}>
+                    on:click={() => (getCurrentExpState(store).mode !== 'welcome') && handleForwardExploration(store, { mode: 'profile', focus: store.get.contextThought?.author.id })}>
                     {store.get.contextThought?.author.username}</div>
             </div>
             <RepliesScroller />

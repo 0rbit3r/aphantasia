@@ -35,7 +35,11 @@ internal partial class EpochLogicService : IEpochLogicContract
         var result = await _epochData.CreateEpoch(_epochOpts.ThoughtsPerEpoch);
 
         if (result.IsSuccess)
+        {
+            _log.LogInformation("New Epoch was created:  {id}", result.Payload!.Id);
             return Result.Success();
+        }
+        _log.LogError("Failed to create Epoch {msg}", result.Error!.Message);
         return result.Error!;
     }
 }

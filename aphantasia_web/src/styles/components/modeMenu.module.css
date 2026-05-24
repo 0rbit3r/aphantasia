@@ -25,13 +25,16 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-content: start;
 }
 
 .button_container {
     margin: 8px;
-    height: 80px;
-    width: 80px;
+    margin-bottom: 1.4rem;
+    height: min(30vw, 10vh);
+    width: min(30vw, 10vh);
     background-color: rgba(0, 0, 0, 0.2);
     border: 1px solid white;
     text-align: center;
+    font-size: 0.85rem;
 }
