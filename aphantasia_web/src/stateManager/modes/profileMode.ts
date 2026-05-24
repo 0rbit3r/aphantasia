@@ -4,6 +4,7 @@ import type { ModeContract } from "./modeContract";
 import { api_fetchUserProfile } from "../../api/fetchUserProfile";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
+import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
 
 export const ProfileMode = {
     grafikaInitType: 'main',
@@ -18,8 +19,6 @@ export const ProfileMode = {
         store.get.grafika.interactionEvents.on('viewportMoved', () => {
             store.get.grafika.focusOn(null);
         });
-
-
     },
     hangleFocusChange: (store, focusId) => {
         store.get.grafika.focusOn('all');
@@ -32,15 +31,11 @@ export const ProfileMode = {
             return;
         }
 
-        store.get.grafika.removeData(); //todo - eventually don't remove/readd but leave intersection in place to make the transition look better
         store.set('contextDataLoading', true);
         api_fetchUserProfile(focusId)
             .then(profile => {
                 store.set('contextProfile', profile);
-                store.get.grafika.addData({
-                    nodes: convertThoughtsToNodes(profile.thoughts),
-                    edges: getEdgesFromNodes(profile.thoughts)
-                });
+                updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts));
             })
             .catch(e => console.error(e))
             .finally(() => store.set('contextDataLoading', false));

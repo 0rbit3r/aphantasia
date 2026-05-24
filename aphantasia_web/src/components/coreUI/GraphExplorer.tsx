@@ -2,7 +2,7 @@ import { BlockyUI } from "./UIContainer";
 import { type GrafikaInstance, type GrafikaSettings } from "grafika";
 import { StoreContext } from "../../contexts/storeContext";
 import { useContext } from "solid-js";
-import { handleAddGrafika } from "../../utility/ handleAddGrafika";
+import { handleGrafikaReinitialization } from "../../utility/ handleAddGrafika";
 
 export interface ExplorerProps {
     grafikaSettings: GrafikaSettings;
@@ -17,7 +17,7 @@ export const GraphExplorer = (props: ExplorerProps) => {
     const handleGrafikaRef = (element: HTMLDivElement) => {
         if (!element) return;
         store.set('grafikaElement', element);
-        handleAddGrafika(store, props.grafikaSettings, grafika => {
+        handleGrafikaReinitialization(store, props.grafikaSettings, grafika => {
             props.handleGrafikaInitialized(grafika);
         });
     };

@@ -3,7 +3,7 @@ import type { AphantasiaStoreGetAndSet } from "./aphantasiaStore"
 import { getCurrentExpState } from "./getCurrentExpState";
 import { MODE_CONTRACTS, type ModeContract } from "./modes/modeContract";
 import { GRAFIKA_INITIALIZERS } from "./modes/grafikaInitializers/grafikaInitTypes";
-import { handleAddGrafika } from "../utility/ handleAddGrafika";
+import { handleGrafikaReinitialization } from "../utility/ handleAddGrafika";
 
 
 export const handleStateChange = (store: AphantasiaStoreGetAndSet,
@@ -24,7 +24,7 @@ const handleChangeToDifferentMode = (store: AphantasiaStoreGetAndSet, oldState: 
     const oldModeContract = MODE_CONTRACTS[oldState.mode];
 
     if (oldModeContract.grafikaInitType !== newModeContract.grafikaInitType) {
-        handleAddGrafika(store, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType], grafika => {
+        handleGrafikaReinitialization(store, GRAFIKA_INITIALIZERS[newModeContract.grafikaInitType], grafika => {
             grafika.simStart();
             switchMode(store, oldModeContract, newModeContract, newState);
         });

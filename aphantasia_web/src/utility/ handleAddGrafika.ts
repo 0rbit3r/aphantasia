@@ -1,13 +1,13 @@
 import { addGrafika, type GrafikaInstance, type GrafikaSettings } from "grafika";
 import type { AphantasiaStoreGetAndSet } from "../stateManager/aphantasiaStore";
 
-export const handleAddGrafika = async (
+export const handleGrafikaReinitialization = async (
     store: AphantasiaStoreGetAndSet,
     settings: GrafikaSettings,
     onAdded: (grafika: GrafikaInstance) => void
 ) => {
     if (store.get.grafika) {
-        await store.get.grafika.dispose();
+        store.get.grafika.dispose();
     }
     const grafika = await addGrafika(store.get.grafikaElement, settings);
     store.set('grafika', grafika);
