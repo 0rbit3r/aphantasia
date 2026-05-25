@@ -71,38 +71,42 @@ export const ExploreMode = {
                 .filter(n => !existingIds.has(n.id))
                 .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n), timeToLiveFrom: 20 * gradualAddIndex++ }));
 
-            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) });
+            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) }, () => {
+                const allCurrentById = new Map(store.get.grafika.getData().nodes.map(n => [n.id, n]));
 
-            const allCurrentById = new Map(store.get.grafika.getData().nodes.map(n => [n.id, n]));
-
-            neighbors.forEach(n => {
-                const proxy = allCurrentById.get(n.id);
-                if (proxy) nodeThoughtData.set(proxy, n);
-            });
-
-            neighbors.forEach(n => {
-                [...n.links, ...n.replies].forEach(nnId => {
-                    const nn = allCurrentById.get(nnId);
-                    if (nn?.hollowEffect) {
-                        const nnData = nodeThoughtData.get(nn);
-                        if (nnData && ![...nnData.links, ...nnData.replies].some(id => !allIds.has(id)))
-                            nn.hollowEffect = false;
-                    }
+                neighbors.forEach(n => {
+                    const proxy = allCurrentById.get(n.id);
+                    if (proxy) nodeThoughtData.set(proxy, n);
                 });
-            });
 
-            if (!focusedNode) {
-                const addedNode = allCurrentById.get(focusId);
-                if (addedNode) {
-                    store.get.grafika.focusOn(addedNode);
-                    addedNode.glowEffect = true;
+                neighbors.forEach(n => {
+                    [...n.links, ...n.replies].forEach(nnId => {
+                        const nn = allCurrentById.get(nnId);
+                        if (nn?.hollowEffect) {
+                            const nnData = nodeThoughtData.get(nn);
+                            if (nnData && ![...nnData.links, ...nnData.replies].some(id => !allIds.has(id)))
+                                nn.hollowEffect = false;
+                        }
+                    });
+                });
+
+                if (!focusedNode) {
+                    const addedNode = allCurrentById.get(focusId);
+                    if (addedNode) {
+                        store.get.grafika.focusOn(addedNode);
+                        addedNode.glowEffect = true;
+                    }
                 }
-            }
+            });
         }).catch(e => console.error(e));
     },
 
     dispose: (store) => {
         store.get.grafika.interactionEvents.all.clear();
+        store.get.grafika.getData().nodes.forEach(n => {
+            if (n.hollowEffect)
+                n.hollowEffect = false;
+        })
 
         removeOldHighlightGlowEffect(store)
     }

@@ -21,19 +21,20 @@ export const CreateMode = {
         const color = store.get.user?.color ?? '#cccccc';
         const viewport = store.get.grafika.getViewport();
 
-        store.get.grafika.addData({
-            nodes: [{ id: 'created_thought', glowEffect: true, radius: 50,
-                text: store.get.contextThoughtInMaking?.title ?? '',
-                shape: store.get.contextThoughtInMaking?.shape ?? NodeShape.Circle,
-                color: color,
-                x: viewport.position.x, y: viewport.position.y
-             }]
-        });
-        const focusOnCreatedThought = (node: ProxyNode)=>{
-            store.get.grafika.focusOn(node);
-            store.get.grafika.interactionEvents.off('nodeAdded', focusOnCreatedThought)
-        };
-        store.get.grafika.interactionEvents.on('nodeAdded', focusOnCreatedThought);
+        store.get.grafika.addData(
+            {
+                nodes: [{ id: 'created_thought', glowEffect: true, radius: 50,
+                    text: store.get.contextThoughtInMaking?.title ?? '',
+                    shape: store.get.contextThoughtInMaking?.shape ?? NodeShape.Circle,
+                    color: color,
+                    x: viewport.position.x, y: viewport.position.y
+                }]
+            },
+            () => {
+                const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+                if (node) store.get.grafika.focusOn(node);
+            }
+        );
 
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking)
