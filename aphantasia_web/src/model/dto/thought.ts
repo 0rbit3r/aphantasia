@@ -9,6 +9,7 @@ export interface Thought {
     shape: number;
     size: number;
     color: string;
+    epochId?: number;
 
     author: UserColorName;
     content: string;

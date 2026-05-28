@@ -71,7 +71,7 @@ export const ThoughtViewer = () => {
             </div>
             <div class={css.metadata_bar}>
                 <div class={css.date}
-                    on:click={() => (getCurrentExpState(store).mode !== 'welcome') && handleForwardExploration(store, { mode: 'profile', focus: store.get.contextThought?.author.id })}>
+                    on:click={() => (getCurrentExpState(store).mode !== 'welcome') && handleForwardExploration(store, { mode: 'epoch', focus: store.get.contextThought?.epochId?.toString() ?? '-1'})}>
                     {store.get.contextThought?.date}</div>
                 <div class={css.author} style={{ color: store.get.contextThought?.author.color ?? '#eeeeee' }}
                     on:click={() => (getCurrentExpState(store).mode !== 'welcome') && handleForwardExploration(store, { mode: 'profile', focus: store.get.contextThought?.author.id })}>

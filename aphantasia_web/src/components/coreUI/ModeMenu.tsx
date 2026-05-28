@@ -42,9 +42,9 @@ export const ModeMenu = () => {
     })
 
     return <Show when={visible()}>
-        <div class={`${css.mode_menu_container} ${faded() ? css.mode_menu_container_hidden : ''}`}>
-            <div class={css.buttons_container}
-                on:click={() => store.set('modeMenuOpen', false)}>
+        <div class={`${css.mode_menu_container} ${faded() ? css.mode_menu_container_hidden : ''}`}
+            on:click={() => store.set('modeMenuOpen', false)}>
+            <div class={css.buttons_container}>
                 <Show when={authContext.getAuthorizedUser() === null}>
                     <>
                         <div class={css.button_container}>

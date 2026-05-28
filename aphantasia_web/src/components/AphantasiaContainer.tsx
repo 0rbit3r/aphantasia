@@ -1,5 +1,5 @@
 import { GraphExplorer } from "./coreUI/GraphExplorer"
-import { createEffect, createSignal, onCleanup, Show, useContext } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show, useContext } from "solid-js";
 import { AuthContext } from "../contexts/authContext";
 import { StoreContext } from "../contexts/storeContext";
 import { parsePathToExplorationState, type ExplorationStateDescriptor } from "../stateManager/explorationMode";
@@ -21,7 +21,7 @@ export const AphantasiaContainer = () => {
 
     // setInitialState when the authorizedUser call loads
     createEffect(() => {
-        if (!auth.authStatusLoaded() || !firstLoad) return;  
+        if (!auth.authStatusLoaded() || !firstLoad) return;
         // only do this the very first time auth is loaded (when saving settings terminate)
         firstLoad = false;
 
@@ -35,7 +35,7 @@ export const AphantasiaContainer = () => {
         setInitialExpState(state);
     });
 
-
+    onMount(()=> store.set('splitUiLayout', 'hidden'))
     onCleanup(() => grafikaInst()?.dispose());
 
     return <>
@@ -48,6 +48,7 @@ export const AphantasiaContainer = () => {
                     setGrafikaInst(g);
                     g.simStart();
                     if (initialExpState()?.mode === 'welcome') {
+                        store.set('splitUiLayout', 'hidden');
                         const handler = (node: ProxyNode) => {
                             if (node.id === 'hello_explorer') {
                                 g.interactionEvents.off('nodeAdded', handler);
@@ -55,7 +56,6 @@ export const AphantasiaContainer = () => {
                             }
                         };
                         g.interactionEvents.on('nodeAdded', handler);
-                        store.set('splitUiLayout', 'hidden');
                     }
                     //Initialize the initial store
                     MODE_CONTRACTS[initialExpState()!.mode].initialize(store);

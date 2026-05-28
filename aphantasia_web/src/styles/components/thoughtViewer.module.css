@@ -42,6 +42,7 @@
 
 .date {
     color: var(--color-text-subtle);
+    cursor: pointer;
 }
 
 .author {
