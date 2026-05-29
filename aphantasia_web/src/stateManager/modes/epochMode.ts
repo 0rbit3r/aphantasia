@@ -25,14 +25,12 @@ export const EpochMode = {
 
         if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph')
             store.set('splitUiLayout', 'half');
-
-        // store.get.grafika.removeData();
     },
 
     hangleFocusChange: (store, focusId) => {
         store.get.grafika.focusOn('all');
 
-        const myGen = ++generation;
+        const myGen = ++generation
         store.set('contextDataLoading', true);
         api_fetchEpoch(focusId)
             .then(epoch => {
