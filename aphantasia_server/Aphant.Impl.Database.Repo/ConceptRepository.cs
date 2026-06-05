@@ -48,6 +48,28 @@ internal class ConceptRepository(AphantasiaDataContext _db) : IConceptDataContra
         return entity.ToDtoFull();
     }
 
+    public async Task<Result<Concept>> GetConceptWithChildren(string tag)
+    {
+        var exact = await _db.Concepts
+            .Include(c => c.Followers)
+            .FirstOrDefaultAsync(c => c.Tag == tag);
+
+        var thoughts = await _db.ThoughtConcepts
+            .Where(tc => EF.Functions.Like(tc.ConceptTag, tag + "%"))
+            .Select(tc => tc.Thought)
+            .Distinct()
+            .Select(ThoughtMapper.ToDtoNodeExpr)
+            .ToListAsync();
+
+        return new Concept
+        {
+            Tag = exact?.Tag ?? tag,
+            Color = exact?.Color ?? "#cccccc",
+            FollowersCount = exact?.Followers.Count ?? 0,
+            Thoughts = thoughts
+        };
+    }
+
     public async Task<Result> AddThoughtToConcept(Guid thoughtId, string conceptTag)
     {
         var exists = await _db.ThoughtConcepts
