@@ -10,6 +10,7 @@ import { InboxMode } from "./inboxMode";
 import { ChatMode } from "./chatMode";
 import type { GrafikaInitType } from "./grafikaInitializers/grafikaInitTypes";
 import { ProfileMode } from "./profileMode";
+import { ConceptMode } from "./conceptMode";
 
 export interface ModeContract {
     // Grafika settings to initialize the mode with
@@ -37,7 +38,7 @@ export const MODE_CONTRACTS: Record<ModeType, ModeContract> = {
     create: CreateMode,
     settings: SettingsMode,
     inbox: InboxMode,
-    concept: null!,
+    concept: ConceptMode,
     chat: ChatMode,
     profile: ProfileMode
 };

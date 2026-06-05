@@ -101,6 +101,11 @@ export const ThoughtCreator = () => {
                 }}
                 on:selectionchange={updateCaret} />
             <div class={css.char_counter}>{contentLen()} / 3000</div>
+            <div class={css.char_counter}>
+                {() => store.get.contextThoughtInMaking?.links?.length ?? 0} links
+                {' · '}
+                {() => (store.get.contextThoughtInMaking?.content?.match(/_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? []).length} concepts
+            </div>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
@@ -210,7 +215,7 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
 
     store.set('contextDataLoading', true);
 
-    api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0)
+    api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0, graphNode.x, graphNode.y)
         .then(newId => {
             const newData = {
                 nodes: [{

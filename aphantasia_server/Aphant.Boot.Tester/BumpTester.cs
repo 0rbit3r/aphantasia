@@ -25,11 +25,11 @@ public class BumpTester : IClassFixture<SeededAppContainer<BumpTester>>
 
         var sizeBefore = (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size;
 
-        var first = await logic.PostThought(fixture.UserId2, "first reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle);
+        var first = await logic.PostThought(fixture.UserId2, "first reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle, 0, 0);
         Assert.True(first.IsSuccess, first.Error?.Message);
         Assert.Equal(sizeBefore + 1, (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size);
 
-        var second = await logic.PostThought(fixture.UserId2, "second reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle);
+        var second = await logic.PostThought(fixture.UserId2, "second reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle, 0, 0);
         Assert.True(second.IsSuccess, second.Error?.Message);
         Assert.Equal(sizeBefore + 1, (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size); // unchanged
     }
@@ -48,7 +48,7 @@ public class BumpTester : IClassFixture<SeededAppContainer<BumpTester>>
 
         // Same ID appears twice in content
         var content = $"[{fixture.ThoughtId2}][first mention] [{fixture.ThoughtId2}][second mention]";
-        var postResult = await logic.PostThought(fixture.UserId1, "dedup test", content, ThoughtShape.Circle);
+        var postResult = await logic.PostThought(fixture.UserId1, "dedup test", content, ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
 
         var target = (await data.GetThoughtById(fixture.ThoughtId2)).Payload!;
@@ -68,13 +68,13 @@ public class BumpTester : IClassFixture<SeededAppContainer<BumpTester>>
         var notifications = fixture.Services.GetRequiredService<INotificationDataContract>();
 
         // Create a second thought for User3 so we can link to two of their thoughts
-        var secondUser3Thought = await data.InsertThought(fixture.UserId3, "user3 extra", "hello world", ThoughtShape.Circle);
+        var secondUser3Thought = await data.InsertThought(fixture.UserId3, "user3 extra", "hello world", ThoughtShape.Circle, 0, 0);
         Assert.True(secondUser3Thought.IsSuccess);
 
         var notifsBefore = (await notifications.GetUserNotifications(fixture.UserId3)).Payload!.Count;
 
         var content = $"[{fixture.ThoughtId3}][first link] [{secondUser3Thought.Payload}][second link]";
-        var postResult = await logic.PostThought(fixture.UserId1, "one notif test", content, ThoughtShape.Circle);
+        var postResult = await logic.PostThought(fixture.UserId1, "one notif test", content, ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
 
         var notifsAfter = (await notifications.GetUserNotifications(fixture.UserId3)).Payload!;

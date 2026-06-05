@@ -63,27 +63,24 @@ const renderContentWithConcepts = (props: ContentProps) => {
         ;
         result.push(<span
             class={css.concept_ref}
-            // style={{ color: props.links.find(t => t.id == id)?.color }}
-            // onClick={_ => handleLinkClick(id)}
-            onMouseDown={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2], false)}
+            style={{ color: props.conceptColors?.get(parts[i + 2]) }}
+            onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2], false)}
         >
             {parts[i + 2]}
         </span>);
         if (parts[i + 3]) {
             result.push(<span
                 class={css.concept_ref}
-                // style={{ color: props.links.find(t => t.id == id)?.color }}
-                onClick={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2] + parts[i + 3], false)}
-            // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                style={{ color: props.conceptColors?.get(parts[i + 2] + parts[i + 3]) }}
+                onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3], false)}
             >
                 {parts[i + 3]}
             </span>);
             if (parts[i + 4]) {
                 result.push(<span
                     class={css.concept_ref}
-                    // style={{ color: props.links.find(t => t.id == id)?.color }}
-                    onClick={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
-                // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                    style={{ color: props.conceptColors?.get(parts[i + 2] + parts[i + 3] + parts[i + 4]) }}
+                    onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
                 >
                     {parts[i + 4]}
                 </span>);

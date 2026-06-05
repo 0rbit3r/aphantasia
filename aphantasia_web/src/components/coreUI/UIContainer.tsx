@@ -17,6 +17,7 @@ import { RegisterForm } from "../RegisterForm";
 import { Inbox } from "../inbox/Inbox";
 import { ChatPanel } from "../chat/ChatPanel";
 import { ProfileViewer } from "../ProfileViewer";
+import { ConceptViewer } from "../ConceptViewer";
 
 
 export interface UIContainerProps {
@@ -77,6 +78,9 @@ export function BlockyUI({ onGrafikaRef }: UIContainerProps) {
                 </Match>
                 <Match when={getCurrentExpState(store).mode === 'profile'}>
                     <ProfileViewer />
+                </Match>
+                <Match when={getCurrentExpState(store).mode === 'concept'}>
+                    <ConceptViewer />
                 </Match>
             </Switch>
         </div>

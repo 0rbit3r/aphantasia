@@ -15,7 +15,9 @@ public interface IThoughtDataContract
         Guid user,
         string title,
         string content,
-        ThoughtShape shape);
+        ThoughtShape shape,
+        double positionX,
+        double positionY);
 
     Task<Result> InsertThoughtReference(Guid SourceId, Guid TargetId);
 

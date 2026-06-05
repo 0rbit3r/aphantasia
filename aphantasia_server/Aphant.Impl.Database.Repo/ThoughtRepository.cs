@@ -65,7 +65,7 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
                 .ToListAsync();
     }
 
-    public async Task<Result<Guid>> InsertThought(Guid userId, string title, string content, ThoughtShape shape)
+    public async Task<Result<Guid>> InsertThought(Guid userId, string title, string content, ThoughtShape shape, double positionX, double positionY)
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -79,7 +79,9 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
             AuthorId = userId,
             Color = user.Color,
             Shape = shape,
-            DateCreated = DateTime.UtcNow
+            DateCreated = DateTime.UtcNow,
+            PositionX = positionX,
+            PositionY = positionY
         };
         _db.Thoughts.Add(entity);
         try

@@ -67,6 +67,8 @@ export const ThoughtViewer = () => {
                     color={store.get.contextThought?.color ?? ''}
                     thoughtColors={store.get.contextThought ? new Map(store.get.contextThought.links.map(l => [l.id, l.color])) : undefined}
                     onThoughtLinkClick={id => handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: id })}
+                    onConceptLinkClick={(tag) => handleForwardExploration(store, { mode: 'concept', focus: tag })}
+                    conceptColors={store.get.contextThought ? new Map(store.get.contextThought.concepts.map(c => [c.tag, c.color])) : undefined}
                 />
             </div>
             <div class={css.metadata_bar}>

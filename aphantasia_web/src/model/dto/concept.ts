@@ -4,7 +4,7 @@ export interface Concept {
     tag: string;
     color: string;
 
-    largestThoughts: ThoughtNode[];
+    thoughts: ThoughtNode[];
 }
 
 export interface ConceptLight {

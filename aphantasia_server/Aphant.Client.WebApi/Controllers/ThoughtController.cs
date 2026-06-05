@@ -42,7 +42,9 @@ namespace Aphant.Client.WebApi.Controllers
                     UserIdClaim.Value,
                     body.Title,
                     body.Content,
-                    body.Shape));
+                    body.Shape,
+                    body.PositionX,
+                    body.PositionY));
         }
 
         [HttpDelete("{id}")]

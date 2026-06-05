@@ -9,7 +9,7 @@ namespace Aphant.Impl.Logic.Thoughts;
 
 internal partial class ThoughtLogicService : IThoughtLogicContract
 {
-    public async Task<Result<Guid>> PostThought(Guid creatorId, string title, string content, ThoughtShape shape)
+    public async Task<Result<Guid>> PostThought(Guid creatorId, string title, string content, ThoughtShape shape, double positionX, double positionY)
     {
         title = title.Trim();
         content = content.Trim();
@@ -55,7 +55,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         }
 
         var insertResult = await _thoughtData.InsertThought(
-            creatorId, title, content, shape);
+            creatorId, title, content, shape, positionX, positionY);
 
         if (!insertResult.IsSuccess)
         {

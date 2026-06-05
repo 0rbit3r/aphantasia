@@ -66,6 +66,10 @@ export default function ContextBanner() {
       setText('~' + (store.get.contextProfile?.user.username ?? 'NULL_USER'));
       setColor(store.get.contextProfile?.user.color ?? defaultTextColor);
     }
+    if (currentMode === 'concept') {
+      setText(store.get.contextConcept?.tag ?? getCurrentExpState(store).focus ?? '');
+      setColor(store.get.contextConcept?.color ?? defaultTextColor);
+    }
   })
 
   return <div classList={{
