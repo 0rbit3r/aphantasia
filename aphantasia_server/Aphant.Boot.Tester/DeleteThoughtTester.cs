@@ -1,4 +1,5 @@
 using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Microsoft.Extensions.DependencyInjection;
 

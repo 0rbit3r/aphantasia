@@ -102,8 +102,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             await _thoughtData.BumpThought(targetThought.Id);
         }
 
-        //  await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
-        //     //todo - add error handling here
+        await HandleConcepts(insertedThoughtResult.Payload!.Id, content, insertedThoughtResult.Payload!.Color);
 
         _log.LogInformation("Thought created: {title}", title);
 
@@ -156,33 +155,31 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         return Result.Success();
     }
 
-    private Result HandleConcepts(string content)
+    private async Task<Result> HandleConcepts(Guid thoughtId, string content, string thoughtColor)
     {
-        var concepts = GetConcepts(content);
-        if (!concepts.IsSuccess) return concepts.Error!;
+        var conceptsResult = GetConcepts(content);
+        if (!conceptsResult.IsSuccess) return conceptsResult.Error!;
 
-        foreach (var concept in concepts.Payload!)
+        foreach (var tag in conceptsResult.Payload!)
         {
-            
-
+            await _conceptData.CreateConcept(tag, thoughtColor);
+            await _conceptData.AddThoughtToConcept(thoughtId, tag);
         }
 
         return Result.Success();
     }
+
     private Result<List<string>> GetConcepts(string content)
     {
         var references = new List<string>();
-        var regex = new Regex(@"_[0-9a-zA-Z]+_[0-9a-zA-Z]+?_[0-9a-zA-Z]+", RegexOptions.Compiled);
+        var regex = new Regex(@"_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)?)?", RegexOptions.Compiled);
 
         var matches = regex.Matches(content);
         if (matches.Count == 0)
-        {
             return new List<string>();
-        }
+
         foreach (Match match in matches)
-        {
             references.Add(match.Groups[0].Value);
-        }
 
         return references.Distinct().ToList();
     }

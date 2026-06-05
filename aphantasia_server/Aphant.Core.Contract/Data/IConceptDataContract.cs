@@ -7,7 +7,7 @@ public interface IConceptDataContract
 {
     Task<Result<Concept>> GetConcept(string tag);
 
-    Task<Result<Concept>> CreateConcept(string tag);
+    Task<Result<Concept>> CreateConcept(string tag, string color);
     
     Task<Result> AddThoughtToConcept(Guid thought, string conceptTag);
 }
