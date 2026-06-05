@@ -12,7 +12,7 @@ public static class ConceptMapper
             Tag = entity.Tag,
             Color = entity.Color,
             FollowersCount = entity.Followers.Count,
-            ThoughtsCount = entity.Thoughts.Count
+            Thoughts = entity.Thoughts.AsQueryable().Select(ThoughtMapper.ToDtoNodeExpr).ToList()
         };
 
     public static Concept ToDtoFull(this ConceptEntity entity)

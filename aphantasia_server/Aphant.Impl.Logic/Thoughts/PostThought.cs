@@ -21,7 +21,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return validationResult.Error!;
         }
 
-        var thoughtIdLinksResult = GetLinksAsync(content);
+        var thoughtIdLinksResult = GetLinks(content);
         if (!thoughtIdLinksResult.IsSuccess)
         {
             _log.LogError("Thought creation failed: {err}", thoughtIdLinksResult.Error?.Message);
@@ -110,7 +110,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         return insertedThoughtResult.Payload!.Id;
     }
 
-    private Result<List<Guid>> GetLinksAsync(string content)
+    private Result<List<Guid>> GetLinks(string content)
     {
         var references = new List<Guid>();
         var regex = new Regex(@"\[([^\[\]\n]+?)\]\[[^\[\]\n]+?\]", RegexOptions.Compiled);
@@ -131,7 +131,6 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 
         return references.Distinct().ToList();
     }
-
     private Result ValidateTitleAndContent(string title, string content)
     {
 
@@ -156,4 +155,36 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         }
         return Result.Success();
     }
+
+    private Result HandleConcepts(string content)
+    {
+        var concepts = GetConcepts(content);
+        if (!concepts.IsSuccess) return concepts.Error!;
+
+        foreach (var concept in concepts.Payload!)
+        {
+            
+
+        }
+
+        return Result.Success();
+    }
+    private Result<List<string>> GetConcepts(string content)
+    {
+        var references = new List<string>();
+        var regex = new Regex(@"_[0-9a-zA-Z]+_[0-9a-zA-Z]+?_[0-9a-zA-Z]+", RegexOptions.Compiled);
+
+        var matches = regex.Matches(content);
+        if (matches.Count == 0)
+        {
+            return new List<string>();
+        }
+        foreach (Match match in matches)
+        {
+            references.Add(match.Groups[0].Value);
+        }
+
+        return references.Distinct().ToList();
+    }
+
 }

@@ -15,5 +15,5 @@ public class Concept
 
     public int FollowersCount { get; set; }
 
-    public int ThoughtsCount { get; set; }
+    public List<ThoughtNode> Thoughts { get; set; } = [];
 }
