@@ -70,6 +70,21 @@ internal class ConceptRepository(AphantasiaDataContext _db) : IConceptDataContra
         };
     }
 
+    public async Task<Result<ConceptGraph>> GetConceptGraph()
+    {
+        var nodes = await _db.Concepts
+            .Select(c => new ConceptGraphNode
+            {
+                Tag = c.Tag,
+                Color = c.Color,
+                ThoughtCount = _db.ThoughtConcepts.Count(tc => tc.ConceptTag == c.Tag)
+            })
+            .OrderByDescending(c => c.ThoughtCount)
+            .ToListAsync();
+
+        return new ConceptGraph { Nodes = nodes };
+    }
+
     public async Task<Result> AddThoughtToConcept(Guid thoughtId, string conceptTag)
     {
         var exists = await _db.ThoughtConcepts

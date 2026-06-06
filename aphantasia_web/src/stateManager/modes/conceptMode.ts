@@ -1,17 +1,45 @@
-import type { ProxyNode } from "grafika";
+import type { GraphNode, ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
 import { api_fetchConcept } from "../../api/fetchConcept";
+import { api_fetchConcepts } from "../../api/fetchConcepts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
+import { getCurrentExpState } from "../getCurrentExpState";
+import type { ConceptGraphNode } from "../../model/dto/concept";
+
+const INITIAL_POS_RADIUS = 5000;
+
+function deriveConceptEdges(nodes: ConceptGraphNode[]) {
+    const tagSet = new Set(nodes.map(n => n.tag));
+    return nodes.flatMap(node => {
+        const lastIdx = node.tag.lastIndexOf('_');
+        if (lastIdx <= 0) return [];
+        const parent = node.tag.slice(0, lastIdx);
+        return tagSet.has(parent) ? [{ sourceId: parent, targetId: node.tag }] : [];
+    });
+}
+
+function convertConceptNodesToGrafika(nodes: ConceptGraphNode[]): GraphNode[] {
+    const step = nodes.length > 0 ? Math.PI * 2 / nodes.length : 0;
+    return nodes.map((node, i) => ({
+        id: node.tag,
+        x: Math.cos(i * step) * INITIAL_POS_RADIUS,
+        y: Math.sin(i * step) * INITIAL_POS_RADIUS,
+        color: node.color,
+        text: node.tag,
+        radius: Math.log((node.thoughtCount + 100) / 100) * 3000 + 50
+    }));
+}
 
 export const ConceptMode = {
     grafikaInitType: 'main',
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
+            const isFocused = !!getCurrentExpState(store).focus;
             handleForwardExploration(store, {
-                mode: 'explore',
+                mode: isFocused ? 'explore' : 'concept',
                 focus: clickedNode.id
             });
         });
@@ -26,12 +54,23 @@ export const ConceptMode = {
         if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph')
             store.set('splitUiLayout', 'half');
 
+        store.set('contextDataLoading', true);
+
         if (!tag) {
-            console.error('No concept tag provided to ConceptMode');
+            store.set('contextConcept', undefined);
+            api_fetchConcepts()
+                .then(graph => {
+                    updateGrafikaNodes(
+                        store.get.grafika,
+                        convertConceptNodesToGrafika(graph.nodes),
+                        deriveConceptEdges(graph.nodes)
+                    );
+                })
+                .catch(e => console.error(e))
+                .finally(() => store.set('contextDataLoading', false));
             return;
         }
 
-        store.set('contextDataLoading', true);
         api_fetchConcept(tag)
             .then(concept => {
                 store.set('contextConcept', concept);

@@ -67,7 +67,7 @@ export default function ContextBanner() {
       setColor(store.get.contextProfile?.user.color ?? defaultTextColor);
     }
     if (currentMode === 'concept') {
-      setText(store.get.contextConcept?.tag ?? getCurrentExpState(store).focus ?? '');
+      setText(store.get.contextConcept?.tag ?? getCurrentExpState(store).focus ?? 'Concepts');
       setColor(store.get.contextConcept?.color ?? defaultTextColor);
     }
   })

@@ -6,18 +6,28 @@ import { ThoughtCard } from "./ThoughtCard";
 export const ConceptViewer = () => {
     const store = useContext(StoreContext)!;
 
-    return <Show when={!store.get.contextDataLoading && store.get.contextConcept}>
+    return <Show when={!store.get.contextDataLoading}>
         <div class={css.concept_viewer_container}>
-            <div class={css.concept_header}>
-                <div class={css.thought_count}>
-                    {store.get.contextConcept?.thoughts.length} thoughts
+            <Show
+                when={store.get.contextConcept}
+                fallback={
+                    <div class={css.concept_header}>
+                        <div class={css.concept_tag}>Concepts</div>
+                    </div>
+                }
+            >
+                <div class={css.concept_header}>
+                    <div class={css.concept_tag}>{store.get.contextConcept!.tag}</div>
+                    <div class={css.thought_count}>
+                        {store.get.contextConcept!.thoughts.length} thoughts
+                    </div>
                 </div>
-            </div>
-            <div class={css.scroll_container}>
-                <For each={store.get.contextConcept?.thoughts}>
-                    {(t) => <ThoughtCard thought={t} />}
-                </For>
-            </div>
+                <div class={css.scroll_container}>
+                    <For each={store.get.contextConcept!.thoughts}>
+                        {(t) => <ThoughtCard thought={t} />}
+                    </For>
+                </div>
+            </Show>
         </div>
     </Show>
 }

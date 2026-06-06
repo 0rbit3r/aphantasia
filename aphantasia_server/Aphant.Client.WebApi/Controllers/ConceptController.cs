@@ -12,4 +12,8 @@ public class ConceptController(IConceptLogicContract conceptLogic) : ApiControll
     [HttpGet("{tag}")]
     public async Task<ActionResult<Result<Concept>>> GetConcept([FromRoute] string tag)
         => ResponseFromResult(await conceptLogic.GetConcept(tag));
+
+    [HttpGet("/api/concepts")]
+    public async Task<ActionResult<Result<ConceptGraph>>> GetConceptGraph()
+        => ResponseFromResult(await conceptLogic.GetConceptGraph());
 }

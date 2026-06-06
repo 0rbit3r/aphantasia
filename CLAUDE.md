@@ -51,6 +51,8 @@ The exploration state is `ExplorationStateDescriptor = { mode: ModeType, focus?:
 
 **`grafika.focusOn(node | null)`** only controls the grafika camera — it is separate from the Aphantasia exploration state and does not trigger `hangleFocusChange`. A `viewportMoved` handler should only call `focusOn(null)`; any visual cleanup that depends on the previous focus belongs in `hangleFocusChange`.
 
+**`ContextBanner.tsx`** contains a per-mode if-chain that sets the banner text and color. Every new mode must add a branch here — failing to do so leaves the banner blank. The fallback text when `focus` is undefined should be a human-readable mode name (e.g. `'Concepts'`, `'Settings'`).
+
 ### Backend (.NET 10 — Clean Architecture)
 
 Projects and their roles:

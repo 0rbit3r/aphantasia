@@ -11,7 +11,7 @@ import createIcon from '../../assets/icons/create_thought.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
 import notificationsIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
-// import conceptsIcon from '../../assets/icons/concepts.png';
+import conceptsIcon from '../../assets/icons/concepts.png';
 import chatIcon from '../../assets/icons/chat.svg';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 import { EpochPseudoId } from '../../model/dto/epoch';
@@ -71,9 +71,9 @@ export const ModeMenu = () => {
                         <div class={css.button_container}>
                             <SymbolButton img={createIcon} action={() => navigateFromChat({ mode: 'create' })} />
                             Write</div>
-                        {/* <div class={css.button_container}>
-                        <SymbolButton img={conceptsIcon} action={() => { }}></SymbolButton>
-                        Concepts</div> */}
+                        <div class={css.button_container}>
+                            <SymbolButton img={conceptsIcon} action={() => navigateFromChat({ mode: 'concept' })}></SymbolButton>
+                            Concepts</div>
                         <div class={css.button_container}>
                             <SymbolButton img={settingsIcon} action={() => handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
                             Settings</div>

@@ -6,4 +6,6 @@ namespace Aphant.Core.Contract.Logic;
 public interface IConceptLogicContract
 {
     Task<Result<Concept>> GetConcept(string tag);
+
+    Task<Result<ConceptGraph>> GetConceptGraph();
 }

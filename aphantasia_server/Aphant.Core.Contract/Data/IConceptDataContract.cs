@@ -12,4 +12,6 @@ public interface IConceptDataContract
     Task<Result> AddThoughtToConcept(Guid thought, string conceptTag);
 
     Task<Result<Concept>> GetConceptWithChildren(string tag);
+
+    Task<Result<ConceptGraph>> GetConceptGraph();
 }

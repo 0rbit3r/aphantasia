@@ -9,4 +9,7 @@ internal class ConceptLogicService(IConceptDataContract _conceptData) : IConcept
 {
     public Task<Result<Concept>> GetConcept(string tag)
         => _conceptData.GetConceptWithChildren(tag);
+
+    public Task<Result<ConceptGraph>> GetConceptGraph()
+        => _conceptData.GetConceptGraph();
 }
