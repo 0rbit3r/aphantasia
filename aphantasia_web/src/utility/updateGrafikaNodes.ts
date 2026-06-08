@@ -10,16 +10,11 @@ export function updateGrafikaNodes(
     const toRemove = [...currentIds].filter(id => !newIds.has(id)).map(id => ({ id }));
     grafika.addData({ nodes: toAdd, edges }, () => {
         addDone = true;
-        console.log('adding')
-        console.log(addDone, removeDone)
-        console.log(toRemove.length)
         if ((removeDone || toRemove.length === 0) && onDone)
             onDone();
     });
     if (toRemove.length) grafika.removeData({ nodes: toRemove, }, () => {
         removeDone = true;
-        console.log('removing')
-        console.log(addDone, removeDone)
         if ((addDone || toAdd.length === 0) && onDone)
             onDone();
     });

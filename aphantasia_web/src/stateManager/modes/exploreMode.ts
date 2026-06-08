@@ -63,7 +63,6 @@ export const ExploreMode = {
             neighbors.forEach(n => {
                 const existing = existingById.get(n.id);
                 if (existing) existing.hollowEffect = isHollow(n);
-                console.log('existing ' + existing?.text + ' ' + isHollow(n))
             });
 
             let gradualAddIndex = 0;

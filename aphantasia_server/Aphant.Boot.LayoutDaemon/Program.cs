@@ -26,6 +26,7 @@ Log.Logger = new LoggerConfiguration()
 builder.Services.RegisterDbRepositoryModule();
 builder.Services.RegisterFdlLayoutModule();
 builder.Services.AddHostedService<LayoutBackgroundService>();
+builder.Services.AddHostedService<ConceptColorService>();
 
 builder.Services.Configure<LayoutServiceOptions>(builder.Configuration.GetSection("LayoutDaemon"));
 

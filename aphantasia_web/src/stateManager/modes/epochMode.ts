@@ -42,6 +42,8 @@ export const EpochMode = {
 
                 store.set('contextEpoch', epoch);
 
+                // store.get.grafika.removeData();
+                // store.get.grafika.addData(json)
                 updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(epoch.thoughts), getEdgesFromNodes(epoch.thoughts));
             })
             .catch(e => console.error(e))

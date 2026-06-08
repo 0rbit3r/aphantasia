@@ -55,23 +55,27 @@ const renderContentWithConcepts = (props: ContentProps) => {
     const parts = props.text.split(CONCEPT_REGEX);
 
     const result = [];
+
+    
     for (let i = 0; i < parts.length; i += 5) {
+        const wholeTag = parts[i + 2] + (parts[i + 3] ?? "") + (parts[i + 4] ?? "");
+        const color = props.conceptColors?.get(wholeTag);
 
         const weblinksBefore = renderContentWithWebLinks(
             { ...props, text: parts[i] + (parts[i + 1] ? parts[i + 1] : '')});
         result.push(weblinksBefore);
-        ;
+        
         result.push(<span
             class={css.concept_ref}
-            style={{ color: props.conceptColors?.get(parts[i + 2]) }}
-            onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2], false)}
+            style={{ color }}
+            onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
         >
             {parts[i + 2]}
         </span>);
         if (parts[i + 3]) {
             result.push(<span
                 class={css.concept_ref}
-                style={{ color: props.conceptColors?.get(parts[i + 2] + parts[i + 3]) }}
+                style={{ color }}
                 onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3], false)}
             >
                 {parts[i + 3]}
@@ -79,7 +83,7 @@ const renderContentWithConcepts = (props: ContentProps) => {
             if (parts[i + 4]) {
                 result.push(<span
                     class={css.concept_ref}
-                    style={{ color: props.conceptColors?.get(parts[i + 2] + parts[i + 3] + parts[i + 4]) }}
+                    style={{ color }}
                     onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
                 >
                     {parts[i + 4]}

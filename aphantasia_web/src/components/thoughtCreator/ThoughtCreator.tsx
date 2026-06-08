@@ -5,7 +5,7 @@ import css from '../../styles/components/thoughtCreator.module.css';
 import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
 import { LinkAdder } from "./LinkAdder";
-import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL } from "../thoughtViewer/Content";
+import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL, CONCEPT_REGEX } from "../thoughtViewer/Content";
 import { type GraphEdge } from "grafika";
 import { AuthContext } from "../../contexts/authContext";
 import { type ThoughtTitle } from "../../model/dto/thought";
@@ -73,6 +73,14 @@ export const ThoughtCreator = () => {
     })
 
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
+    const conceptsCount = () => {
+        let count = 0;
+        (store.get.contextThoughtInMaking?.content
+            ?.match(/_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [])
+            .forEach(part => { if (part.startsWith('_')) { count += part.split('_').length - 1 } });
+        return count;
+    }
+
 
     return <div class={css.thought_creator_container}>
         <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden'
@@ -101,10 +109,14 @@ export const ThoughtCreator = () => {
                 }}
                 on:selectionchange={updateCaret} />
             <div class={css.char_counter}>{contentLen()} / 3000</div>
-            <div class={css.char_counter}>
-                {() => store.get.contextThoughtInMaking?.links?.length ?? 0} links
+            <div class={css.links_and_concepts}>
+                <span class={(store.get.contextThoughtInMaking?.links?.length ?? 0) > 3 ? css.validation_red : ""}>
+                    {store.get.contextThoughtInMaking?.links?.length ?? 0} links
+                </span>
                 {' · '}
-                {() => (store.get.contextThoughtInMaking?.content?.match(/_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? []).length} concepts
+                <span class={conceptsCount() > 3 ? css.validation_red : ""}>
+                    {conceptsCount()} concepts
+                </span>
             </div>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
@@ -209,7 +221,6 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }
 
-    console.log(newThought)
     if (publishInProgress()) return;
     setPublishInProgress(true);
 
