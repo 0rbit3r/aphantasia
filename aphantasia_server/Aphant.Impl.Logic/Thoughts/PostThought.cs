@@ -160,13 +160,29 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         var conceptsResult = GetConcepts(content);
         if (!conceptsResult.IsSuccess) return conceptsResult.Error!;
 
-        foreach (var tag in conceptsResult.Payload!)
+        var allTags = conceptsResult.Payload!
+            .SelectMany(ExpandToAncestors)
+            .Distinct();
+
+        foreach (var tag in allTags)
         {
             await _conceptData.CreateConcept(tag, thoughtColor);
             await _conceptData.AddThoughtToConcept(thoughtId, tag);
         }
 
         return Result.Success();
+    }
+
+    private static IEnumerable<string> ExpandToAncestors(string tag)
+    {
+        var parts = tag.Split('_', StringSplitOptions.RemoveEmptyEntries);
+        var accumulator = new StringBuilder();
+        foreach (var part in parts)
+        {
+            accumulator.Append('_');
+            accumulator.Append(part);
+            yield return accumulator.ToString();
+        }
     }
 
     private Result<List<string>> GetConcepts(string content)
