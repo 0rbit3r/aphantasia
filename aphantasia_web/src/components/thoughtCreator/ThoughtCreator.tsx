@@ -5,7 +5,7 @@ import css from '../../styles/components/thoughtCreator.module.css';
 import css_buttons from '../../styles/common/buttons.module.css';
 import { ShapeSelector } from "./ShapeSelector";
 import { LinkAdder } from "./LinkAdder";
-import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL, CONCEPT_REGEX } from "../thoughtViewer/Content";
+import { Content, LINK_REGEX_SIMPLE, LINK_REGEX_FULL } from "../thoughtViewer/Content";
 import { type GraphEdge } from "grafika";
 import { AuthContext } from "../../contexts/authContext";
 import { type ThoughtTitle } from "../../model/dto/thought";

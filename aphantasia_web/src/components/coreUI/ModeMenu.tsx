@@ -11,7 +11,7 @@ import createIcon from '../../assets/icons/create_thought.svg';
 import settingsIcon from '../../assets/icons/settings.svg';
 import notificationsIcon from '../../assets/icons/envelope.svg';
 // import bookmarksIcon from '../../assets/icons/bookmarks.svg';
-import conceptsIcon from '../../assets/icons/concepts.png';
+import conceptsIcon from '../../assets/icons/concepts.svg';
 import chatIcon from '../../assets/icons/chat.svg';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 import { EpochPseudoId } from '../../model/dto/epoch';

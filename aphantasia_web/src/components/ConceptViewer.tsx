@@ -9,15 +9,8 @@ export const ConceptViewer = () => {
     return <Show when={!store.get.contextDataLoading}>
         <div class={css.concept_viewer_container}>
             <Show
-                when={store.get.contextConcept}
-                fallback={
-                    <div class={css.concept_header}>
-                        <div class={css.concept_tag}>Concepts</div>
-                    </div>
-                }
-            >
+                when={store.get.contextConcept}>
                 <div class={css.concept_header}>
-                    <div class={css.concept_tag}>{store.get.contextConcept!.tag}</div>
                     <div class={css.thought_count}>
                         {store.get.contextConcept!.thoughts.length} thoughts
                     </div>

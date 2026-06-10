@@ -68,7 +68,7 @@ const renderContentWithConcepts = (props: ContentProps) => {
         result.push(<span
             class={css.concept_ref}
             style={{ color }}
-            onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
+            onPointerDown={_ => props.onConceptLinkClick?.(parts[i + 2], false)}
         >
             {parts[i + 2]}
         </span>);

@@ -13,7 +13,7 @@ import homeIcon from '../../assets/icons/home.svg';
 import epochIcon from '../../assets/icons/galaxy.svg';
 import exploreIcon from '../../assets/icons/bead.svg';
 import createIcon from '../../assets/icons/create_thought.svg';
-import conceptsIcon from '../../assets/icons/concepts.png';
+import conceptsIcon from '../../assets/icons/concepts.svg';
 import nothing from '../../assets/icons/nothing.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
 import arrowIcon from '../../assets/icons/arrow.svg';
