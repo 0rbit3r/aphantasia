@@ -2,12 +2,23 @@ import type { ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
 import { api_fetchNotifications } from "../../api/api_notifications";
+import { EpochPseudoId } from "../../model/dto/epoch";
+import arrowIcon from '../../assets/icons/arrow.svg';
+import envelopeIcon from '../../assets/icons/envelope.svg';
 
 
-// inbox mode will show the replies to user's thoughts 
+// inbox mode will show the replies to user's thoughts
 // (In the future it might show more such as thoughts from followed users, concepts etc.)
 export const InboxMode = {
     grafikaInitType: 'main',
+    iconModeBar: arrowIcon,
+    iconMenu: envelopeIcon,
+    entryPoint: { mode: 'epoch' as const, focus: String(EpochPseudoId.LATEST_CONTEXT) },
+    contextBanner: {
+        text: (_store) => 'Inbox',
+        color: (store) => store.get.user?.color ?? '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

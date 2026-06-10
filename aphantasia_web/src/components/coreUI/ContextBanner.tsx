@@ -3,73 +3,27 @@ import css from '../../styles/components/contextBanner.module.css';
 import { StoreContext } from '../../contexts/storeContext';
 import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
 import { ScreenOrientation } from '../../contexts/screenOrientationContext';
-import { EpochPseudoId } from '../../model/dto/epoch';
-
-const defaultTextColor = '#cccccc';
+import { MODE_CONTRACTS } from '../../stateManager/modes/modeContract';
 
 // This banner will be almost always visible and display the current mode, focused thought title, profile name
 // or any other "current state"
-// eg. Settings, Big graph, _birds, A thought about dogs, UserMcFakename, 
+// eg. Settings, Big graph, _birds, A thought about dogs, UserMcFakename,
 export default function ContextBanner() {
   const store = useContext(StoreContext)!;
   const screenOrientation = useContext(ScreenOrientation)
 
   const [text, setText] = createSignal('Aphantasia');
-  const [color, setColor] = createSignal(defaultTextColor);
+  const [color, setColor] = createSignal('#cccccc');
 
   createEffect(() => {
-    const currentMode = getCurrentExpState(store).mode;
-    if (currentMode === 'welcome_create' || currentMode === 'create') { // TODO - make individual modes define these for themselves and only reference it here instead of ugly ifs...
-      if (store.get.contextThoughtInMaking?.previewMode) {
-        setText(store.get.contextThoughtInMaking.title);
-        setColor(store.get.user?.color ?? defaultTextColor);
-      }
-      else {
-        setText('What\'s on your mind?');
-        setColor(defaultTextColor);
-      }
-      return;
-    }
-    if (store.get.contextDataLoading) {
+    const currentModeContract = MODE_CONTRACTS[getCurrentExpState(store).mode];
+    if (store.get.contextDataLoading && !currentModeContract.contextBanner.skipLoadingOverride) {
       setText('Loading...');
       setColor('#999999');
       return;
     }
-    if (currentMode === 'welcome' || currentMode === 'explore'
-    ) {
-      setText(store.get.contextThought?.title ?? '');
-      setColor(store.get.contextThought?.color ?? defaultTextColor);
-    }
-    if (currentMode === 'epoch') {
-      const focus = getCurrentExpState(store).focus;
-      setColor('#eeeeee');
-      if (focus === String(EpochPseudoId.LATEST_CONTEXT))
-        setText(import.meta.env.VITE_APP_TITLE);
-      else if (focus === String(EpochPseudoId.EPOCHLESS))
-        setText('Epoch to be');
-      else
-        setText(store.get.contextEpoch?.name ?? 'Epoch #' + store.get.contextEpoch?.id);
-    }
-    if (currentMode === 'settings') {
-      setText('Settings');
-      setColor(defaultTextColor)
-    }
-    if (currentMode === 'inbox') {
-      setText('Inbox');
-      setColor(store.get.user?.color ?? defaultTextColor);
-    }
-    if (currentMode === 'chat') {
-      setText('Chat');
-      setColor(defaultTextColor);
-    }
-    if (currentMode === 'profile') {
-      setText('~' + (store.get.contextProfile?.user.username ?? 'NULL_USER'));
-      setColor(store.get.contextProfile?.user.color ?? defaultTextColor);
-    }
-    if (currentMode === 'concept') {
-      setText(store.get.contextConcept?.tag ?? getCurrentExpState(store).focus ?? 'Concepts');
-      setColor(store.get.contextConcept?.color ?? defaultTextColor);
-    }
+    setText(currentModeContract.contextBanner.text(store));
+    setColor(currentModeContract.contextBanner.color(store));
   })
 
   return <div classList={{
@@ -78,15 +32,7 @@ export default function ContextBanner() {
   }} style={{
     border: `2px solid ${color()}`
   }}
-    onClick={() => {
-      const currentState = getCurrentExpState(store);
-      if (currentState.mode === 'explore' || currentState.mode === 'welcome')
-        store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' });
-      if (currentState.mode === 'epoch' && !currentState.focus)
-        store.get.grafika.focusOn('all');
-      if (currentState.mode === 'welcome_create' || currentState.mode === 'create')
-        store.get.grafika.focusOn({ id: 'created_thought' })
-    }}>
+    onClick={() => MODE_CONTRACTS[getCurrentExpState(store).mode].contextBanner.onClick(store)}>
     <h1 style={{ color: color() }}>
       {text()}
     </h1>

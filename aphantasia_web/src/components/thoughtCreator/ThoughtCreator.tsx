@@ -66,6 +66,7 @@ export const ThoughtCreator = () => {
         store.set('contextThoughtInMaking', 'links', prev => {
             const newLinks = edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 }))
                 .concat(prev)
+                .filter((v, i, a) => a.findIndex(tt => tt.id === v.id) === i)
                 .filter(l => !edgesToDelete.find(e => e.sourceId === l.id)) ?? [];
 
             return newLinks;
@@ -76,7 +77,7 @@ export const ThoughtCreator = () => {
     const conceptsCount = () => {
         let count = 0;
         (store.get.contextThoughtInMaking?.content
-            ?.match(/_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [])
+            ?.match(/(^|\s)_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [])
             .forEach(part => { if (part.startsWith('_')) { count += part.split('_').length - 1 } });
         return count;
     }

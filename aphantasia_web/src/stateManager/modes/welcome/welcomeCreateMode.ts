@@ -3,11 +3,24 @@ import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../../handleForwardExploration";
 import type { ThoughtInMaking } from "../../../model/ThoughtInMaking";
 import { createSignal } from "solid-js";
+import createIcon from '../../../assets/icons/create_thought.svg';
 
 export const [tutorialCreatedThoughtIndex, setTutorialCreatedThoughtIndex] = createSignal(0);
 
 export const WelcomeCreateMode = {
     grafikaInitType: 'welcome',
+    iconModeBar: createIcon,
+    iconMenu: createIcon,
+    contextBanner: {
+        text: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? store.get.contextThoughtInMaking.title
+            : "What's on your mind?",
+        color: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? (store.get.user?.color ?? '#cccccc')
+            : '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: 'created_thought' }),
+        skipLoadingOverride: true,
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

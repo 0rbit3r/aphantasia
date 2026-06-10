@@ -1,6 +1,7 @@
 import { NodeShape, type GraphNode } from 'grafika';
 import type { ModeContract } from './modeContract';
 import type { ChatMessage } from '../../model/dto/chatMessage';
+import chatIcon from '../../assets/icons/chat.svg';
 import {
     buildChatConnection,
     onInitialMessages,
@@ -39,6 +40,13 @@ function loadMessages(store: AphantasiaStoreGetAndSet, messages: ChatMessage[]) 
 
 export const ChatMode: ModeContract = {
     grafikaInitType: 'chat',
+    iconModeBar: chatIcon,
+    iconMenu: chatIcon,
+    contextBanner: {
+        text: (_store) => 'Chat',
+        color: (_store) => '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
 
     initialize: (store) => {
         store.get.grafika.removeData();

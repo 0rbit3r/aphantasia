@@ -1,9 +1,24 @@
 import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
+import { EpochPseudoId } from "../../model/dto/epoch";
+import createIcon from '../../assets/icons/create_thought.svg';
 
 export const CreateMode = {
     grafikaInitType: 'main',
+    iconModeBar: createIcon,
+    iconMenu: createIcon,
+    entryPoint: { mode: 'epoch' as const, focus: String(EpochPseudoId.LATEST_CONTEXT) },
+    contextBanner: {
+        text: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? store.get.contextThoughtInMaking.title
+            : "What's on your mind?",
+        color: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? (store.get.user?.color ?? '#cccccc')
+            : '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: 'created_thought' }),
+        skipLoadingOverride: true,
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

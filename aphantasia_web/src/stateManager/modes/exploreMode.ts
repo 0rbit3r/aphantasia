@@ -7,12 +7,18 @@ import { api_fetchNeighborhood } from "../../api/fetchNeighborhood";
 import { convertThoughtToNode } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { removeOldHighlightGlowEffect } from "../../utility/removeOldHighlight";
+import exploreIcon from '../../assets/icons/bead.svg';
 
 const nodeThoughtData = new WeakMap<ProxyNode, ThoughtNode>();
 
 export const ExploreMode = {
     grafikaInitType: 'main',
-
+    iconModeBar: exploreIcon,
+    contextBanner: {
+        text: (store) => store.get.contextThought?.title ?? '',
+        color: (store) => store.get.contextThought?.color ?? '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' }),
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

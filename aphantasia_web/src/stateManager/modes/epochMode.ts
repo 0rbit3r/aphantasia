@@ -5,11 +5,26 @@ import { api_fetchEpoch } from "../../api/fetchEpoch";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
+import { getCurrentExpState } from "../getCurrentExpState";
+import { EpochPseudoId } from "../../model/dto/epoch";
+import epochIcon from '../../assets/icons/galaxy.svg';
 
 let generation = 0;
 
 export const EpochMode = {
     grafikaInitType: 'main',
+    iconModeBar: epochIcon,
+    iconMenu: epochIcon,
+    contextBanner: {
+        text: (store) => {
+            const currentFocus = getCurrentExpState(store).focus;
+            if (currentFocus === String(EpochPseudoId.LATEST_CONTEXT)) return import.meta.env.VITE_APP_TITLE;
+            if (currentFocus === String(EpochPseudoId.EPOCHLESS)) return 'Epoch to be';
+            return store.get.contextEpoch?.name ?? 'Epoch #' + store.get.contextEpoch?.id;
+        },
+        color: (_store) => '#eeeeee',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

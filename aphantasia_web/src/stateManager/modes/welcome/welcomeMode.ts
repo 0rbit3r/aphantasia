@@ -6,10 +6,18 @@ import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
 import { removeOldHighlightGlowEffect } from "../../../utility/removeOldHighlight";
+import homeIcon from '../../../assets/icons/home.svg';
 
 
 export const WelcomeMode = {
     grafikaInitType: 'welcome',
+    iconModeBar: homeIcon,
+    iconMenu: homeIcon,
+    contextBanner: {
+        text: (store) => store.get.contextThought?.title ?? '',
+        color: (store) => store.get.contextThought?.color ?? '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' }),
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
