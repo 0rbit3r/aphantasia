@@ -203,7 +203,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
     private Result<List<string>> GetConcepts(string content)
     {
         var references = new List<string>();
-        var regex = new Regex(@"(?<!\w)_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)?)?", RegexOptions.Compiled);
+        var regex = new Regex(@"(?<!\w)_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*", RegexOptions.Compiled);
 
         var matches = regex.Matches(content);
         if (matches.Count == 0)

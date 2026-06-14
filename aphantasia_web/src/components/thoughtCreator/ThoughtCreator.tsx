@@ -76,7 +76,7 @@ export const ThoughtCreator = () => {
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
     const conceptsCount = () => {
         const matches = store.get.contextThoughtInMaking?.content
-            ?.match(/(?<![a-zA-Z0-9])_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [];
+            ?.match(/(?<![a-zA-Z0-9])_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)*/g) ?? [];
         const ancestors = new Set<string>();
         for (const tag of new Set(matches)) {
             let accumulated = '';
