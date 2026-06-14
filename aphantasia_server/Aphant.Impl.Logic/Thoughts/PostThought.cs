@@ -54,6 +54,21 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return Error.BadRequest(errors.ToString().TrimEnd('\n'));
         }
 
+        var conceptTagsResult = GetConcepts(content);
+        if (!conceptTagsResult.IsSuccess)
+            return conceptTagsResult.Error!;
+
+        var expandedConceptCount = conceptTagsResult.Payload!
+            .SelectMany(ExpandToAncestors)
+            .Distinct()
+            .Count();
+
+        if (expandedConceptCount > 3)
+        {
+            _log.LogWarning("Attempted to create a thought with too many concept tags (expanded to {count})", expandedConceptCount);
+            return Error.BadRequest("Too many concepts");
+        }
+
         var insertResult = await _thoughtData.InsertThought(
             creatorId, title, content, shape, positionX, positionY);
 
@@ -188,7 +203,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
     private Result<List<string>> GetConcepts(string content)
     {
         var references = new List<string>();
-        var regex = new Regex(@"_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)?)?", RegexOptions.Compiled);
+        var regex = new Regex(@"(?<!\w)_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)?)?", RegexOptions.Compiled);
 
         var matches = regex.Matches(content);
         if (matches.Count == 0)

@@ -3,6 +3,12 @@
 # Current task
 
 
+- [ ] Figure out how to manage continuity (let the last epoch "simmer"?)
+- [ ] reliable concepts
+- [ ] bug hunt
+- [ ] all fixed
+
+
 ## Features
 - [ ] Delete account
 
@@ -16,12 +22,13 @@
 
 # Bugs
 - [x] multiline titles
-- [ ] Broken COntext banner in create (maybe after first created thought?)
-- [ ] No focus on all in epoch context banner
+- [x] Broken COntext banner in create (maybe after first created thought?)
+- [x] No focus on all in epoch context banner
 - [ ] Write - load referenced thoughts
-- [ ] Effects not working sometimes
-- [ ] 
+- [x] Effects not working sometimes
+
+- [x] Figure out why Fixes nodes dont affect Not fixed ones in be fdl
 
 # Tweaks
-- [ ] Positions postage
+- [x] Positions postage
 - [ ] Shorter edges (maybe pair with lower push strength?)

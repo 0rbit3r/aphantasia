@@ -19,7 +19,7 @@ function deriveConceptEdges(nodes: ConceptGraphNode[]) {
         const lastIdx = node.tag.lastIndexOf('_');
         if (lastIdx <= 0) return [];
         const parent = node.tag.slice(0, lastIdx);
-        return tagSet.has(parent) ? [{ sourceId: parent, targetId: node.tag }] : [];
+        return tagSet.has(parent) ? [{ sourceId: parent, targetId: node.tag, length: 500 }] : [];
     });
 }
 

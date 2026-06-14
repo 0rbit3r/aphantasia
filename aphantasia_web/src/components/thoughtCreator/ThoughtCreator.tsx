@@ -75,11 +75,17 @@ export const ThoughtCreator = () => {
 
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
     const conceptsCount = () => {
-        let count = 0;
-        (store.get.contextThoughtInMaking?.content
-            ?.match(/(^|\s)_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [])
-            .forEach(part => { if (part.startsWith('_')) { count += part.split('_').length - 1 } });
-        return count;
+        const matches = store.get.contextThoughtInMaking?.content
+            ?.match(/(?<![a-zA-Z0-9])_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)?)?/g) ?? [];
+        const ancestors = new Set<string>();
+        for (const tag of new Set(matches)) {
+            let accumulated = '';
+            for (const part of tag.split('_').filter(p => p)) {
+                accumulated += '_' + part;
+                ancestors.add(accumulated);
+            }
+        }
+        return ancestors.size;
     }
 
 

@@ -18,6 +18,7 @@ public partial class FdlLayoutService : ILayoutLogicContract
             Radius = GetRadius(n.Size, options),
             PositionX = n.X != 0 ? n.X : Random.Shared.NextDouble() - 0.5,
             PositionY = n.Y != 0 ? n.Y : Random.Shared.NextDouble() - 0.5,
+            IsFixed = n.IsFixed
         }).ToList();
 
         for (int i = 0; i < iterations; i++)
@@ -58,6 +59,8 @@ public partial class FdlLayoutService : ILayoutLogicContract
 
         foreach (var node in nodes)
         {
+            if (node.IsFixed) continue;
+
             if (Math.Abs(node.MomentumX) < Math.Abs(node.ForcesX))
                 node.MomentumX = Math.Abs(node.MomentumX) * Math.Sign(node.ForcesX);
             if (Math.Abs(node.MomentumY) < Math.Abs(node.ForcesY))
