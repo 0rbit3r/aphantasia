@@ -83,7 +83,9 @@ export const ChatMode: ModeContract = {
         });
         store.get.grafika.interactionEvents.on('backgroundClicked', () => {
             if (getCurrentExpState(store).focus !== undefined)
-                handleForwardExploration(store, { mode: 'chat', focus: undefined })
+                handleForwardExploration(store, { mode: 'chat', focus: undefined });
+            else if (store.get.splitUiLayout !== 'half')
+                store.set('splitUiLayout', 'half');
             else
                 store.set('splitUiLayout', 'graph');
         });

@@ -14,19 +14,26 @@
 .action_buttons_bar {
     height: var(--action-buttons-bar);
     border: 1px solid white;
-    border-top: none;
+    /* border-top: none; */
     display: flex;
     justify-content: space-around;
+    background-color: var(--color-background-tertiary);
+}
+
+.replies_container {
+    height: 3.1rem;
+    /* todo */
 
     transition: height 1s ease;
 }
 
-.action_buttons_bar_collapsed {
+.replies_container_collapsed {
     height: 0;
-} 
+}
 
-.action_buttons_bar_button{
-    width: var(--action-buttons-bar); /* to make it square*/
+.action_buttons_bar_button {
+    width: var(--action-buttons-bar);
+    /* to make it square*/
 }
 
 .metadata_bar {

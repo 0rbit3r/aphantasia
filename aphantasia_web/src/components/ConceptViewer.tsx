@@ -2,14 +2,15 @@ import { For, Show, useContext } from "solid-js";
 import { StoreContext } from "../contexts/storeContext";
 import css from "../styles/components/conceptViewer.module.css";
 import { ThoughtCard } from "./ThoughtCard";
+import { ConceptCard } from "./ConceptCard";
+import { getCurrentExpState } from "../stateManager/getCurrentExpState";
 
 export const ConceptViewer = () => {
     const store = useContext(StoreContext)!;
 
     return <Show when={!store.get.contextDataLoading}>
         <div class={css.concept_viewer_container}>
-            <Show
-                when={store.get.contextConcept}>
+            <Show when={store.get.contextConcept && getCurrentExpState(store).focus}>
                 <div class={css.concept_header}>
                     <div class={css.thought_count}>
                         {store.get.contextConcept!.thoughts.length} thoughts
@@ -18,6 +19,13 @@ export const ConceptViewer = () => {
                 <div class={css.scroll_container}>
                     <For each={store.get.contextConcept!.thoughts}>
                         {(t) => <ThoughtCard thought={t} />}
+                    </For>
+                </div>
+            </Show>
+            <Show when={store.get.contextConceptList && !getCurrentExpState(store).focus}>
+                <div class={css.scroll_container}>
+                    <For each={store.get.contextConceptList}>
+                        {(c) => <ConceptCard concept={c} />}
                     </For>
                 </div>
             </Show>

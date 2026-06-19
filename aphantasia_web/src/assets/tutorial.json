@@ -148,7 +148,7 @@
       "id": "good_job!",
       "text": "Good job!",
       "color": "#27b909",
-      "content": "Now that you are both done and validated for creating your first thought, let's create your first association.\n\n**To proceed, connect me to Red.**\n\nHe should have a thought floating around here somewhere.",
+      "content": "Now that you are both done and validated for creating your first thought, let's create your first association.\n\n**To proceed, connect me to Red.**\n\nHe should have a thought floating around here somewhere.\n\n\nOh and let's not forget [0][the link];-)",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -164,7 +164,7 @@
       "id": "join",
       "text": "Join",
       "color": "#27b909",
-      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles and follow the instructions** and eventually you will find the registration form.\n\n[hello_explorer][Go back to the beginning]\n",
+      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nTo register, **click on the hollow circles and follow the instructions;-)**\n\n[hello_explorer][Go back to the beginning]\n",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -180,7 +180,7 @@
       "id": "links_and_replies",
       "text": "Links and Replies",
       "color": "#27b909",
-      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nThe **underlined text** two lines above **is** called **a link**.\n\n**Links** reference the past and **can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **mention** what you've talked about\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\n\n**Reply is the opposite end of link** and in practice it's a way to explore forwards in time. \n\n**This thought has two** replies you can click on:",
+      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nThe **underlined text** two lines above **is** called **a link**.\n\n**Links** reference the past and **can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\n\nAnd on the other end of each link there is a reply.\n\n**This thought has two replies** you can click on down under.",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -385,6 +385,10 @@
     {
       "targetId": "explore_some_more?",
       "sourceId": "register"
+    },
+    {
+      "targetId": "good_job!",
+      "sourceId": "0"
     },
     {
       "targetId": "growth",

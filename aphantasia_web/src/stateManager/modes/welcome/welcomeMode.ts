@@ -65,6 +65,20 @@ export const WelcomeMode = {
 
         if (focusedNode.id === 'link_me!') return;
 
+
+        store.set('contextThought', {replies: welcome_data.nodes
+            .filter(n => welcome_data.edges.some(e =>
+                e.sourceId === focusedNode.id && e.targetId === n.id))
+            .map(n => ({
+                id: n.id,
+                title: n.text,
+                shape: 0, 
+                color: n.color
+            }))} as Thought);
+        // todo tohle je strašně odporný, ale zatim to funguje
+        // nápad : definovat co jednotlivý módy vidí v contentu přímo v kontraktu?
+        // + zdvojit např viewer a creator do dvou podobných, ale unikátních views pro jednotlivý módy
+        
         // add neighbors
         let timeToLiveFrom = 0;
         const nodesToAdd = welcome_data.nodes

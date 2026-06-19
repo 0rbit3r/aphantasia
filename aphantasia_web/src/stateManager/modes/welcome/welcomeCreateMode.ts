@@ -91,7 +91,7 @@ const tutorialCreatedThoughts = [
             'Here is a very quick guide through its various features:\n\n' +
             '1) **stars for bold**\n' +
             '2) __underscores for italic__\n' +
-            '3) Links look like this: [let_us_create_a_thought][Sup... \'name\'s Link. Thought Link]\n' +
+            '3) Links look like this:\n\n[let_us_create_a_thought][A BIG FAT LINK]\n' +
             '   ...where the first pair of brackets contain the ID and second one the displayed text.\n\n' +
             'Now **click Preview and then Publish**.',
         links: [],

@@ -2,7 +2,7 @@ import { createStore, type SetStoreFunction } from "solid-js/store";
 import type { GrafikaInstance } from "grafika";
 import type { SplitLayout } from "../components/coreUI/SplitUI";
 import type { Thought } from "../model/dto/thought";
-import type { Concept } from "../model/dto/concept";
+import type { Concept, ConceptGraphNode} from "../model/dto/concept";
 import type { ExplorationStateDescriptor } from "./explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 import type { AuthorizedUser } from "../contexts/authContext";
@@ -22,12 +22,13 @@ export interface AphantasiaStore {
     explorationIndex: number;
 
     contextThought?: Thought;
-    contextConcept?: Concept;
     contextThoughtInMaking?: ThoughtInMaking;
     contextEpoch?: Epoch;
     contextInbox?: InboxNotification[];
     contextChatMessages?: ChatMessage[];
     contextProfile?: UserProfile;
+    contextConcept?: Concept;
+    contextConceptList?: ConceptGraphNode[];
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;

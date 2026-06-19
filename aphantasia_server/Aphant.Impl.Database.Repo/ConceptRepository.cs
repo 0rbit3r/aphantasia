@@ -12,7 +12,9 @@ internal class ConceptRepository(AphantasiaDataContext _db) : IConceptDataContra
     public async Task<Result<Concept>> GetConcept(string tag)
     {
         var concept = await _db.Concepts
-            .Include(c => c.Thoughts)
+            .Include(c => c.Thoughts).ThenInclude(t => t.Author)
+            .Include(c => c.Thoughts).ThenInclude(t => t.Links)
+            .Include(c => c.Thoughts).ThenInclude(t => t.Backlinks)
             .Include(c => c.Followers)
             .FirstOrDefaultAsync(c => c.Tag == tag);
 

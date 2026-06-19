@@ -8,7 +8,6 @@ import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
 import { getCurrentExpState } from "../getCurrentExpState";
 import type { ConceptGraphNode } from "../../model/dto/concept";
-import { EpochPseudoId } from "../../model/dto/epoch";
 import conceptsIcon from '../../assets/icons/concepts.svg';
 
 const INITIAL_POS_RADIUS = 5000;
@@ -36,10 +35,9 @@ function convertConceptNodesToGrafika(nodes: ConceptGraphNode[]): GraphNode[] {
 }
 
 export const ConceptMode = {
-    grafikaInitType: 'main',
+    grafikaInitType: 'concept',
     iconModeBar: conceptsIcon,
     iconMenu: conceptsIcon,
-    entryPoint: { mode: 'epoch' as const, focus: String(EpochPseudoId.LATEST_CONTEXT) },
     contextBanner: {
         text: (store) => store.get.contextConcept?.tag ?? getCurrentExpState(store).focus ?? 'Concepts',
         color: (store) => store.get.contextConcept?.color ?? '#cccccc',
@@ -70,6 +68,7 @@ export const ConceptMode = {
             store.set('contextConcept', undefined);
             api_fetchConcepts()
                 .then(graph => {
+                    store.set('contextConceptList', graph.nodes.sort((a, b) => b.thoughtCount - a.thoughtCount));
                     updateGrafikaNodes(
                         store.get.grafika,
                         convertConceptNodesToGrafika(graph.nodes),

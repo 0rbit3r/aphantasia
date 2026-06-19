@@ -63,11 +63,8 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             .Distinct()
             .Count();
 
-        if (expandedConceptCount > 3)
-        {
-            _log.LogWarning("Attempted to create a thought with too many concept tags (expanded to {count})", expandedConceptCount);
-            return Error.BadRequest("Too many concepts");
-        }
+        var conceptValidationResult = ValidateConcepts(conceptTagsResult.Payload!);
+        if (!conceptValidationResult.IsSuccess) return conceptValidationResult.Error!;
 
         var insertResult = await _thoughtData.InsertThought(
             creatorId, title, content, shape, positionX, positionY);
@@ -163,6 +160,8 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         }
         if (title.Contains('\n'))
             errors.AppendLine("Title cannot contain new lines");
+        if (title.StartsWith('_'))
+            errors.AppendLine("Title cannot start with underscore");
         if (errors.Length > 0)
         {
             return Error.BadRequest(errors.ToString());
@@ -185,6 +184,21 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             await _conceptData.AddThoughtToConcept(thoughtId, tag);
         }
 
+        return Result.Success();
+    }
+
+    private Result ValidateConcepts(List<string> concepts) //todo - concept validation contract?
+    {
+        var errors = new StringBuilder();
+        if (concepts.Count() > 3)
+            errors.Append("Too many concepts");
+        if (concepts.Any(c => c.Length > 50))
+            errors.Append("Concept may be no longer than 50 characters");
+
+        if (errors.Length > 0)
+        {
+            return Error.BadRequest(errors.ToString());
+        }
         return Result.Success();
     }
 

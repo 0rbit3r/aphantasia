@@ -40,7 +40,7 @@ The frontend is built around a **mode system** — each screen state is a `ModeC
 - `src/api/` — thin fetch/post/delete wrappers that attach JWT tokens from `AuthContext`; all responses unwrap the backend `Result<T>` envelope (`{ isSuccess, payload, error }`)
 - `src/model/dto/` — TypeScript interfaces mirroring backend DTOs (Thought, Concept, Epoch, User, Notifications)
 
-The graph is rendered by the **grafika** library (external package); `GraphExplorer.tsx` bridges between mode state and grafika's API.
+The graph is rendered by the **grafika** library (package we own - you can create prompts for grafika agent if need be) ; `GraphExplorer.tsx` bridges between mode state and grafika's API.
 
 #### Exploration state and navigation history
 
@@ -57,7 +57,7 @@ The exploration state is `ExplorationStateDescriptor = { mode: ModeType, focus?:
 Every mode object must define:
 - **`grafikaInitType`** (`'main' | 'welcome' | 'chat' | 'build'`) — when transitioning to a mode whose `grafikaInitType` differs from the current one, grafika is fully disposed and reinitialized with the settings from `GRAFIKA_INITIALIZERS`.
 - **`entryPoint?: ExplorationStateDescriptor`** — if set and the current `grafikaInitType` differs from the target's, `handleForwardExploration` inserts this state as a real history step first (e.g. epoch before create when leaving chat). This keeps grafika context meaningful.
-- **`contextBanner`** — object with `text`, `color`, `onClick`, and optional `skipLoadingOverride`. Each mode owns its banner logic here; there is no central if-chain. Set `skipLoadingOverride: true` for modes whose banner state is always locally available (e.g. create), bypassing the global "Loading..." override.
+- **`contextBanner`** — object with `text`, `color`, `onClick`, and optional `skipLoadingOverride`. Each mode owns its banner logic here. Set `skipLoadingOverride: true` for modes whose banner state is always locally available (e.g. create), bypassing the global "Loading..." override.
 - **`iconModeBar`** — icon shown in the center mode button of `ModeBar`.
 - **`iconMenu?`** — icon shown in `ModeMenu`; undefined means the mode has no menu entry.
 
@@ -87,5 +87,3 @@ Projects and their roles:
 ### Environment Configuration
 
 Frontend uses Vite env files (`.env.development`, `.env.production`, `.env.aphantdev`). Backend uses `appsettings.{Environment}.json`. CORS is open in development and locked to `aphant.dev` in production.
-
-**Do not read `appsettings.Production.json` or any `appsettings.*.json` file other than `appsettings.Development.json` and `appsettings.Template.json` / `appsettings.DevTemplate.json`.** Production config files contain live secrets (DB credentials, JWT signing key). Use the `*Template.json` files as the reference for config structure instead.
