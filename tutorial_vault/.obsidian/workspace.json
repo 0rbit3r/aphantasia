@@ -1,0 +1,223 @@
+{
+  "main": {
+    "id": "a7354afac6785fff",
+    "type": "split",
+    "children": [
+      {
+        "id": "feadffb274a6997a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9a7dbea5b48f2891",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e6699146d610a64a",
+    "type": "split",
+    "children": [
+      {
+        "id": "2d29f79c2fcf2098",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6a92f06a351ec796",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "ffc23ffbe0444a25",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "home",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b43eac9d25a310bd",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 268.5,
+    "collapsed": true
+  },
+  "right": {
+    "id": "1cc758924a913fe8",
+    "type": "split",
+    "children": [
+      {
+        "id": "1cc3469fc4b5fc4b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "75047939d8cb0cb3",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Blu/Be yourself.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Be yourself"
+            }
+          },
+          {
+            "id": "05a583da164a0781",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Blu/Graph view.md",
+                "linksCollapsed": true,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Graph view"
+            }
+          },
+          {
+            "id": "a100acce455f9247",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "9e8eb367c69a8049",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "78d6b37ef2a5e2d2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Green/I'm a reply!.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of I'm a reply!"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "graph:Open graph view": false,
+      "switcher:Open quick switcher": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "9a7dbea5b48f2891",
+  "lastOpenFiles": [
+    "White/Trivia.md",
+    "Blu/APL386.md",
+    "Green/Concepts.md",
+    "White/Mechanics and Features.md",
+    "Green/Good job!.md",
+    "0.md",
+    "convert.py",
+    "Green/Join.md",
+    "tutorial_1.json",
+    "output_old.json",
+    "sql lines.md",
+    "Blu/3 axioms of links.md",
+    "Green/About Thoughts.md",
+    "Green/Links and Replies.md",
+    "Red/Link me!.md",
+    "Green/Let us create a thought.md",
+    "Green/SolidJS.md",
+    "Green/Almost there!.md",
+    "Blu/The project.md",
+    "Blu/I am not yet old enough.md",
+    "Blu/I am 13 years or older.md",
+    "Blu/Cookies and Privacy policy.md",
+    "Blu/Collected data.md",
+    "Blu/Code of conduct.md",
+    "Blu/Be yourself.md",
+    "Blu/Be respectful.md",
+    "Blu/Use your head.md",
+    "Blu/Age requirement.md",
+    "Orange/Register.md",
+    "Untitled.canvas",
+    "convert2.py",
+    "Dev_done/tasks",
+    "Dev_todo/supertasks",
+    "Dev_todo/tasks",
+    "Dev_done",
+    "Dev_todo",
+    "Dev"
+  ]
+}
