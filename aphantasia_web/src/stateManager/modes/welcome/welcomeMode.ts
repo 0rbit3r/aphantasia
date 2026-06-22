@@ -6,6 +6,9 @@ import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
 import { removeOldHighlightGlowEffect } from "../../../utility/removeOldHighlight";
+import { ThoughtViewer } from "../../../components/thoughtViewer/ThoughtViewer";
+import { LoginForm } from "../../../components/LoginForm";
+import { RegisterForm } from "../../../components/RegisterForm";
 import homeIcon from '../../../assets/icons/home.svg';
 
 
@@ -17,6 +20,13 @@ export const WelcomeMode = {
         text: (store) => store.get.contextThought?.title ?? '',
         color: (store) => store.get.contextThought?.color ?? '#cccccc',
         onClick: (store) => store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' }),
+    },
+
+    content: (store) => {
+        const focus = getCurrentExpState(store).focus;
+        if (focus === 'log_in') return LoginForm;
+        if (focus === 'register') return RegisterForm;
+        return store.get.contextThought ? ThoughtViewer : undefined;
     },
 
     initialize: (store) => {
@@ -75,10 +85,7 @@ export const WelcomeMode = {
                 shape: 0, 
                 color: n.color
             }))} as Thought);
-        // todo tohle je strašně odporný, ale zatim to funguje
-        // nápad : definovat co jednotlivý módy vidí v contentu přímo v kontraktu?
-        // + zdvojit např viewer a creator do dvou podobných, ale unikátních views pro jednotlivý módy
-        
+
         // add neighbors
         let timeToLiveFrom = 0;
         const nodesToAdd = welcome_data.nodes

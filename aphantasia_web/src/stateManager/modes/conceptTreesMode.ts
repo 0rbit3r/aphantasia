@@ -43,6 +43,7 @@ export const ConceptTreesMode = {
         color: (store) => store.get.contextConcept?.color ?? '#cccccc',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
+    content: () => undefined,
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
             const isFocused = !!getCurrentExpState(store).focus;

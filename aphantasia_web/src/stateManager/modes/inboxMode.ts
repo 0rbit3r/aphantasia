@@ -3,6 +3,7 @@ import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
 import { api_fetchNotifications } from "../../api/api_notifications";
 import { EpochPseudoId } from "../../model/dto/epoch";
+import { Inbox } from "../../components/inbox/Inbox";
 import arrowIcon from '../../assets/icons/arrow.svg';
 import envelopeIcon from '../../assets/icons/envelope.svg';
 
@@ -19,6 +20,8 @@ export const InboxMode = {
         color: (store) => store.get.user?.color ?? '#cccccc',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
+
+    content: () => Inbox,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

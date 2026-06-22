@@ -1,3 +1,4 @@
+import type { Component } from "solid-js";
 import type { AphantasiaStoreGetAndSet } from "../aphantasiaStore";
 import type { ExplorationStateDescriptor, ModeType } from "../explorationMode";
 import { WelcomeMode } from "./welcome/welcomeMode";
@@ -38,6 +39,10 @@ export interface ModeContract {
         onClick: (store: AphantasiaStoreGetAndSet) => void;
         skipLoadingOverride?: boolean;
     };
+
+    // Which content component this mode renders in the content panel, based on the
+    // current store/focus. undefined renders nothing. Replaces the <Switch> in UIContainer.
+    content: (store: AphantasiaStoreGetAndSet) => Component | undefined;
 
     // operations to do on initialized grafika (load data, set focus, handle interaction events...)
     initialize: (store: AphantasiaStoreGetAndSet) => void;

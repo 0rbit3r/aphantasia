@@ -7,6 +7,7 @@ import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
 import { getCurrentExpState } from "../getCurrentExpState";
 import { EpochPseudoId } from "../../model/dto/epoch";
+import { EpochViewer } from "../../components/EpochViewer";
 import epochIcon from '../../assets/icons/galaxy.svg';
 
 let generation = 0;
@@ -25,6 +26,8 @@ export const EpochMode = {
         color: (_store) => '#eeeeee',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
+
+    content: (store) => store.get.contextEpoch ? EpochViewer : undefined,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

@@ -2,6 +2,7 @@ import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../handleForwardExploration";
 import type { ModeContract } from "./modeContract";
 import { EpochPseudoId } from "../../model/dto/epoch";
+import { ThoughtCreator } from "../../components/thoughtCreator/ThoughtCreator";
 import createIcon from '../../assets/icons/create_thought.svg';
 
 export const CreateMode = {
@@ -19,6 +20,8 @@ export const CreateMode = {
         onClick: (store) => store.get.grafika.focusOn({ id: 'created_thought' }),
         skipLoadingOverride: true,
     },
+
+    content: (store) => store.get.contextThoughtInMaking ? ThoughtCreator : undefined,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {

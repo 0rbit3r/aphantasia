@@ -1,5 +1,5 @@
-import { Match, Show, Switch, useContext } from "solid-js";
-import { ThoughtViewer } from "../thoughtViewer/ThoughtViewer";
+import { Show, useContext } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import ModeBar from "./ModeBar";
 import css from '../../styles/components/blockyUI.module.css';
 import SplitUI from "./SplitUI";
@@ -8,16 +8,8 @@ import { ModeMenu } from "./ModeMenu";
 import { StoreContext } from "../../contexts/storeContext";
 import ContextBanner from "./ContextBanner";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
-import { ThoughtCreator } from "../thoughtCreator/ThoughtCreator";
-import { LoginForm } from "../LoginForm";
-import { EpochViewer } from "../EpochViewer";
+import { MODE_CONTRACTS } from "../../stateManager/modes/modeContract";
 import MessageOverlay from "./MessageOverlay";
-import { Settings } from "../Settings";
-import { RegisterForm } from "../RegisterForm";
-import { Inbox } from "../inbox/Inbox";
-import { ChatPanel } from "../chat/ChatPanel";
-import { ProfileViewer } from "../ProfileViewer";
-import { ConceptViewer } from "../ConceptViewer";
 
 
 export interface UIContainerProps {
@@ -48,41 +40,7 @@ export function BlockyUI({ onGrafikaRef }: UIContainerProps) {
             [css.content_container]: true,
             [css.content_container_land]: screenOrientation.isLandscape()
         }}>
-            <Switch>
-                <Match when={getCurrentExpState(store).focus === 'log_in'}>
-                    <LoginForm />
-                </Match>
-                <Match when={getCurrentExpState(store).focus === 'register'}>
-                    <RegisterForm />
-                </Match>
-                <Match when={store.get.contextThought
-                    && (getCurrentExpState(store).mode === 'welcome' || getCurrentExpState(store).mode === 'explore')}>
-                    <ThoughtViewer />
-                </Match>
-                <Match when={store.get.contextThoughtInMaking
-                    && (getCurrentExpState(store).mode === 'welcome_create' || getCurrentExpState(store).mode === 'create')}>
-                    <ThoughtCreator />
-                </Match>
-                <Match when={store.get.contextEpoch
-                    && (getCurrentExpState(store).mode === 'epoch')}>
-                    <EpochViewer />
-                </Match>
-                <Match when={getCurrentExpState(store).mode === 'settings'}>
-                    <Settings />
-                </Match>
-                <Match when={getCurrentExpState(store).mode === 'inbox'}>
-                    <Inbox />
-                </Match>
-                <Match when={getCurrentExpState(store).mode === 'chat'}>
-                    <ChatPanel />
-                </Match>
-                <Match when={getCurrentExpState(store).mode === 'profile'}>
-                    <ProfileViewer />
-                </Match>
-                <Match when={getCurrentExpState(store).mode === 'concept'}>
-                    <ConceptViewer />
-                </Match>
-            </Switch>
+            <Dynamic component={MODE_CONTRACTS[getCurrentExpState(store).mode].content(store)} />
         </div>
     </div>
 

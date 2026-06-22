@@ -1,6 +1,7 @@
 import { NodeShape, type GraphNode } from 'grafika';
 import type { ModeContract } from './modeContract';
 import type { ChatMessage } from '../../model/dto/chatMessage';
+import { ChatPanel } from '../../components/chat/ChatPanel';
 import chatIcon from '../../assets/icons/chat.svg';
 import {
     buildChatConnection,
@@ -47,6 +48,8 @@ export const ChatMode: ModeContract = {
         color: (_store) => '#cccccc',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
+
+    content: () => ChatPanel,
 
     initialize: (store) => {
         store.get.grafika.removeData();

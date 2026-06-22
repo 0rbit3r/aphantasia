@@ -6,6 +6,7 @@ import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
 import { getCurrentExpState } from "../getCurrentExpState";
+import { ConceptViewer } from "../../components/ConceptViewer";
 import conceptsIcon from '../../assets/icons/concepts.svg';
 
 export const ConceptMode = {
@@ -17,6 +18,7 @@ export const ConceptMode = {
         color: (store) => store.get.contextConcept?.color ?? '#cccccc',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
+    content: () => ConceptViewer,
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
             const isFocused = !!getCurrentExpState(store).focus;
