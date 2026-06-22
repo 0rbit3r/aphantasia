@@ -11,6 +11,7 @@ import { ChatMode } from "./chatMode";
 import type { GrafikaInitType } from "./grafikaInitializers/grafikaInitTypes";
 import { ProfileMode } from "./profileMode";
 import { ConceptMode } from "./conceptMode";
+import { ConceptTreesMode } from "./conceptTreesMode";
 
 export interface ModeContract {
     // Grafika settings to initialize the mode with
@@ -59,6 +60,7 @@ export const MODE_CONTRACTS: Record<ModeType, ModeContract> = {
     settings: SettingsMode,
     inbox: InboxMode,
     concept: ConceptMode,
+    conceptTrees: ConceptTreesMode,
     chat: ChatMode,
     profile: ProfileMode
 };

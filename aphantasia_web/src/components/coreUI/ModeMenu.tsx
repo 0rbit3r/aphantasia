@@ -33,11 +33,13 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() === null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['welcome'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'welcome' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['welcome'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'welcome' })}></SymbolButton>
                             Welcome</div>
                         <Show when={store.get.grafika.getData().nodes.find(n => n.id === 'let_us_create_a_thought')}>
                             <div class={css.button_container}>
-                                <SymbolButton img={MODE_CONTRACTS['welcome_create'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'welcome_create' })} />
+                                <SymbolButton img={MODE_CONTRACTS['welcome_create'].iconMenu!} action={() =>
+                                    handleForwardExploration(store, { mode: 'welcome_create' })} />
                                 Write</div>
                         </Show>
                     </>
@@ -45,25 +47,31 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() !== null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['epoch'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['epoch'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) })}></SymbolButton>
                             Epochs</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['inbox'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'inbox' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['inbox'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'inbox' })}></SymbolButton>
                             Inbox</div>
                         {/*<div class={css.button_container}>
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
                         Bookmarks</div> */}
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['create'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'create' })} />
+                            <SymbolButton img={MODE_CONTRACTS['create'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'create' })} />
                             Write</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['concept'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'concept' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['conceptTrees'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'conceptTrees' })}></SymbolButton>
                             Concepts</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['settings'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['settings'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
                             Settings</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={MODE_CONTRACTS['chat'].iconMenu!} action={() => handleForwardExploration(store, { mode: 'chat' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['chat'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'chat' })}></SymbolButton>
                             Chat</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={dieIcon} action={() => { }}></SymbolButton>

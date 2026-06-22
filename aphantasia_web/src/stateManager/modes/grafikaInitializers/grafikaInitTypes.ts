@@ -6,7 +6,7 @@ export type GrafikaInitType =
     'welcome' |
     'chat' |
     'build' |
-    'concept'
+    'conceptTrees'
 
 export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
     main: {
@@ -79,7 +79,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
         debug: { showFps: true },
         data: {}
     },
-    concept: {
+    conceptTrees: {
         graphics: {
             antialiasing: false,
             backgroundColor: '#020202',
@@ -87,7 +87,7 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
             defaultEdgeColor: "source",
             defaultEdgeAlpha: 0.6,
             colorfulText: true,
-            defaultEdgeType: EdgeType.Tapered,
+            defaultEdgeType: EdgeType.CurvedLine,
             backdrop: {
                 startAppearingAt: 0.001,
                 fullyVisibleAt: 0.1,
