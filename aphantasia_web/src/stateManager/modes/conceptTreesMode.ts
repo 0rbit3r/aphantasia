@@ -9,6 +9,7 @@ import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
 import { getCurrentExpState } from "../getCurrentExpState";
 import type { ConceptGraphNode } from "../../model/dto/concept";
 import conceptsIcon from '../../assets/icons/concepts.svg';
+import { ConceptTreesViewer } from "../../components/ConceptTreesViewer";
 
 const INITIAL_POS_RADIUS = 5000;
 
@@ -43,7 +44,7 @@ export const ConceptTreesMode = {
         color: (store) => store.get.contextConcept?.color ?? '#cccccc',
         onClick: (store) => store.get.grafika.focusOn('all'),
     },
-    content: () => undefined,
+    content: () => ConceptTreesViewer,
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
             const isFocused = !!getCurrentExpState(store).focus;

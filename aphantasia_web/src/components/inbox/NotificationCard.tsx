@@ -17,7 +17,7 @@ import { api_MarkNotificationAsRead } from "../../api/api_notifications";
 export const NotificationCard = (props: { notification: InboxNotification }) => {
     const store = useContext(StoreContext)!;
 
-    return <div classList={{[css.notification_card]: true, [css.notification_card_unread]: !props.notification.read}}
+    return <div classList={{ [css.notification_card]: true, [css.notification_card_unread]: !props.notification.read }}
         style={{ ['border-color']: props.notification.thought?.color ?? 'white' }}
         on:click={_ => {
             if (props.notification.thought)
@@ -26,6 +26,7 @@ export const NotificationCard = (props: { notification: InboxNotification }) => 
                 store.set('screenMessages', prev => [...prev, {
                     color: 'yellow', text: 'This notification is thought-less'
                 }]);
+            store.set('contextInbox', n => n.id === props.notification.id, 'read', true);
             api_MarkNotificationAsRead(props.notification.id);
         }}>
         <div class={css.title_and_shape}>

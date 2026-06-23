@@ -11,7 +11,9 @@ import { getCurrentExpState } from "./getCurrentExpState";
 export const handleForwardExploration = (store: AphantasiaStoreGetAndSet, newState: ExplorationStateDescriptor) => {
     const targetContract = MODE_CONTRACTS[newState.mode];
     const currentInitType = MODE_CONTRACTS[getCurrentExpState(store).mode].grafikaInitType;
+
     if (targetContract.entryPoint && currentInitType !== targetContract.grafikaInitType) {
+        console.log(targetContract.entryPoint )
         handleForwardExploration(store, targetContract.entryPoint);
         setTimeout(() => {
             handleStateChange(store, newState);
@@ -20,6 +22,8 @@ export const handleForwardExploration = (store: AphantasiaStoreGetAndSet, newSta
             store.set('explorationIndex', prev => prev + 1);
         },
             1000);
+            // uglyass hack, still... todo Gotta make grafika and a whole bunch of code asynchronous...
+
     }
     else {
         handleStateChange(store, newState);

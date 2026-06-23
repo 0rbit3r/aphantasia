@@ -17,16 +17,26 @@ export const WelcomeMode = {
     iconModeBar: homeIcon,
     iconMenu: homeIcon,
     contextBanner: {
-        text: (store) => store.get.contextThought?.title ?? '',
-        color: (store) => store.get.contextThought?.color ?? '#cccccc',
-        onClick: (store) => store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' }),
+        text: (store) => getCurrentExpState(store).focus
+            ? store.get.contextThought?.title ?? ''
+            : 'Aphant.dev',
+        color: (store) =>
+            getCurrentExpState(store).focus
+                ? store.get.contextThought?.color ?? '#cccccc'
+                : '#cccccc',
+        onClick: (store) =>
+            getCurrentExpState(store).focus
+                ? store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' })
+                : handleForwardExploration(store, { mode: 'welcome' })
     },
 
     content: (store) => {
         const focus = getCurrentExpState(store).focus;
         if (focus === 'log_in') return LoginForm;
         if (focus === 'register') return RegisterForm;
-        return store.get.contextThought ? ThoughtViewer : undefined;
+        return focus 
+            ? ThoughtViewer
+            : undefined;
     },
 
     initialize: (store) => {
@@ -48,11 +58,20 @@ export const WelcomeMode = {
 
         removeOldHighlightGlowEffect(store)
 
-        const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
+
         handleHighlightAndContext(store, focusId);
-        if (!focusedNode) {
+
+
+
+        if (!focusId && store.get.splitUiLayout !== 'hidden') {
+            store.set('splitUiLayout', 'graph');
+            store.get.grafika.focusOn('all');
             return;
         }
+
+        const focusedNode = grafikaData.nodes.find(n => n.id === focusId)!;
+        if (!focusedNode)
+            return;
 
         if (focusedNode.id === 'good_job!' && !grafikaData.nodes.some(n => n.id === 'link_me!')) {
             store.get.grafika.addData({
@@ -76,15 +95,17 @@ export const WelcomeMode = {
         if (focusedNode.id === 'link_me!') return;
 
 
-        store.set('contextThought', {replies: welcome_data.nodes
-            .filter(n => welcome_data.edges.some(e =>
-                e.sourceId === focusedNode.id && e.targetId === n.id))
-            .map(n => ({
-                id: n.id,
-                title: n.text,
-                shape: 0, 
-                color: n.color
-            }))} as Thought);
+        store.set('contextThought', {
+            replies: welcome_data.nodes
+                .filter(n => welcome_data.edges.some(e =>
+                    e.sourceId === focusedNode.id && e.targetId === n.id))
+                .map(n => ({
+                    id: n.id,
+                    title: n.text,
+                    shape: 0,
+                    color: n.color
+                }))
+        } as Thought);
 
         // add neighbors
         let timeToLiveFrom = 0;

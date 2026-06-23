@@ -14,7 +14,7 @@ export const InboxMode = {
     grafikaInitType: 'main',
     iconModeBar: arrowIcon,
     iconMenu: envelopeIcon,
-    entryPoint: { mode: 'epoch' as const, focus: String(EpochPseudoId.LATEST_CONTEXT) },
+    entryPoint: { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) },
     contextBanner: {
         text: (_store) => 'Inbox',
         color: (store) => store.get.user?.color ?? '#cccccc',
