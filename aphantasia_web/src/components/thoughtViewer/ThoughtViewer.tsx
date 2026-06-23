@@ -100,7 +100,8 @@ export const ThoughtViewer = () => {
                     onConceptLinkClick={(tag) =>
                         getCurrentExpState(store).mode.startsWith('welcome')
                             ? null
-                            : handleForwardExploration(store, { mode: 'concept', focus: tag })}
+                            : setTimeout(()=>handleForwardExploration(store, { mode: 'concept', focus: tag }),
+                            200)} // prevent thought card click from firing on once thoughts load ( todo try pointerup?)
                     conceptColors={store.get.contextThought ? new Map(store.get.contextThought.concepts.map(c => [c.tag, c.color])) : undefined}
                 />
             </div>

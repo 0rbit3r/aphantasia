@@ -10,9 +10,10 @@ export const ConceptCard = (props: { concept: ConceptGraphNode }) => {
 
     return <div class={css.concept_card}
         style={{ ['border-color']: props.concept?.color ?? 'white' }}
-        on:click={_ => {
+        on:pointerup={_ => {
             if (props.concept)
-                handleForwardExploration(store, { mode: 'concept', focus: props.concept.tag });
+                setTimeout(() => handleForwardExploration(store, { mode: 'concept', focus: props.concept.tag }),
+            50); // prevent thought card click from firing on once thoughts load ( todo try pointerup?)
             // move up
 
         }}>

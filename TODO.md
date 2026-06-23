@@ -2,19 +2,14 @@
 
 # Current tasks
 
-- [x] Figure out how to manage continuity (let the last epoch "simmer"?)
-- [x] reliable concepts
-- [x] bug hunt
-- [x] forbid linking concepts (or spawn creation thought in concepts...)
-- [x] Concepts scroller
-- [x] all fixed
+- [ ] grafika - async dispose
+- [ ] better handling of entry points
+- [ ] solve the thought card stealing concept click 
+
 
 - [ ] layout deamon - add parameter for concepts colors delay
-- [ ] Idea - two concept modes? - one for concept graph and one for thoughts of a particular concept (concepts graph vs concept detail...)
 - [ ] The few big todos in the code...
 - [ ] Ensure order in concept viewer
-- [ ] Concept mode reloads into the exploration mode badly Fix the entire thing...
-    - [ ] (really add the secondary concept mode?)
 - [ ] Capital letters in concepts
 
 
