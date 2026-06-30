@@ -149,6 +149,8 @@ const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: st
                 .filter(n => welcome_data.edges.find(e => e.targetId === n.id && e.sourceId === focusedThought.id))
                 .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
             size: 0,
+            bookmarkedCount: 0,
+            isBookmarkedByCurrentUser: false,
         } satisfies Thought)
         const proxyNodeToHighlight = store.get.grafika.getData().nodes?.find(n => n.id === focusId)
         if (proxyNodeToHighlight) {

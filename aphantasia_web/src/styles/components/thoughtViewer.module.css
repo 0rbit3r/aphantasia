@@ -33,7 +33,19 @@
 
 .action_buttons_bar_button {
     width: var(--action-buttons-bar);
+    height: 100%;
     /* to make it square*/
+}
+
+.bookmark_button {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.bookmark_count {
+    margin-left: 0.1rem;
+    font-weight: bold;
 }
 
 .metadata_bar {

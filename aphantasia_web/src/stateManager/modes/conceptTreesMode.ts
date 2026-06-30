@@ -25,12 +25,13 @@ function deriveConceptEdges(nodes: ConceptGraphNode[]) {
 
 function convertConceptNodesToGrafika(nodes: ConceptGraphNode[]): GraphNode[] {
     const step = nodes.length > 0 ? Math.PI * 2 / nodes.length : 0;
+
     return nodes.map((node, i) => ({
         id: node.tag,
         x: Math.cos(i * step) * INITIAL_POS_RADIUS,
         y: Math.sin(i * step) * INITIAL_POS_RADIUS,
         color: node.color,
-        text: node.tag,
+        text:'_'  + node.tag.split('_')[node.tag.split('_').length -1],
         radius: Math.log((node.thoughtCount + 100) / 100) * 3000 + 50
     }));
 }
@@ -59,7 +60,7 @@ export const ConceptTreesMode = {
         });
     },
     hangleFocusChange: (store, tag) => {
-      store.get.grafika.focusOn('all');
+        store.get.grafika.focusOn('all');
 
         if (store.get.splitUiLayout === 'hidden' || store.get.splitUiLayout === 'graph')
             store.set('splitUiLayout', 'half');

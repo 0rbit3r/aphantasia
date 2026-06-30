@@ -1,9 +1,10 @@
 import { Content } from "./Content";
 import css from "../../styles/components/thoughtViewer.module.css";
 import { createEffect, createSignal, Show, useContext } from "solid-js";
-// import bookmarkIcon from '../../assets/icons/bookmark.svg';
+import bookmarkIcon from '../../assets/icons/bookmark.svg';
+import bookmarkFillIcon from '../../assets/icons/bookmark_full.svg'
 // import paperPlaneIcon from '../../assets/icons/paper_plane.png';
-import bracketsIcon from '../../assets/icons/brackets_scribble.svg';
+import bracketsIcon from '../../assets/icons/brackets.svg';
 import trashIcon from '../../assets/icons/trash.png';
 import { NodeShape } from "grafika";
 import { StoreContext } from "../../contexts/storeContext";
@@ -13,6 +14,7 @@ import { ScreenOrientation } from "../../contexts/screenOrientationContext";
 import { RepliesScroller } from "./RepliesScroller";
 import { SymbolButton } from "../SymbolButton";
 import { api_deleteThought } from "../../api/deleteThought";
+import { api_toggleBookmark } from "../../api/toggleBookmark";
 import { navigateBack } from "../../stateManager/backAndForward";
 
 
@@ -58,6 +60,18 @@ export const ThoughtViewer = () => {
             setTripleDeleteTap(0);
     })
 
+    const handleToggleBookmark = () => {
+        const thought = store.get.contextThought;
+        if (!thought) return;
+        api_toggleBookmark(thought.id)
+            .then(nowBookmarked => {
+                store.set('contextThought', 'isBookmarkedByCurrentUser', nowBookmarked);
+                store.set('contextThought', 'bookmarkedCount', count => count + (nowBookmarked ? 1 : -1));
+            })
+            .catch(e => store.set('screenMessages',
+                prev => [...prev, { color: 'red', text: e }]));
+    }
+
     const handleQuickReply = () => {
         const thought = store.get.contextThought;
         if (!thought) return;
@@ -100,8 +114,8 @@ export const ThoughtViewer = () => {
                     onConceptLinkClick={(tag) =>
                         getCurrentExpState(store).mode.startsWith('welcome')
                             ? null
-                            : setTimeout(()=>handleForwardExploration(store, { mode: 'concept', focus: tag }),
-                            200)} // prevent thought card click from firing on once thoughts load ( todo try pointerup?)
+                            : setTimeout(() => handleForwardExploration(store, { mode: 'concept', focus: tag }),
+                                200)} // prevent thought card click from firing on once thoughts load ( todo try pointerup?)
                     conceptColors={store.get.contextThought ? new Map(store.get.contextThought.concepts.map(c => [c.tag, c.color])) : undefined}
                 />
             </div>
@@ -114,10 +128,12 @@ export const ThoughtViewer = () => {
                     {store.get.contextThought?.author.username}</div>
             </div>
             <div class={`${css.replies_container} ${((!scrOrientation.isLandscape() && store.get.splitUiLayout !== 'content')) ? css.replies_container_collapsed : ''}`}>
-                <RepliesScroller replyClicked={id => {console.log(id);
-                    return getCurrentExpState(store).mode.startsWith('welcome') 
+                <RepliesScroller replyClicked={id => {
+                    console.log(id);
+                    return getCurrentExpState(store).mode.startsWith('welcome')
                         ? handleForwardExploration(store, { mode: 'welcome', focus: id })
-                        : handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: id })}} />
+                        : handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: id })
+                }} />
             </div>
             <Show when={store.get.user?.id}>
                 <div class={css.action_buttons_bar}>
@@ -130,7 +146,15 @@ export const ThoughtViewer = () => {
                         <div class={css.action_buttons_bar_button}>
                             <SymbolButton img={bracketsIcon} action={handleQuickReply} /></div>
                     </Show>
-                    {/* <SymbolButton action={() => { }} img={bookmarkIcon} /> */}
+                    <Show when={store.get.user}>
+                        <div class={css.bookmark_button}>
+                            <div class={css.action_buttons_bar_button}>
+                                <SymbolButton img={ store.get.contextThought?.isBookmarkedByCurrentUser
+                                    ? bookmarkFillIcon
+                                    : bookmarkIcon} action={handleToggleBookmark} /></div>
+                            <div class={css.bookmark_count}>{store.get.contextThought?.bookmarkedCount ?? 0}</div>
+                        </div>
+                    </Show>
                     {/* <SymbolButton action={() => { }} img={paperPlaneIcon} /> */}
                 </div>
             </Show>

@@ -17,12 +17,22 @@ namespace Aphant.Client.WebApi.Controllers
     ) : ApiControllerBase
     {
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Result<Thought>>> GetThoughtById([FromRoute] Guid id)
         {
-            return ResponseFromResult(await _thoughtData.GetThoughtById(id));
+            return ResponseFromResult(await _thoughtData.GetThoughtById(id, UserIdClaim));
+        }
+
+        [HttpPost("{id}/bookmark")]
+        [Authorize]
+        public async Task<ActionResult<Result<bool>>> ToggleBookmark([FromRoute] Guid id)
+        {
+            if (UserIdClaim is null) return ResponseFromResult(Error.Unauthorized());
+            return ResponseFromResult(await _thoughtData.ToggleBookmark(id, UserIdClaim.Value));
         }
 
         [HttpGet("{id}/neighborhood")]
+        [Authorize]
         public async Task<ActionResult<Result<List<ThoughtNode>>>> GetThoughtNeighborhood(
             [FromRoute] Guid id,
             [FromQuery] int depth = 1,
