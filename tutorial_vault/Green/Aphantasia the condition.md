@@ -1,4 +1,4 @@
-This project is named after a fascinating phenomena.
+This project is named after a fascinating phenomenon.
 
 People with aphantasia (sometimes called aphants) are unable to visualize mental images.
 

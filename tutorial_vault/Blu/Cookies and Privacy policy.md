@@ -10,7 +10,7 @@ We use **no third party cookies or services**.
 
 **Collected data is not** and will not be **sold to third parties** nor will it be used for tasks unrelated to development, maintenance or promotion of the website.
 
-Note however, that any **content that you create is public** and therefore free for anyone to use as they see fit.
+Note, however, that any **content that you create is public** and therefore free for anyone to use as they see fit.
 
 [[Collected Data|Click here to see which data we collect]]
 

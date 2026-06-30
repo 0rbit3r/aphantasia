@@ -11,6 +11,9 @@
 - [ ] The few big todos in the code...
 - [ ] Ensure order in concept viewer
 - [ ] Capital letters in concepts
+- [ ] __this__ is bumping concept count
+- [ ] Add copy concepts checkbox
+- [ ] 
 
 
 ## Features
