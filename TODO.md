@@ -4,8 +4,7 @@
 
 - [ ] grafika - async dispose
 - [ ] better handling of entry points
-- [ ] solve the thought card stealing concept click 
-
+- [ ] solve the thought card stealing concept click
 
 - [ ] layout deamon - add parameter for concepts colors delay
 - [ ] The few big todos in the code...

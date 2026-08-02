@@ -19,7 +19,7 @@ export interface UIContainerProps {
 // This component holds almost all of Aphantasia's experience
 // - the graph view, content view, control bars, validation messages...
 // all dynamically rendering based on the current exploration state
-export function BlockyUI({ onGrafikaRef }: UIContainerProps) {
+export function UIContainer({ onGrafikaRef }: UIContainerProps) {
     const screenOrientation = useContext(ScreenOrientation);
     const store = useContext(StoreContext)!;
 

@@ -1,4 +1,4 @@
-import { BlockyUI } from "./UIContainer";
+import { UIContainer } from "./UIContainer";
 import { type GrafikaInstance, type GrafikaSettings } from "grafika";
 import { StoreContext } from "../../contexts/storeContext";
 import { useContext } from "solid-js";
@@ -22,5 +22,5 @@ export const GraphExplorer = (props: ExplorerProps) => {
         });
     };
 
-    return <BlockyUI onGrafikaRef={handleGrafikaRef}></BlockyUI>;
+    return <UIContainer onGrafikaRef={handleGrafikaRef}></UIContainer>;
 }

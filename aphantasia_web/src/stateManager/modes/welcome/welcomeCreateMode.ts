@@ -47,12 +47,11 @@ export const WelcomeCreateMode = {
                     shape: currentTutorialThought.shape ?? NodeShape.Circle,
                     color: color, x: viewport.position.x, y: viewport.position.y
                 }]
-            },
-            () => {
-                const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
-                if (node) store.get.grafika.focusOn(node);
             }
-        );
+        ).then(() => {
+            const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+            if (node) store.get.grafika.focusOn(node);
+        });
 
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking) {
@@ -90,11 +89,10 @@ const tutorialCreatedThoughts = [
     {
         title: 'An interesting title',
         concepts: [],
-        content: '**Welcome to the thought creator.**\n' +
-            'Here is a very quick guide through its various features:\n\n' +
+        content: '**Welcome to the thought creator.**\n\n' +
             '1) **stars for bold**\n' +
             '2) __underscores for italic__\n' +
-            '3) Links look like this:\n\n[let_us_create_a_thought][A BIG FAT LINK]\n' +
+            '3) **Links** look like this:\n\n[let_us_create_a_thought][A BIG FAT LINK]\n' +
             '   ...where the first pair of brackets contain the ID and second one the displayed text.\n\n' +
             'Now **click Preview and then Publish**.',
         links: [],

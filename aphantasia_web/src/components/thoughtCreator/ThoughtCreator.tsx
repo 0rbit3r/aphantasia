@@ -83,7 +83,7 @@ export const ThoughtCreator = () => {
                 .filter(lt => !store.get.grafika.getData().nodes.find(n => n.id === lt.id))
                 .map(lt => ({ id: lt.id, color: lt.color, shape: lt.shape, text: lt.title }));
             if (newNodes.length > 0) {
-                store.get.grafika.addData({ nodes: newNodes }, onceInGraph);
+                store.get.grafika.addData({ nodes: newNodes }).then(onceInGraph);
             } else {
                 onceInGraph();
             }
@@ -213,8 +213,8 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet) => {
         };
 
 
-        // onFinished fires once expectedId is rendered — safe to navigate even after WelcomeCreateMode.dispose cleared events.
-        store.get.grafika.addData(newData, () => {
+        // resolves once expectedId is rendered — safe to navigate even after WelcomeCreateMode.dispose cleared events.
+        store.get.grafika.addData(newData).then(() => {
             handleForwardExploration(store, { mode: "welcome", focus: expectedId });
         });
 
@@ -280,8 +280,8 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
 
 
             store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] });
-            // onFinished fires once newId is rendered — safe to navigate even after CreateMode.dispose cleared events.
-            store.get.grafika.addData(newData, () => {
+            // resolves once newId is rendered — safe to navigate even after CreateMode.dispose cleared events.
+            store.get.grafika.addData(newData).then(() => {
                 handleForwardExploration(store, { mode: "explore", focus: newId });
             });
 

@@ -39,8 +39,8 @@ export const SettingsMode = {
         if (!store.get.user) return;
         api_fetchUserProfile(store.get.user.id)
             .then(profile => {
-                updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts),
-                () =>{
+                updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts))
+                .then(() => {
                     store.get.grafika.focusOn('all');
                 });
             })

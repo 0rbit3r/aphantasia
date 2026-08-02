@@ -47,12 +47,11 @@ export const CreateMode = {
                     color: color,
                     x: viewport.position.x, y: viewport.position.y
                 }]
-            },
-            () => {
-                const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
-                if (node) store.get.grafika.focusOn(node);
             }
-        );
+        ).then(() => {
+            const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+            if (node) store.get.grafika.focusOn(node);
+        });
 
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking)

@@ -79,7 +79,7 @@ export const ExploreMode = {
                 .filter(n => !existingIds.has(n.id))
                 .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n), timeToLiveFrom: 20 * gradualAddIndex++ }));
 
-            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) }, () => {
+            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) }).then(() => {
                 const allCurrentById = new Map(store.get.grafika.getData().nodes.map(n => [n.id, n]));
 
                 neighbors.forEach(n => {
