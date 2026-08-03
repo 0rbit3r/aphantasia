@@ -5,7 +5,7 @@ namespace Aphant.Core.Contract.Data;
 
 public interface IThoughtDataContract
 {
-    Task<Result<Thought>> GetThoughtById(Guid id);
+    Task<Result<Thought>> GetThoughtById(Guid id, Guid? currentUserId = null);
     Task<Result<List<ThoughtNode>>> GetThoughtNeighborhood(Guid id, int depth = 1, int limit = 100);
     Task<Result<ThoughtTitle>> GetThoughtTitleById(Guid id);
     Task<Result<ThoughtNode>> GetThoughtNodeById(Guid id);
@@ -15,9 +15,13 @@ public interface IThoughtDataContract
         Guid user,
         string title,
         string content,
-        ThoughtShape shape);
+        ThoughtShape shape,
+        double positionX,
+        double positionY);
 
     Task<Result> InsertThoughtReference(Guid SourceId, Guid TargetId);
+
+    Task<Result<bool>> ToggleBookmark(Guid thoughtId, Guid userId);
 
     Task<Result> DeleteThought(Guid id);
 

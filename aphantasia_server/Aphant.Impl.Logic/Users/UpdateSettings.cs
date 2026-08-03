@@ -9,7 +9,7 @@ internal partial class UserLogicService : IUserLogicContract
 {
     public async Task<Result> UpdateUserSettings(UserSettings settings)
     {
-        if (!Regex.IsMatch(settings.Color, @"^\#[0-9a-f]{6}$"))
+        if (!Regex.IsMatch(settings.Color, @"^\#[0-9a-fA-F]{6}$"))
             return Error.BadRequest("Malformed color code");
         if (settings.Bio.Length > 1000)
             return Error.BadRequest("Bio can be at most 1000 characters long");

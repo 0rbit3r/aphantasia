@@ -5,9 +5,20 @@ import { api_fetchUserProfile } from "../../api/fetchUserProfile";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
+import { ProfileViewer } from "../../components/ProfileViewer";
+import personIcon from '../../assets/icons/user.svg';
 
 export const ProfileMode = {
     grafikaInitType: 'main',
+    iconModeBar: personIcon,
+    contextBanner: {
+        text: (store) => '~' + (store.get.contextProfile?.user.username ?? 'NULL_USER'),
+        color: (store) => store.get.contextProfile?.user.color ?? '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
+
+    content: () => ProfileViewer,
+
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
             handleForwardExploration(store, {

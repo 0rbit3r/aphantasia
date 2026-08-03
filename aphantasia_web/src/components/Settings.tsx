@@ -37,14 +37,12 @@ export const Settings = () => {
             store.set('screenMessages', prev => [...prev, { color: 'green', text: 'Settings saved' }]);
             authContext.reload();
             store.get.grafika.focusOn(null);
-            console.log('foo')
-            store.get.grafika.removeData(store.get.grafika.getData(), () => {
+            store.get.grafika.removeData(store.get.grafika.getData()).then(() => {
                 if (!store.get.user) return;
                 api_fetchUserProfile(store.get.user.id)
                     .then(profile => {
-                        updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts),
-                            () => {
-                                console.log("then")
+                        updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts))
+                            .then(() => {
                                 store.get.grafika.focusOn('all');
                             });
                     })

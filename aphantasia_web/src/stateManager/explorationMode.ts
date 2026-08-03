@@ -12,6 +12,7 @@ export type ModeType =
     'explore' |
     'create' |
     'concept' |
+    'conceptTrees' |
     'inbox' |
     'settings' |
     'chat' |

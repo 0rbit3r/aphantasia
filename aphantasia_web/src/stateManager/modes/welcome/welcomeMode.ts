@@ -6,10 +6,38 @@ import type { Thought, ThoughtTitle } from "../../../model/dto/thought";
 import type { AphantasiaStoreGetAndSet } from "../../aphantasiaStore";
 import { welcome_data } from "./welcomeData";
 import { removeOldHighlightGlowEffect } from "../../../utility/removeOldHighlight";
+import { ThoughtViewer } from "../../../components/thoughtViewer/ThoughtViewer";
+import { LoginForm } from "../../../components/LoginForm";
+import { RegisterForm } from "../../../components/RegisterForm";
+import homeIcon from '../../../assets/icons/home.svg';
 
 
 export const WelcomeMode = {
     grafikaInitType: 'welcome',
+    iconModeBar: homeIcon,
+    iconMenu: homeIcon,
+    contextBanner: {
+        text: (store) => getCurrentExpState(store).focus
+            ? store.get.contextThought?.title ?? ''
+            : 'Aphant.dev',
+        color: (store) =>
+            getCurrentExpState(store).focus
+                ? store.get.contextThought?.color ?? '#cccccc'
+                : '#cccccc',
+        onClick: (store) =>
+            getCurrentExpState(store).focus
+                ? store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' })
+                : handleForwardExploration(store, { mode: 'welcome' })
+    },
+
+    content: (store) => {
+        const focus = getCurrentExpState(store).focus;
+        if (focus === 'log_in') return LoginForm;
+        if (focus === 'register') return RegisterForm;
+        return focus 
+            ? ThoughtViewer
+            : undefined;
+    },
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
@@ -30,11 +58,20 @@ export const WelcomeMode = {
 
         removeOldHighlightGlowEffect(store)
 
-        const focusedNode = grafikaData.nodes.find(n => n.id === focusId);
+
         handleHighlightAndContext(store, focusId);
-        if (!focusedNode) {
+
+
+
+        if (!focusId && store.get.splitUiLayout !== 'hidden') {
+            store.set('splitUiLayout', 'graph');
+            store.get.grafika.focusOn('all');
             return;
         }
+
+        const focusedNode = grafikaData.nodes.find(n => n.id === focusId)!;
+        if (!focusedNode)
+            return;
 
         if (focusedNode.id === 'good_job!' && !grafikaData.nodes.some(n => n.id === 'link_me!')) {
             store.get.grafika.addData({
@@ -56,6 +93,19 @@ export const WelcomeMode = {
         }
 
         if (focusedNode.id === 'link_me!') return;
+
+
+        store.set('contextThought', {
+            replies: welcome_data.nodes
+                .filter(n => welcome_data.edges.some(e =>
+                    e.sourceId === focusedNode.id && e.targetId === n.id))
+                .map(n => ({
+                    id: n.id,
+                    title: n.text,
+                    shape: 0,
+                    color: n.color
+                }))
+        } as Thought);
 
         // add neighbors
         let timeToLiveFrom = 0;
@@ -99,6 +149,8 @@ const handleHighlightAndContext = (store: AphantasiaStoreGetAndSet, focusId?: st
                 .filter(n => welcome_data.edges.find(e => e.targetId === n.id && e.sourceId === focusedThought.id))
                 .map<ThoughtTitle>(n => ({ id: n.id, title: n.text, color: n.color, shape: 0 })),
             size: 0,
+            bookmarkedCount: 0,
+            isBookmarkedByCurrentUser: false,
         } satisfies Thought)
         const proxyNodeToHighlight = store.get.grafika.getData().nodes?.find(n => n.id === focusId)
         if (proxyNodeToHighlight) {

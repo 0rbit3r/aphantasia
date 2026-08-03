@@ -4,16 +4,7 @@ import { createEffect, createSignal, Show, useContext } from 'solid-js';
 import { AuthContext } from '../../contexts/authContext';
 import { StoreContext } from '../../contexts/storeContext';
 import { handleForwardExploration } from '../../stateManager/handleForwardExploration';
-import type { ExplorationStateDescriptor } from '../../stateManager/explorationMode';
-import welcomeIcon from '../../assets/icons/home.svg';
-import epochIcon from '../../assets/icons/galaxy.svg';
-import createIcon from '../../assets/icons/create_thought.svg';
-import settingsIcon from '../../assets/icons/settings.svg';
-import notificationsIcon from '../../assets/icons/envelope.svg';
-// import bookmarksIcon from '../../assets/icons/bookmarks.svg';
-// import conceptsIcon from '../../assets/icons/concepts.png';
-import chatIcon from '../../assets/icons/chat.svg';
-import { getCurrentExpState } from '../../stateManager/getCurrentExpState';
+import { MODE_CONTRACTS } from '../../stateManager/modes/modeContract';
 import { EpochPseudoId } from '../../model/dto/epoch';
 // import dieIcon from '../../assets/icons/die.svg';
 
@@ -23,12 +14,6 @@ export const ModeMenu = () => {
 
     const [visible, setVisible] = createSignal(false);
     const [faded, setFaded] = createSignal(true);
-
-    const navigateFromChat = (target: ExplorationStateDescriptor) => {
-        if (getCurrentExpState(store).mode === 'chat')
-            handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) });
-        handleForwardExploration(store, target);
-    };
 
     createEffect(() => {
         if (store.get.modeMenuOpen === false) {
@@ -48,11 +33,13 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() === null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={welcomeIcon} action={() => handleForwardExploration(store, { mode: 'welcome' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['welcome'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'welcome' })}></SymbolButton>
                             Welcome</div>
                         <Show when={store.get.grafika.getData().nodes.find(n => n.id === 'let_us_create_a_thought')}>
                             <div class={css.button_container}>
-                                <SymbolButton img={createIcon} action={() => handleForwardExploration(store, { mode: 'welcome_create' })} />
+                                <SymbolButton img={MODE_CONTRACTS['welcome_create'].iconMenu!} action={() =>
+                                    handleForwardExploration(store, { mode: 'welcome_create' })} />
                                 Write</div>
                         </Show>
                     </>
@@ -60,25 +47,31 @@ export const ModeMenu = () => {
                 <Show when={authContext.getAuthorizedUser() !== null}>
                     <>
                         <div class={css.button_container}>
-                            <SymbolButton img={epochIcon} action={() => handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['epoch'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) })}></SymbolButton>
                             Epochs</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={notificationsIcon} action={() => navigateFromChat({ mode: 'inbox' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['inbox'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'inbox' })}></SymbolButton>
                             Inbox</div>
                         {/*<div class={css.button_container}>
                         <SymbolButton img={bookmarksIcon} action={() => { }}></SymbolButton>
                         Bookmarks</div> */}
                         <div class={css.button_container}>
-                            <SymbolButton img={createIcon} action={() => navigateFromChat({ mode: 'create' })} />
+                            <SymbolButton img={MODE_CONTRACTS['create'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'create' })} />
                             Write</div>
-                        {/* <div class={css.button_container}>
-                        <SymbolButton img={conceptsIcon} action={() => { }}></SymbolButton>
-                        Concepts</div> */}
                         <div class={css.button_container}>
-                            <SymbolButton img={settingsIcon} action={() => handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['conceptTrees'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'conceptTrees' })}></SymbolButton>
+                            Concepts</div>
+                        <div class={css.button_container}>
+                            <SymbolButton img={MODE_CONTRACTS['settings'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'settings' })}></SymbolButton>
                             Settings</div>
                         <div class={css.button_container}>
-                            <SymbolButton img={chatIcon} action={() => handleForwardExploration(store, { mode: 'chat' })}></SymbolButton>
+                            <SymbolButton img={MODE_CONTRACTS['chat'].iconMenu!} action={() =>
+                                handleForwardExploration(store, { mode: 'chat' })}></SymbolButton>
                             Chat</div>
                         {/* <div class={css.button_container}>
                         <SymbolButton img={dieIcon} action={() => { }}></SymbolButton>

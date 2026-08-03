@@ -2,7 +2,7 @@ import { createStore, type SetStoreFunction } from "solid-js/store";
 import type { GrafikaInstance } from "grafika";
 import type { SplitLayout } from "../components/coreUI/SplitUI";
 import type { Thought } from "../model/dto/thought";
-import type { Concept } from "../model/dto/concept";
+import type { Concept, ConceptGraphNode } from "../model/dto/concept";
 import type { ExplorationStateDescriptor } from "./explorationMode";
 import type { ThoughtInMaking } from "../model/ThoughtInMaking";
 import type { AuthorizedUser } from "../contexts/authContext";
@@ -11,6 +11,7 @@ import type { ScreenMessage } from "../components/coreUI/MessageOverlay";
 import type { InboxNotification } from "../model/dto/inboxNotification";
 import type { ChatMessage } from "../model/dto/chatMessage";
 import type { UserProfile } from "../model/dto/userProfile";
+import { createEffect } from "solid-js";
 
 export interface AphantasiaStore {
     grafika: GrafikaInstance;
@@ -22,12 +23,13 @@ export interface AphantasiaStore {
     explorationIndex: number;
 
     contextThought?: Thought;
-    contextConcept?: Concept;
     contextThoughtInMaking?: ThoughtInMaking;
     contextEpoch?: Epoch;
     contextInbox?: InboxNotification[];
     contextChatMessages?: ChatMessage[];
     contextProfile?: UserProfile;
+    contextConcept?: Concept;
+    contextConceptList?: ConceptGraphNode[];
 
     contextDataLoading: boolean;
     splitUiLayout: SplitLayout;
@@ -56,5 +58,12 @@ export function initializeAphantasiaStore(): AphantasiaStoreGetAndSet {
         screenMessages: []
     });
 
+    createEffect(()=>{
+        console.log('foo')
+        console.log(getStore.contextInbox);
+    })
+
     return { get: getStore, set: setStore };
+
+
 };

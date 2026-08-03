@@ -5,12 +5,13 @@ export type GrafikaInitType =
     'main' |
     'welcome' |
     'chat' |
-    'build'
+    'build' |
+    'conceptTrees'
 
 export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
     main: {
         graphics: {
-            antialiasing: false,
+            antialiasing: true,
             backgroundColor: '#020202',
             initialZoom: 1 / 100,
             defaultEdgeColor: "source",
@@ -74,7 +75,28 @@ export const GRAFIKA_INITIALIZERS: Record<GrafikaInitType, GrafikaSettings> = {
                 url: "generic_space_small.jpg"
             }
         },
-        simulation: { pushThreshold: 500, defaultEdgeLength: 10, downflowEnabled: true},
+        simulation: { pushThreshold: 500, defaultEdgeLength: 10, downflowEnabled: true },
+        debug: { showFps: true },
+        data: {}
+    },
+    conceptTrees: {
+        graphics: {
+            antialiasing: false,
+            backgroundColor: '#020202',
+            initialZoom: 1 / 100,
+            defaultEdgeColor: "source",
+            defaultEdgeAlpha: 0.6,
+            colorfulText: true,
+            defaultEdgeType: EdgeType.CurvedLine,
+            backdrop: {
+                startAppearingAt: 0.001,
+                fullyVisibleAt: 0.1,
+                parallax: 0.75,
+                scale: 40,
+                url: "backdrop_small.png"
+            }
+        },
+        simulation: { pushThreshold: 2000, defaultEdgeLength: 350 },
         debug: { showFps: true },
         data: {}
     },

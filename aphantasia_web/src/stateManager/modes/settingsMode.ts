@@ -5,11 +5,21 @@ import { api_fetchUserProfile } from "../../api/fetchUserProfile";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { convertThoughtsToNodes } from "../../utility/thoughtToNodeConvertor";
 import { updateGrafikaNodes } from "../../utility/updateGrafikaNodes";
+import { Settings } from "../../components/Settings";
+import settingsIcon from '../../assets/icons/settings.svg';
 
 
 export const SettingsMode = {
     grafikaInitType: 'main',
+    iconModeBar: settingsIcon,
+    iconMenu: settingsIcon,
+    contextBanner: {
+        text: (_store) => 'Settings',
+        color: (_store) => '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
 
+    content: () => Settings,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
@@ -29,8 +39,8 @@ export const SettingsMode = {
         if (!store.get.user) return;
         api_fetchUserProfile(store.get.user.id)
             .then(profile => {
-                updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts),
-                () =>{
+                updateGrafikaNodes(store.get.grafika, convertThoughtsToNodes(profile.thoughts), getEdgesFromNodes(profile.thoughts))
+                .then(() => {
                     store.get.grafika.focusOn('all');
                 });
             })

@@ -9,7 +9,7 @@ namespace Aphant.Impl.Logic.Thoughts;
 
 internal partial class ThoughtLogicService : IThoughtLogicContract
 {
-    public async Task<Result<Guid>> PostThought(Guid creatorId, string title, string content, ThoughtShape shape)
+    public async Task<Result<Guid>> PostThought(Guid creatorId, string title, string content, ThoughtShape shape, double positionX, double positionY)
     {
         title = title.Trim();
         content = content.Trim();
@@ -21,7 +21,7 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return validationResult.Error!;
         }
 
-        var thoughtIdLinksResult = GetLinksAsync(content);
+        var thoughtIdLinksResult = GetLinks(content);
         if (!thoughtIdLinksResult.IsSuccess)
         {
             _log.LogError("Thought creation failed: {err}", thoughtIdLinksResult.Error?.Message);
@@ -54,8 +54,20 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             return Error.BadRequest(errors.ToString().TrimEnd('\n'));
         }
 
+        var conceptTagsResult = GetConcepts(content);
+        if (!conceptTagsResult.IsSuccess)
+            return conceptTagsResult.Error!;
+
+        var expandedConceptCount = conceptTagsResult.Payload!
+            .SelectMany(ExpandToAncestors)
+            .Distinct()
+            .Count();
+
+        var conceptValidationResult = ValidateConcepts(conceptTagsResult.Payload!);
+        if (!conceptValidationResult.IsSuccess) return conceptValidationResult.Error!;
+
         var insertResult = await _thoughtData.InsertThought(
-            creatorId, title, content, shape);
+            creatorId, title, content, shape, positionX, positionY);
 
         if (!insertResult.IsSuccess)
         {
@@ -102,15 +114,14 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
             await _thoughtData.BumpThought(targetThought.Id);
         }
 
-        //  await _hashtagService.HandleNewThoughtConceptsAsync(insertedThought.Payload!);
-        //     //todo - add error handling here
+        await HandleConcepts(insertedThoughtResult.Payload!.Id, content, insertedThoughtResult.Payload!.Color);
 
         _log.LogInformation("Thought created: {title}", title);
 
         return insertedThoughtResult.Payload!.Id;
     }
 
-    private Result<List<Guid>> GetLinksAsync(string content)
+    private Result<List<Guid>> GetLinks(string content)
     {
         var references = new List<Guid>();
         var regex = new Regex(@"\[([^\[\]\n]+?)\]\[[^\[\]\n]+?\]", RegexOptions.Compiled);
@@ -131,7 +142,6 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
 
         return references.Distinct().ToList();
     }
-
     private Result ValidateTitleAndContent(string title, string content)
     {
 
@@ -150,10 +160,73 @@ internal partial class ThoughtLogicService : IThoughtLogicContract
         }
         if (title.Contains('\n'))
             errors.AppendLine("Title cannot contain new lines");
+        if (title.StartsWith('_'))
+            errors.AppendLine("Title cannot start with underscore");
         if (errors.Length > 0)
         {
             return Error.BadRequest(errors.ToString());
         }
         return Result.Success();
     }
+
+    private async Task<Result> HandleConcepts(Guid thoughtId, string content, string thoughtColor)
+    {
+        var conceptsResult = GetConcepts(content);
+        if (!conceptsResult.IsSuccess) return conceptsResult.Error!;
+
+        var allTags = conceptsResult.Payload!
+            .SelectMany(ExpandToAncestors)
+            .Distinct();
+
+        foreach (var tag in allTags)
+        {
+            await _conceptData.CreateConcept(tag, thoughtColor);
+            await _conceptData.AddThoughtToConcept(thoughtId, tag);
+        }
+
+        return Result.Success();
+    }
+
+    private Result ValidateConcepts(List<string> concepts) //todo - concept validation contract?
+    {
+        var errors = new StringBuilder();
+        if (concepts.Count() > 3)
+            errors.Append("Too many concepts");
+        if (concepts.Any(c => c.Length > 50))
+            errors.Append("Concept may be no longer than 50 characters");
+
+        if (errors.Length > 0)
+        {
+            return Error.BadRequest(errors.ToString());
+        }
+        return Result.Success();
+    }
+
+    private static IEnumerable<string> ExpandToAncestors(string tag)
+    {
+        var parts = tag.Split('_', StringSplitOptions.RemoveEmptyEntries);
+        var accumulator = new StringBuilder();
+        foreach (var part in parts)
+        {
+            accumulator.Append('_');
+            accumulator.Append(part);
+            yield return accumulator.ToString();
+        }
+    }
+
+    private Result<List<string>> GetConcepts(string content)
+    {
+        var references = new List<string>();
+        var regex = new Regex(@"(?<!\w)_[a-zA-Z0-9]+(?:_[a-zA-Z0-9]+)*", RegexOptions.Compiled);
+
+        var matches = regex.Matches(content);
+        if (matches.Count == 0)
+            return new List<string>();
+
+        foreach (Match match in matches)
+            references.Add(match.Groups[0].Value);
+
+        return references.Distinct().ToList();
+    }
+
 }

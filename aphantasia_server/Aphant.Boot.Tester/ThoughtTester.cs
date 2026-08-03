@@ -1,5 +1,6 @@
 using Aphant.Core.Contract;
 using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Aphant.Core.Dto.Results;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +27,7 @@ public class ThoughtTester : IClassFixture<SeededAppContainer<ThoughtTester>>
     {
         var thoughtContract = fixture.Services.GetRequiredService<IThoughtLogicContract>();
 
-        var postResult = await thoughtContract.PostThought(fixture.UserId1, title, content, ThoughtShape.Circle);
+        var postResult = await thoughtContract.PostThought(fixture.UserId1, title, content, ThoughtShape.Circle, 0, 0);
 
         Assert.True(expectedCode is not null || postResult.IsSuccess, postResult.Error?.Message);
         Assert.Equal(expectedCode, postResult.Error?.Code);
@@ -44,7 +45,7 @@ public class ThoughtTester : IClassFixture<SeededAppContainer<ThoughtTester>>
 
         var thoughtContract = fixture.Services.GetRequiredService<IThoughtLogicContract>();
         var content = $"link one [{oldThought1.Payload?.Id}][this] link two [{oldThought2.Payload?.Id}][that]  [{oldThought3.Payload?.Id}][this]  badabam";
-        var postResult = await thoughtContract.PostThought(fixture.UserId3, "test", content, ThoughtShape.Circle);
+        var postResult = await thoughtContract.PostThought(fixture.UserId3, "test", content, ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
 
         var newThought1 = await thoughtRepo.GetThoughtById(fixture.ThoughtId1);

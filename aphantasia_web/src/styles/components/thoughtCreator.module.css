@@ -48,3 +48,15 @@
     line-height: 1.4;
     margin: 1px 4px;
 }
+
+.links_and_concepts {
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+    text-align: left;
+    line-height: 1.4;
+    margin: 1px 4px;
+}
+
+.validation_red {
+    color: red;
+}

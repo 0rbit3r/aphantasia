@@ -1,0 +1,30 @@
+.concept_card {
+    margin: 4px;
+    margin-bottom: 8px;
+    border: 2px solid;
+    cursor: pointer;
+}
+
+.concept_card:hover .title_and_shape {
+    background-color: var(--color-background-tertiary);
+}
+
+.concept_card:hover .date_and_user{
+    background-color: var(--color-background-secondary);
+}
+
+.tag {
+    background-color: var(--color-background-secondary);
+    font-weight: bold;
+    border-bottom: 1px dotted var(--color-text-subtle);
+    padding: 4px;
+
+    word-break: break-all;
+}
+ 
+.count{
+    padding: 2px;
+    padding-right: 8px;
+    height: var(--action-bar-height);
+    text-align: right;
+}

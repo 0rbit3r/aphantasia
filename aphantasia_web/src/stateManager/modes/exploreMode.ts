@@ -7,12 +7,21 @@ import { api_fetchNeighborhood } from "../../api/fetchNeighborhood";
 import { convertThoughtToNode } from "../../utility/thoughtToNodeConvertor";
 import { getEdgesFromNodes } from "../../utility/edgesFromThoughts";
 import { removeOldHighlightGlowEffect } from "../../utility/removeOldHighlight";
+import { ThoughtViewer } from "../../components/thoughtViewer/ThoughtViewer";
+import exploreIcon from '../../assets/icons/bead.svg';
 
 const nodeThoughtData = new WeakMap<ProxyNode, ThoughtNode>();
 
 export const ExploreMode = {
     grafikaInitType: 'main',
+    iconModeBar: exploreIcon,
+    contextBanner: {
+        text: (store) => store.get.contextThought?.title ?? '',
+        color: (store) => store.get.contextThought?.color ?? '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: store.get.contextThought?.id ?? '' }),
+    },
 
+    content: (store) => store.get.contextThought ? ThoughtViewer : undefined,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
@@ -63,7 +72,6 @@ export const ExploreMode = {
             neighbors.forEach(n => {
                 const existing = existingById.get(n.id);
                 if (existing) existing.hollowEffect = isHollow(n);
-                console.log('existing ' + existing?.text + ' ' + isHollow(n))
             });
 
             let gradualAddIndex = 0;
@@ -71,7 +79,7 @@ export const ExploreMode = {
                 .filter(n => !existingIds.has(n.id))
                 .map(n => ({ ...convertThoughtToNode(n), hollowEffect: isHollow(n), timeToLiveFrom: 20 * gradualAddIndex++ }));
 
-            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) }, () => {
+            store.get.grafika.addData({ nodes: nodesToAdd, edges: getEdgesFromNodes(neighbors) }).then(() => {
                 const allCurrentById = new Map(store.get.grafika.getData().nodes.map(n => [n.id, n]));
 
                 neighbors.forEach(n => {

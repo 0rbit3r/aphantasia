@@ -9,6 +9,22 @@
       "date": "ages ago"
     },
     {
+      "id": "a_word_on_passwords",
+      "text": "A word on passwords",
+      "color": "#5d52f2",
+      "content": "Before you [register][Register], let's have a little PSA.\n\n**Do not reuse passwords**\n\nThat is a great general advice, not just one for websites hosted by some rando.\n\nYour **browser** likely already supports **password** management and **generation** - take advantage of it.",
+      "authorName": "Blu",
+      "date": "ages ago"
+    },
+    {
+      "id": "apl386",
+      "text": "APL386",
+      "color": "#5d52f2",
+      "content": "The font of the UI and (on some devices) the graph is APL386.\n\nhttps://github.com/abrudz/APL386\n\n[attributions][attributions]",
+      "authorName": "Blu",
+      "date": "ages ago"
+    },
+    {
       "id": "about",
       "text": "About",
       "color": "#5d52f2",
@@ -25,22 +41,6 @@
       "date": "ages ago"
     },
     {
-      "id": "be_respectful",
-      "text": "Be respectful",
-      "color": "#5d52f2",
-      "content": "The second rule is very simple: **Be respectful**\n \nWhen we disagree, that is grounds for a discussion, not animosity.",
-      "authorName": "Blu",
-      "date": "ages ago"
-    },
-    {
-      "id": "be_yourself",
-      "text": "Be yourself",
-      "color": "#5d52f2",
-      "content": "If you are here, there is something human about you - put some of that in here - your projects, your day, share what you find interesting, criticise what you deem worthy of a critique.\n\nJust don't waste time and space on aimless arguing, troll feeding, culture wars crap and, please, don't use AI to generate thoughts.",
-      "authorName": "Blu",
-      "date": "ages ago"
-    },
-    {
       "id": "code_of_conduct",
       "text": "Code of conduct",
       "color": "#5d52f2",
@@ -53,6 +53,14 @@
       "text": "Collected data",
       "color": "#5d52f2",
       "content": "We store the following:\n- Account data (registered users only)\n\t- **Username**\n\t- **Password hash**\n\t- **Email** (if provided)\n\t- **User settings**\n\t- Any created **content**\n- Technical logs related to hosting - notably:\n\t- **IP address**\n\t- **Date and time of requests**\n\t- **Operating system**\n\t- **Browser/client type**\n\nAccess **logs are stored for up to one month** since creation, after which they are **deleted**.",
+      "authorName": "Blu",
+      "date": "ages ago"
+    },
+    {
+      "id": "concepts",
+      "text": "Concepts",
+      "color": "#5d52f2",
+      "content": "You know hashtags?\n\nWell concepts are like that except, like everything here, a bit more needlessly complicated.\n\nConcepts start with a underscore:\n\n**_thisIsAConcept**\n\nClicking on it won't work yet, but after log in all the thoughts containing that concept tag are just a click away.\n\nConcepts can also be nested:\n\n**_gaming_tetris_tactics**\n\nand they take on the color of the thoughts containing it.\n\nLook in the mode menu once you log in;-)\n\nConcepts are a [mechanics_and_features][Feature]",
       "authorName": "Blu",
       "date": "ages ago"
     },
@@ -105,18 +113,10 @@
       "date": "ages ago"
     },
     {
-      "id": "use_your_head",
-      "text": "Use your head",
-      "color": "#5d52f2",
-      "content": "This place is 13+.\n\nAs such, please try to act in ways, that promote a safe environment.\n\nIf you rather have it spelled out:\n__porn, gore, violence, spam, propaganda, racism, sexism__... did I miss any?\n          ...**don't belong on Aphantasia**.\n\nJust **use your head** and you will be fine. You're a smart cookie. \n\n**I believe in you;-)**",
-      "authorName": "Blu",
-      "date": "ages ago"
-    },
-    {
       "id": "about_thoughts",
       "text": "About Thoughts",
       "color": "#27b909",
-      "content": "**The building block of Aphantasia is a thought**.\n\nA thought, just like a comment or a forum post, is just **a piece of text** written by a user.\n\nThis thought, for example, has a title **About Thoughts** and was written by user named **Green**.\n\n [join][Go back to \"Join\"]",
+      "content": "**The building block of Aphantasia is a thought**.\n\nA thought is just **a piece of text** written by a user.\n\nBut it's also a node in a network of connections.\n\n [join][Go back to \"Join\"]",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -124,7 +124,7 @@
       "id": "almost_there!",
       "text": "Almost there!",
       "color": "#27b909",
-      "content": "Now you are ready to join Aphantasia.\n\nBut before you do we need to go through a few formalities.\n\n[link_me!][Back to \"Link me!\"]\n",
+      "content": "Now you are ready to join Aphantasia.\n\nBut before you do we need to go through a few formalities.\n\n[link_me!][Back to \"Link me!\"]",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -133,6 +133,14 @@
       "text": "Aphantasia the condition",
       "color": "#27b909",
       "content": "This project is named after a fascinating phenomena.\n\nPeople with aphantasia (sometimes called aphants) are unable to visualize mental images.\n\nHow does one imagine when their imagination cannot see?\n\n\n\nThey create a website where they can visualise thoughts with others, of course:-P\n\n[trivia][Trivia]",
+      "authorName": "Green",
+      "date": "ages ago"
+    },
+    {
+      "id": "be_yourself",
+      "text": "Be yourself",
+      "color": "#27b909",
+      "content": "A weird rule to start with I know but hear me out.\n\nWhat do AI generated, reactionary and upvote-farming types of content have in common?\n\nYes.\n\nI'm interested in what you have to say. Not what you have to output.",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -148,7 +156,7 @@
       "id": "good_job!",
       "text": "Good job!",
       "color": "#27b909",
-      "content": "Now that you are both done and validated for creating your first thought, let's create your first association.\n\n**To proceed, connect me to Red.**\n\nHe should have a thought floating around here somewhere.",
+      "content": "Now that you are both done and validated for creating your first thought, let's create your first association.\n\n**To proceed, connect me to Red.**\n\nHe should have a thought floating around here somewhere.\n\n\nOh and let's not forget [0][the link];-)",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -164,7 +172,7 @@
       "id": "join",
       "text": "Join",
       "color": "#27b909",
-      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nSimply **click on the hollow circles and follow the instructions** and eventually you will find the registration form.\n\n[hello_explorer][Go back to the beginning]\n",
+      "content": "**Welcome to Aphantasia!**\n\nYou are now on a path to create an account and join the hivemind.\n\nTo register, **click on the hollow circles and follow the instructions;-)**\n\n[hello_explorer][Go back to the beginning]\n",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -180,7 +188,7 @@
       "id": "links_and_replies",
       "text": "Links and Replies",
       "color": "#27b909",
-      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nThe **underlined text** two lines above **is** called **a link**.\n\n**Links** reference the past and **can** be used to:\n- **continue** a chain of thought (like I'm doing now)\n- **mention** what you've talked about\n- **respond** to what others have said\n- **associate** multiple thoughts together\n\n\n**Reply is the opposite end of link** and in practice it's a way to explore forwards in time. \n\n**This thought has two** replies you can click on:",
+      "content": "[about_thoughts][Go back to \"About Thoughts\"]\n\nThe **underlined text** two lines above **is** called **a link**.\n\nAnd on the other end of each link there is a reply.\n\n**This thought has two replies**",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -204,7 +212,7 @@
       "id": "reading_the_graph",
       "text": "Reading the graph",
       "color": "#27b909",
-      "content": "The colorful animation you hopefully see is called a **graph view**.\n\nNow, notice that in the graph view the links are asymmetric - the replied thought is always at the wide base of the connection while **the linking thought gets the narrow end**.\n\nIn other words, if you imagine the link to be an **arrow**, it **will always point towards the future**.\n\n[links_and_replies][Go back to \"Links and Replies\"]",
+      "content": "The colorful animation you hopefully see is called a **graph view**.\n\nNotice that in the graph view the links are asymmetric - the replied thought is always at the wide base of the connection while **the linking thought gets the narrow end**.\n\nIn other words, if you imagine the link to be an **arrow**, it **will always point towards the future**.\n\n[links_and_replies][Go back to \"Links and Replies\"]",
       "authorName": "Green",
       "date": "ages ago"
     },
@@ -225,6 +233,14 @@
       "date": "ages ago"
     },
     {
+      "id": "graph_theory",
+      "text": "Graph theory",
+      "color": "#f5841b",
+      "content": "The **graph view** over there is not called that just because it **sounds good**. \n\nThe rendering technique is an old and diverse way to represent __graphs__.\n\nIn graph theory it's defined every which way but, simply put:\n\n**A graph is**\n  **a set of entities called nodes**\n  **interconnected by some kind of relationship.**\n\nHere the entities are thoughts and they are connected by linking each other.\n\nBut **graphs can represent** almost **anything**.\n\nA plan of a metro? That's a graph view.\nGoogle maps uses graphs to represent roads and cities.\nPrinted circuit board? That's a planar graph of conductor lines.\nWhat about you...\n\n**Are you a graph?**\n\nOf course you are! **A graph of** blodvessels and organs and friends and groups and lineages and **ideas**\n\n[trivia][Re: Trivia]",
+      "authorName": "Orange",
+      "date": "ages ago"
+    },
+    {
       "id": "log_in",
       "text": "Log in",
       "color": "#f5841b",
@@ -241,14 +257,6 @@
       "date": "ages ago"
     },
     {
-      "id": "a_word_on_passwords",
-      "text": "A word on passwords",
-      "color": "#f30b0b",
-      "content": "Before you [register][Register], let's have a little PSA.\n\n**Do not reuse passwords**\n\nThat is a great general advice, not just one for websites hosted by some rando.\n\nYour **browser** likely already supports **password** management and **generation** - take advantage of it.",
-      "authorName": "Red",
-      "date": "ages ago"
-    },
-    {
       "id": "boo",
       "text": "Boo",
       "color": "#f30b0b",
@@ -260,7 +268,7 @@
       "id": "link_me!",
       "text": "Link me!",
       "color": "#f30b0b",
-      "content": "Hello I'm Red.\n\nWould you be so kind and connect me to my friend Green over there?\n\n**Simply go to the thought creator, click the Link button and then click on this thought in the graph view.**\n\n**Then do the same for thought titled \"Good job!\"**\n\n**Then publish to proceed**",
+      "content": "Hello I'm Red.\n\nWould you be so kind and connect me to my friend Green over there?",
       "authorName": "Red",
       "date": "ages ago"
     },
@@ -269,6 +277,14 @@
       "text": "Quantity",
       "color": "#f30b0b",
       "content": "Or lack there of...\n\n**Users can create only 3 thoughts a day.**\n\nHarsh rule I know... but think of all the money I will save on database space:3\n\n[mechanics_and_features][Mechanics and Features]",
+      "authorName": "Red",
+      "date": "ages ago"
+    },
+    {
+      "id": "use_your_head",
+      "text": "Use your head",
+      "color": "#f30b0b",
+      "content": "This place is 13+.\n\nAs such, please try to act in ways, that promote a safe environment.\n\nIf you rather have it spelled out:\n__porn, gore, violence, spam, propaganda, racism, sexism__... did I miss any?\n          ...**don't belong on Aphantasia**.\n\nJust **use your head** and you will be fine. You're a smart cookie. \n\n**I believe in you;-)**",
       "authorName": "Red",
       "date": "ages ago"
     },
@@ -285,6 +301,14 @@
       "text": "Attributions",
       "color": "#cccccc",
       "content": "If I were to name everyone and every thing that made Aphantasia possible, I would still be listing today.\n\nBut I would like to give a little shout out to at least a few, so here it goes.\n\n\n[explore_some_more?][Explore some more?] is a thought.\n",
+      "authorName": "White",
+      "date": "ages ago"
+    },
+    {
+      "id": "be_respectful",
+      "text": "Be respectful",
+      "color": "#cccccc",
+      "content": "The second rule is very simple: **Be respectful**\n \nWhen we disagree, that is grounds for a discussion, not animosity.",
       "authorName": "White",
       "date": "ages ago"
     },
@@ -317,6 +341,14 @@
     {
       "targetId": "3_axioms_of_links",
       "sourceId": "links_and_replies"
+    },
+    {
+      "targetId": "a_word_on_passwords",
+      "sourceId": "register"
+    },
+    {
+      "targetId": "apl386",
+      "sourceId": "attributions"
     },
     {
       "targetId": "about",
@@ -363,6 +395,10 @@
       "sourceId": "i_am_13_years_or_older"
     },
     {
+      "targetId": "concepts",
+      "sourceId": "mechanics_and_features"
+    },
+    {
       "targetId": "cookies_and_privacy_policy",
       "sourceId": "collected_data"
     },
@@ -385,6 +421,10 @@
     {
       "targetId": "explore_some_more?",
       "sourceId": "register"
+    },
+    {
+      "targetId": "good_job!",
+      "sourceId": "0"
     },
     {
       "targetId": "growth",
@@ -427,16 +467,16 @@
       "sourceId": "attributions"
     },
     {
+      "targetId": "graph_theory",
+      "sourceId": "trivia"
+    },
+    {
       "targetId": "log_in",
       "sourceId": "hello_explorer"
     },
     {
       "targetId": "register",
       "sourceId": "use_your_head"
-    },
-    {
-      "targetId": "a_word_on_passwords",
-      "sourceId": "register"
     },
     {
       "targetId": "boo",

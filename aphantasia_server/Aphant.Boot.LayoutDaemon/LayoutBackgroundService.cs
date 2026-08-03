@@ -82,18 +82,21 @@ public class LayoutBackgroundService : BackgroundService
             Shape = t.Shape,
             Links = t.Links.ToList(),
             BackLinks = t.Replies.ToList(),
-            IsFixed = !epochlessResult.Payload!.Thoughts.Any(elt => elt.Id == t.Id)
+            IsFixed = false
         }).ToList();
-
-        var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
+        
 
         if (_iteration % _serviceOpts.ExportImageAfterXRuns == 0 && _serviceOpts.ExportImageAfterXRuns > 0)
         {
-            var path = $"{opts.RenderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
-            var printResult = await layoutService.PrintLayout(path, laid, opts);
+            var renderPath = opts.RenderPath?.EndsWith("/") == true
+                ? opts.RenderPath
+                : opts.RenderPath + "/";
+            var path = $"{renderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+            var printResult = await layoutService.PrintLayout(path, nodes, opts);
             if (!printResult.IsSuccess)
                 _log.LogWarning("Failed to export thought layout image: {err}", printResult.Error!.Message);
         }
+        var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
 
         await SaveThoughtPositions(laid);
     }
@@ -119,6 +122,14 @@ public class LayoutBackgroundService : BackgroundService
             Shape = ThoughtShape.Square
         }).ToList();
 
+        if (_serviceOpts.ExportImageAfterXRuns > 0 && _iteration % _serviceOpts.ExportImageAfterXRuns == 0)
+        {
+            var path = $"{opts.RenderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
+            var printResult = await layoutService.PrintLayout(path, nodes, opts);
+            if (!printResult.IsSuccess)
+                _log.LogWarning("Failed to export chat layout image: {err}", printResult.Error!.Message);
+        }
+
         var laid = layoutService.LayoutNodes(nodes, opts, opts.IterationsPerRun);
 
         var nodeMap = laid.ToDictionary(n => n.Id);
@@ -132,14 +143,6 @@ public class LayoutBackgroundService : BackgroundService
         }
 
         await chatData.UpdatePositions(messages);
-
-        if (_serviceOpts.ExportImageAfterXRuns > 0 && _iteration % _serviceOpts.ExportImageAfterXRuns == 0)
-        {
-            var path = $"{opts.RenderPath}{DateTime.Now:yyyy-MM-dd_HHmmss}.png";
-            var printResult = await layoutService.PrintLayout(path, laid, opts);
-            if (!printResult.IsSuccess)
-                _log.LogWarning("Failed to export chat layout image: {err}", printResult.Error!.Message);
-        }
     }
 
     private async Task<Result> SaveThoughtPositions(List<LayoutNode> nodes)

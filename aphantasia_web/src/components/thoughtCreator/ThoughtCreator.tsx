@@ -15,6 +15,7 @@ import { welcome_data } from "../../stateManager/modes/welcome/welcomeData";
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { api_postCreateThought } from "../../api/postCreateThought";
 import { setTutorialCreatedThoughtIndex } from "../../stateManager/modes/welcome/welcomeCreateMode";
+import { api_fetchThought } from "../../api/fetchThought";
 
 const [publishInProgress, setPublishInProgress] = createSignal(false);
 
@@ -33,6 +34,7 @@ export const ThoughtCreator = () => {
 
     const [titleLen, setTitleLen] = createSignal(store.get.contextThoughtInMaking?.title?.length ?? 0);
     const [contentLen, setContentLen] = createSignal(store.get.contextThoughtInMaking?.content?.length ?? 0);
+    let fetchingIds = new Map<string, boolean>();
 
     // fetch thoughts and modify links array based on content
     createEffect(() => {
@@ -45,34 +47,82 @@ export const ThoughtCreator = () => {
         }
 
         const linkThoughts: ThoughtTitle[] = [];
+        const fetchPromises: Promise<void>[] = [];
+
         foundIds.forEach(thoughtId => {
             const nodeInGraph = store.get.grafika.getData().nodes.find(node => node.id === thoughtId)
             if (nodeInGraph) {
-                linkThoughts.push({ id: nodeInGraph.id, color: nodeInGraph.color, shape: nodeInGraph.shape, title: nodeInGraph.text })
+                linkThoughts.push({ id: nodeInGraph.id, color: nodeInGraph.color, shape: nodeInGraph.shape, title: nodeInGraph.text });
             }
-            else {
-                // in normal create, fetch from api
+            else if (getCurrentExpState(store).mode.startsWith('welcome')) {
                 store.set('screenMessages', prev => [...prev, { color: 'yellow', text: 'Thought not found\n' + thoughtId }])
             }
+            else if (fetchingIds.get(thoughtId)) {
+                linkThoughts.push({ id: thoughtId, color: '#aaaaaa', shape: 0, title: '' });
+            }
+            else {
+                fetchingIds.set(thoughtId, true);
+                linkThoughts.push({ id: thoughtId, color: '#aaaaaa', shape: 0, title: '' });
+                fetchPromises.push(
+                    api_fetchThought(thoughtId)
+                        .then(thought => {
+                            const placeholder = linkThoughts.find(l => l.id === thoughtId);
+                            if (placeholder) { placeholder.color = thought.color; placeholder.title = thought.title; placeholder.shape = thought.shape; }
+                            fetchingIds.set(thoughtId, false);
+                        })
+                        .catch(() => {
+                            fetchingIds.set(thoughtId, false);
+                            store.set('screenMessages', prev => [...prev, { color: 'yellow', text: 'Thought not found\n' + thoughtId }])
+                        })
+                );
+            }
         });
 
-        const edgesToDelete = store.get.grafika.getData().edges.filter(e => e.targetId === 'created_thought' && !linkThoughts?.find(l => l.id === e.sourceId));
-        const edgesToAdd = linkThoughts?.filter(link => store.get.grafika.getData().edges.filter(e => e.sourceId === link.id && e.targetId === 'created_thought')?.length === 0)
-            .map<GraphEdge>(link => ({ sourceId: link.id, targetId: 'created_thought', color: link.color, length: 300 }));// length should not need to be specified - todo fix grafika
-
-        store.get.grafika.addData({ edges: edgesToAdd });
-        store.get.grafika.removeData({ edges: edgesToDelete });
-
-        store.set('contextThoughtInMaking', 'links', prev => {
-            const newLinks = edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 }))
-                .concat(prev)
-                .filter(l => !edgesToDelete.find(e => e.sourceId === l.id)) ?? [];
-
-            return newLinks;
+        Promise.all(fetchPromises).then(() => {
+            const newNodes = linkThoughts
+                .filter(lt => !store.get.grafika.getData().nodes.find(n => n.id === lt.id))
+                .map(lt => ({ id: lt.id, color: lt.color, shape: lt.shape, text: lt.title }));
+            if (newNodes.length > 0) {
+                store.get.grafika.addData({ nodes: newNodes }).then(onceInGraph);
+            } else {
+                onceInGraph();
+            }
         });
+
+        function onceInGraph() {
+            const edgesToDelete = store.get.grafika.getData().edges.filter(e => e.targetId === 'created_thought' && !linkThoughts?.find(l => l.id === e.sourceId));
+            const edgesToAdd = linkThoughts?.filter(link => store.get.grafika.getData().edges.filter(e => e.sourceId === link.id && e.targetId === 'created_thought')?.length === 0)
+                .map<GraphEdge>(link => ({ sourceId: link.id, targetId: 'created_thought', color: link.color, length: 300 }));// length should not need to be specified - todo fix grafika
+
+            store.get.grafika.addData({ edges: edgesToAdd });
+            store.get.grafika.removeData({ edges: edgesToDelete });
+
+            store.set('contextThoughtInMaking', 'links', prev => {
+                const newLinks = edgesToAdd?.map<ThoughtTitle>(e => ({ color: e.color ?? '#aaaaaa', id: e.sourceId, title: '', shape: 0 }))
+                    .concat(prev)
+                    .filter((v, i, a) => a.findIndex(tt => tt.id === v.id) === i)
+                    .filter(l => !edgesToDelete.find(e => e.sourceId === l.id)) ?? [];
+
+                return newLinks;
+            });
+        }
     })
 
     const linkColors = () => new Map(store.get.contextThoughtInMaking?.links?.map(l => [l.id, l.color]));
+    const conceptsCount = () => {
+        const matches = store.get.contextThoughtInMaking?.content
+            ?.match(/(?<![a-zA-Z0-9])_[0-9a-zA-Z]+(?:_[0-9a-zA-Z]+)*/g) ?? [];
+        const ancestors = new Set<string>();
+        for (const tag of new Set(matches)) {
+            let accumulated = '';
+            for (const part of tag.split('_').filter(p => p)) {
+                accumulated += '_' + part;
+                ancestors.add(accumulated);
+            }
+        }
+        return ancestors.size;
+    }
+
 
     return <div class={css.thought_creator_container}>
         <Show when={store.get.contextThoughtInMaking && store.get.contextThoughtInMaking.linkSelectionState === 'hidden'
@@ -101,6 +151,15 @@ export const ThoughtCreator = () => {
                 }}
                 on:selectionchange={updateCaret} />
             <div class={css.char_counter}>{contentLen()} / 3000</div>
+            <div class={css.links_and_concepts}>
+                <span class={(store.get.contextThoughtInMaking?.links?.length ?? 0) > 3 ? css.validation_red : ""}>
+                    {store.get.contextThoughtInMaking?.links?.length ?? 0} links
+                </span>
+                {' · '}
+                <span class={conceptsCount() > 3 ? css.validation_red : ""}>
+                    {conceptsCount()} concepts
+                </span>
+            </div>
             <div class={css.button_bar}>
                 <button class={`${css.button_bar_button} ${css_buttons.common_button}`}
                     on:click={() => store.set('contextThoughtInMaking', { ...store.get.contextThoughtInMaking, linkSelectionState: 'link-menu' })}>
@@ -154,8 +213,8 @@ const handleThoughtCreation_Welcome = (store: AphantasiaStoreGetAndSet) => {
         };
 
 
-        // onFinished fires once expectedId is rendered — safe to navigate even after WelcomeCreateMode.dispose cleared events.
-        store.get.grafika.addData(newData, () => {
+        // resolves once expectedId is rendered — safe to navigate even after WelcomeCreateMode.dispose cleared events.
+        store.get.grafika.addData(newData).then(() => {
             handleForwardExploration(store, { mode: "welcome", focus: expectedId });
         });
 
@@ -204,13 +263,12 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
 
     if (!newThought) { console.error("No thoughtInMaking object found in store - cannot create thought") }
 
-    console.log(newThought)
     if (publishInProgress()) return;
     setPublishInProgress(true);
 
     store.set('contextDataLoading', true);
 
-    api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0)
+    api_postCreateThought(newThought?.title ?? "", newThought?.content ?? "", newThought?.shape ?? 0, graphNode.x, graphNode.y)
         .then(newId => {
             const newData = {
                 nodes: [{
@@ -222,8 +280,8 @@ const handleThoughtCreation_forReal = (store: AphantasiaStoreGetAndSet) => {
 
 
             store.get.grafika.removeData({ nodes: [{ id: graphNode.id }] });
-            // onFinished fires once newId is rendered — safe to navigate even after CreateMode.dispose cleared events.
-            store.get.grafika.addData(newData, () => {
+            // resolves once newId is rendered — safe to navigate even after CreateMode.dispose cleared events.
+            store.get.grafika.addData(newData).then(() => {
                 handleForwardExploration(store, { mode: "explore", focus: newId });
             });
 
