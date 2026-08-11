@@ -14,6 +14,7 @@ public class Thought
     public int? EpochId { get; set; }
     public int Size { get; set; }
     public int BookmarkedCount { get; set; }
+    public bool IsBookmarkedByCurrentUser { get; set; }
     public ThoughtShape Shape { get; set; }
     public ICollection<ThoughtTitle> Links { get; set; } = new List<ThoughtTitle>();
     public ICollection<ThoughtTitle> Replies { get; set; } = new List<ThoughtTitle>();

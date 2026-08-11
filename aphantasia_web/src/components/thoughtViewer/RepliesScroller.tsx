@@ -1,12 +1,8 @@
 import { For, Show, useContext } from "solid-js";
 import css from '../../styles/components/repliesScroller.module.css';
 import { StoreContext } from "../../contexts/storeContext";
-import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
-import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 
-
-
-export const RepliesScroller = () => {
+export const RepliesScroller = (props: {replyClicked: (id: string) => void}) => {
     const store = useContext(StoreContext)!;
     let scrollerRef: HTMLDivElement | undefined;
 
@@ -16,6 +12,7 @@ export const RepliesScroller = () => {
             scrollerRef!.scrollLeft += e.deltaY;
         }
     };
+
     return <div
         class={css.horizontal_scroller_container}
         ref={scrollerRef}
@@ -28,8 +25,7 @@ export const RepliesScroller = () => {
             {reply => <div
                 class={css.reply_box}
                 style={{ border: `2px solid ${reply.color}`, "background-color": `${reply.color}30` }}
-                on:click={() => handleForwardExploration(store, { mode: getCurrentExpState(store).mode, focus: reply.id })}
-            // todo - reples and links might sometimes need to decide whether to switch to exploration mode...
+                on:click={() => props.replyClicked(reply.id)}
             >
                 {reply.title}</div>}
         </For>

@@ -2,20 +2,26 @@
 
 All of these must be tested and working before deploying to production:
 
-- [ ] Welcome mode
-    - [ ] Navigation with no unwanted states (epochs, profiles...)
-    - [ ] Login
-    - [ ] Thought creation
-    - [ ] Register
-- [ ] Default mode
-    - [ ] Epochs
-    - [ ] Profiles
-    - [ ] Settings
-        - [ ] Bio
-        - [ ] Color
-    - [ ] Seamless transitioning to and from various modes
-    - [ ] Thought creation
-- [ ] Chat
-    - [ ] Sending messages
-    - [ ] Receiving
-    - [ ] Reconnection
+- [x] Welcome mode
+    - [x] Navigation with no unwanted states (epochs, profiles...)
+    - [x] Login
+    - [x] Thought creation
+    - [x] Register
+- [x] Default mode
+    - [x] Epochs
+    - [x] Profiles
+    - [s] Settings
+        - [x] Bio
+        - [x] Color
+    - [x] Seamless transitioning to and from various modes
+    - [x] Thought creation
+        - [x] Links
+        - [x] Concepts
+        - [x] formatting
+    - [x] Thought deletion
+        - [x] Linked one both ways
+- [x] Chat
+    - [x] Sending messages
+    - [x] Deleting
+    - [x] Receiving
+    - [-] Reconnection

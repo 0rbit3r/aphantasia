@@ -4,10 +4,20 @@ export interface Concept {
     tag: string;
     color: string;
 
-    largestThoughts: ThoughtNode[];
+    thoughts: ThoughtNode[];
 }
 
 export interface ConceptLight {
     tag: string;
     color: string;
+}
+
+export interface ConceptGraphNode {
+    tag: string;
+    color: string;
+    thoughtCount: number;
+}
+
+export interface ConceptGraph {
+    nodes: ConceptGraphNode[];
 }

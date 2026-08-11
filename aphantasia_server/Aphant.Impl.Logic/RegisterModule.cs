@@ -1,6 +1,7 @@
 using Aphant.Boot.LayoutDaemon;
 using Aphant.Core.Contract.Logic;
 using Aphant.Core.Contracta.Configuration;
+using Aphant.Impl.Logic.Concepts;
 using Aphant.Impl.Logic.Epochs;
 using Aphant.Impl.Logic.Thoughts;
 using Aphant.Impl.Logic.Users;
@@ -15,6 +16,7 @@ public static class RegisterModule
         services.AddScoped<IThoughtLogicContract, ThoughtLogicService>();
         services.AddScoped<IUserLogicContract, UserLogicService>();
         services.AddScoped<IEpochLogicContract, EpochLogicService>();
+        services.AddScoped<IConceptLogicContract, ConceptLogicService>();
         services.AddHostedService<ChatBackgroundService>();
     }
     

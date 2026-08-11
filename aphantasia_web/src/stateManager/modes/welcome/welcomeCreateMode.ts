@@ -3,11 +3,27 @@ import { NodeShape, type ProxyNode } from "grafika";
 import { handleForwardExploration } from "../../handleForwardExploration";
 import type { ThoughtInMaking } from "../../../model/ThoughtInMaking";
 import { createSignal } from "solid-js";
+import { ThoughtCreator } from "../../../components/thoughtCreator/ThoughtCreator";
+import createIcon from '../../../assets/icons/create_thought.svg';
 
 export const [tutorialCreatedThoughtIndex, setTutorialCreatedThoughtIndex] = createSignal(0);
 
 export const WelcomeCreateMode = {
     grafikaInitType: 'welcome',
+    iconModeBar: createIcon,
+    iconMenu: createIcon,
+    contextBanner: {
+        text: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? store.get.contextThoughtInMaking.title
+            : "What's on your mind?",
+        color: (store) => store.get.contextThoughtInMaking?.previewMode
+            ? (store.get.user?.color ?? '#cccccc')
+            : '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn({ id: 'created_thought' }),
+        skipLoadingOverride: true,
+    },
+
+    content: (store) => store.get.contextThoughtInMaking ? ThoughtCreator : undefined,
 
     initialize: (store) => {
         store.get.grafika.interactionEvents.on('nodeClicked', (clickedNode: ProxyNode) => {
@@ -31,12 +47,11 @@ export const WelcomeCreateMode = {
                     shape: currentTutorialThought.shape ?? NodeShape.Circle,
                     color: color, x: viewport.position.x, y: viewport.position.y
                 }]
-            },
-            () => {
-                const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
-                if (node) store.get.grafika.focusOn(node);
             }
-        );
+        ).then(() => {
+            const node = store.get.grafika.getData().nodes.find(n => n.id === 'created_thought');
+            if (node) store.get.grafika.focusOn(node);
+        });
 
         store.set('splitUiLayout', 'half');
         if (!store.get.contextThoughtInMaking) {
@@ -74,11 +89,10 @@ const tutorialCreatedThoughts = [
     {
         title: 'An interesting title',
         concepts: [],
-        content: '**Welcome to the thought creator.**\n' +
-            'Here is a very quick guide through its various features:\n\n' +
+        content: '**Welcome to the thought creator.**\n\n' +
             '1) **stars for bold**\n' +
             '2) __underscores for italic__\n' +
-            '3) Links look like this: [let_us_create_a_thought][Sup... \'name\'s Link. Thought Link]\n' +
+            '3) **Links** look like this:\n\n[let_us_create_a_thought][A BIG FAT LINK]\n' +
             '   ...where the first pair of brackets contain the ID and second one the displayed text.\n\n' +
             'Now **click Preview and then Publish**.',
         links: [],

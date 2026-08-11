@@ -13,4 +13,6 @@ internal class GraphNode
     public double ForcesY;
     public double MomentumX;
     public double MomentumY;
+
+    public bool IsFixed;
 }

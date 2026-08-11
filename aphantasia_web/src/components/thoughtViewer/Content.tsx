@@ -31,7 +31,7 @@ const renderContentWithThoughtLinks = (props: ContentProps) => {
         const id = parts[i + 1];
 
         const weblinksBefore = renderContentWithConcepts(
-            { ...props, text: parts[i]}
+            { ...props, text: parts[i] }
         );
         result.push(weblinksBefore);
 
@@ -55,35 +55,45 @@ const renderContentWithConcepts = (props: ContentProps) => {
     const parts = props.text.split(CONCEPT_REGEX);
 
     const result = [];
+
+
     for (let i = 0; i < parts.length; i += 5) {
+        const wholeTag = parts[i + 2] + (parts[i + 3] ?? "") + (parts[i + 4] ?? "");
+        const color = props.conceptColors?.get(wholeTag);
 
         const weblinksBefore = renderContentWithWebLinks(
-            { ...props, text: parts[i] + (parts[i + 1] ? parts[i + 1] : '')});
+            { ...props, text: parts[i] + (parts[i + 1] ? parts[i + 1] : '') });
         result.push(weblinksBefore);
-        ;
+
         result.push(<span
             class={css.concept_ref}
-            // style={{ color: props.links.find(t => t.id == id)?.color }}
-            // onClick={_ => handleLinkClick(id)}
-            onMouseDown={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2], false)}
+            style={{ color }}
+            onClick={e => {
+                props.onConceptLinkClick?.(parts[i + 2], false);
+                e.preventDefault();
+            }}
         >
             {parts[i + 2]}
         </span>);
         if (parts[i + 3]) {
             result.push(<span
                 class={css.concept_ref}
-                // style={{ color: props.links.find(t => t.id == id)?.color }}
-                onClick={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2] + parts[i + 3], false)}
-            // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                style={{ color }}
+                onClick={e => {
+                    props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3], false);
+                    e.preventDefault();
+                }}
             >
                 {parts[i + 3]}
             </span>);
             if (parts[i + 4]) {
                 result.push(<span
                     class={css.concept_ref}
-                    // style={{ color: props.links.find(t => t.id == id)?.color }}
-                    onClick={_ => props.onConceptLinkClick && props.onConceptLinkClick(parts[i + 2] + parts[i + 3] + parts[i + 4], false)}
-                // onMouseDown={e => handleMiddleMouseLinkClick(e, id)}
+                    style={{ color }}
+                    onClick={e => {
+                        props.onConceptLinkClick?.(parts[i + 2] + parts[i + 3] + parts[i + 4], false);
+                        e.preventDefault();
+                    }}
                 >
                     {parts[i + 4]}
                 </span>);
@@ -101,7 +111,7 @@ const renderContentWithWebLinks = (props: ContentProps) => {
     const parts = props.text.split(urlRegex);
     const result = [];
     for (let i = 0; i < parts.length; i += 2) {
-        result.push(renderContentWithBold({ ...props, text: parts[i]}));
+        result.push(renderContentWithBold({ ...props, text: parts[i] }));
         result.push(<a href={parts[i + 1]} target='_blank' style={{ color: "#777" }}>{parts[i + 1]}</a>);
     }
     return result;
@@ -116,7 +126,7 @@ const renderContentWithBold = (props: ContentProps) => {
     const parts = props.text.split(urlRegex);
     const result = [];
     for (let i = 0; i < parts.length; i += 2) {
-        result.push(renderContentWitthItalics({ ...props, text: parts[i]}));
+        result.push(renderContentWitthItalics({ ...props, text: parts[i] }));
         result.push(<strong style={{ color: props.color, "font-weight": "bolder" }}>{parts[i + 1]}</strong>);
     }
     return result;
@@ -130,7 +140,7 @@ const renderContentWitthItalics = (props: ContentProps) => {
     const result = [];
     for (let i = 0; i < parts.length; i += 2) {
         result.push(parts[i]);
-        result.push(<em  style={{ color:props.color }}>{parts[i + 1]}</em>);
+        result.push(<em style={{ color: props.color }}>{parts[i + 1]}</em>);
     }
     return result;
 }

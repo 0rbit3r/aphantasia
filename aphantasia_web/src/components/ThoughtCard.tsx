@@ -21,10 +21,7 @@ export const ThoughtCard = (props: { thought: ThoughtNode }) => {
         on:click={_ => {
             if (props.thought)
                 handleForwardExploration(store, { mode: 'explore', focus: props.thought.id });
-            else
-                store.set('screenMessages', prev => [...prev, {
-                    color: 'yellow', text: 'This thought is thought-less'
-                }]);
+            //todo move this up a floor
         }}>
         <div class={css.title_and_shape}>
             <div class={css.title}>

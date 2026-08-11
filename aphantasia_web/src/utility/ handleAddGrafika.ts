@@ -10,6 +10,7 @@ export const handleGrafikaReinitialization = async (
         store.get.grafika.dispose();
     }
     const grafika = await addGrafika(store.get.grafikaElement, settings);
+    grafika.start();
     store.set('grafika', grafika);
     onAdded(grafika);
 }

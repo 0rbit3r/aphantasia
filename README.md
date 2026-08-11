@@ -9,7 +9,13 @@ See complementary youtube channel: https://www.youtube.com/@AphantasticChannel
 
 ## To do before launch
 
-- [ ] Chat
-- [ ] Concepts
-- [ ] Profiles
-- [ ] Epochs
+- [x] Chat
+- [x] Concepts
+- [x] Profiles
+- [x] Epochs
+
+- [ ] Account deletion
+- [ ] Bookmarks
+- [ ] Admin CLI
+- [ ] Builder mode
+- [ ] Daily limit

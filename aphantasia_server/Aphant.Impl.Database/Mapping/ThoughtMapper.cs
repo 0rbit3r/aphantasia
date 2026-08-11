@@ -7,7 +7,8 @@ namespace Aphant.Impl.Database.Mapping;
 public static class ThoughtMapper
 {
 
-    public static Expression<Func<ThoughtEntity, Thought>> ToDtoFullExpr = (ThoughtEntity entity) =>
+    public static Expression<Func<ThoughtEntity, Thought>> ToDtoFullExpr(Guid? currentUserId) =>
+        (ThoughtEntity entity) =>
         new Thought
         {
             Id = entity.Id,
@@ -18,6 +19,7 @@ public static class ThoughtMapper
             Shape = entity.Shape,
             Content = entity.Content,
             BookmarkedCount = entity.Bookmarks.Count,
+            IsBookmarkedByCurrentUser = currentUserId != null && entity.Bookmarks.Any(b => b.UserId == currentUserId),
             Author = new() { Id = entity.AuthorId, Color = entity.Author.Color, Username = entity.Author.Username },
             Concepts = entity.Concepts.AsQueryable().Select(ConceptMapper.ToDtoLightExpr).ToList(),
             EpochId = entity.EpochId,
@@ -36,9 +38,9 @@ public static class ThoughtMapper
             }).ToList()
         };
 
-    public static Thought ToDtoFull(this ThoughtEntity entity)
+    public static Thought ToDtoFull(this ThoughtEntity entity, Guid? currentUserId = null)
     {
-        return ToDtoFullExpr.Compile()(entity);
+        return ToDtoFullExpr(currentUserId).Compile()(entity);
     }
 
     public static Expression<Func<ThoughtEntity, ThoughtTitle>> ToDtoTitleExpr = (ThoughtEntity entity) =>

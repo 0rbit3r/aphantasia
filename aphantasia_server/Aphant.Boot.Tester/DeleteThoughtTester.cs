@@ -1,4 +1,5 @@
 using Aphant.Core.Contract.Data;
+using Aphant.Core.Contract.Logic;
 using Aphant.Core.Dto;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,7 +26,7 @@ public class DeleteThoughtTester : IClassFixture<SeededAppContainer<DeleteThough
 
         var notifsBefore = (await notifications.GetUserNotifications(fixture.UserId1)).Payload!.Count;
 
-        var postResult = await logic.PostThought(fixture.UserId2, "cascade test", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle);
+        var postResult = await logic.PostThought(fixture.UserId2, "cascade test", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
         var replyId = postResult.Payload;
 
@@ -58,7 +59,7 @@ public class DeleteThoughtTester : IClassFixture<SeededAppContainer<DeleteThough
 
         var sizeBefore = (await data.GetThoughtById(fixture.ThoughtId2)).Payload!.Size;
 
-        var postResult = await logic.PostThought(fixture.UserId1, "debump test", LinkContent(fixture.ThoughtId2), ThoughtShape.Circle);
+        var postResult = await logic.PostThought(fixture.UserId1, "debump test", LinkContent(fixture.ThoughtId2), ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
 
         var sizeAfterPost = (await data.GetThoughtById(fixture.ThoughtId2)).Payload!.Size;
@@ -81,7 +82,7 @@ public class DeleteThoughtTester : IClassFixture<SeededAppContainer<DeleteThough
         var sizeBefore = (await data.GetThoughtById(fixture.ThoughtId3)).Payload!.Size;
 
         // User3 links to their own thought
-        var postResult = await logic.PostThought(fixture.UserId3, "self link", LinkContent(fixture.ThoughtId3), ThoughtShape.Circle);
+        var postResult = await logic.PostThought(fixture.UserId3, "self link", LinkContent(fixture.ThoughtId3), ThoughtShape.Circle, 0, 0);
         Assert.True(postResult.IsSuccess, postResult.Error?.Message);
 
         var sizeAfterPost = (await data.GetThoughtById(fixture.ThoughtId3)).Payload!.Size;
@@ -102,13 +103,13 @@ public class DeleteThoughtTester : IClassFixture<SeededAppContainer<DeleteThough
 
         var sizeBefore = (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size;
 
-        var reply1 = await logic.PostThought(fixture.UserId2, "first reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle);
+        var reply1 = await logic.PostThought(fixture.UserId2, "first reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle, 0, 0);
         Assert.True(reply1.IsSuccess, reply1.Error?.Message);
 
         var sizeAfterFirst = (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size;
         Assert.Equal(sizeBefore + 1, sizeAfterFirst); // bumped once
 
-        var reply2 = await logic.PostThought(fixture.UserId2, "second reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle);
+        var reply2 = await logic.PostThought(fixture.UserId2, "second reply", LinkContent(fixture.ThoughtId1), ThoughtShape.Circle, 0, 0);
         Assert.True(reply2.IsSuccess, reply2.Error?.Message);
 
         var sizeAfterSecond = (await data.GetThoughtById(fixture.ThoughtId1)).Payload!.Size;

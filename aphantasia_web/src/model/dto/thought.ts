@@ -17,6 +17,9 @@ export interface Thought {
     links: ThoughtTitle[];
     replies: ThoughtTitle[];
     concepts: ConceptLight[];
+
+    bookmarkedCount: number;
+    isBookmarkedByCurrentUser: boolean;
 }
 
 export interface ThoughtTitle {

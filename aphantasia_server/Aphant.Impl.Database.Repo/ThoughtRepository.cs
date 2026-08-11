@@ -10,10 +10,10 @@ namespace Aphant.Impl.Database.Repo;
 
 internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContract
 {
-    public async Task<Result<Thought>> GetThoughtById(Guid id)
+    public async Task<Result<Thought>> GetThoughtById(Guid id, Guid? currentUserId = null)
     {
         var thought = await _db.Thoughts
-            .Select(ThoughtMapper.ToDtoFullExpr)
+            .Select(ThoughtMapper.ToDtoFullExpr(currentUserId))
             .FirstOrDefaultAsync(t => t.Id == id);
 
         if (thought is null) return Error.NotFound();
@@ -65,7 +65,7 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
                 .ToListAsync();
     }
 
-    public async Task<Result<Guid>> InsertThought(Guid userId, string title, string content, ThoughtShape shape)
+    public async Task<Result<Guid>> InsertThought(Guid userId, string title, string content, ThoughtShape shape, double positionX, double positionY)
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
         if (user is null)
@@ -79,7 +79,9 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
             AuthorId = userId,
             Color = user.Color,
             Shape = shape,
-            DateCreated = DateTime.UtcNow
+            DateCreated = DateTime.UtcNow,
+            PositionX = positionX,
+            PositionY = positionY
         };
         _db.Thoughts.Add(entity);
         try
@@ -109,6 +111,34 @@ internal class ThoughtRepository(AphantasiaDataContext _db) : IThoughtDataContra
             return Error.General("Server error");
         }
         return Result.Success();
+    }
+
+    public async Task<Result<bool>> ToggleBookmark(Guid thoughtId, Guid userId)
+    {
+        var existing = await _db.Bookmarks
+            .FirstOrDefaultAsync(b => b.ThoughtId == thoughtId && b.UserId == userId);
+
+        bool nowBookmarked;
+        if (existing is not null)
+        {
+            _db.Bookmarks.Remove(existing);
+            nowBookmarked = false;
+        }
+        else
+        {
+            _db.Bookmarks.Add(new BookmarkEntity { ThoughtId = thoughtId, UserId = userId });
+            nowBookmarked = true;
+        }
+
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            return Error.General("Server error");
+        }
+        return Result.Success(nowBookmarked);
     }
 
     public async Task<Result> BumpThought(Guid id)

@@ -42,7 +42,7 @@ namespace Aphant.Client.WebApi.Controllers
         public async Task<ActionResult<Result<UserSettings>>> UpdateUserSettings(
             [FromRoute] Guid id, [FromBody] UserSettings settings)
         {
-            if (id != UserIdClaim)
+            if (id != UserIdClaim || settings.UserId != UserIdClaim)
                 return ResponseFromResult(Error.Unauthorized());
 
             return ResponseFromResult(await _userLogic.UpdateUserSettings(settings));

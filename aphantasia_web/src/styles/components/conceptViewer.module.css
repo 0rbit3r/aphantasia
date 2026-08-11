@@ -1,0 +1,22 @@
+.concept_viewer_container {
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 4px);
+}
+
+.concept_tag {
+    font-size: 1.1rem;
+    cursor: default;
+}
+
+.thought_count {
+    color: var(--color-text-subtle);
+    font-size: 0.85rem;
+}
+
+.scroll_container {
+    margin-top: 8px;
+    overflow-y: scroll;
+    flex: 1;
+}

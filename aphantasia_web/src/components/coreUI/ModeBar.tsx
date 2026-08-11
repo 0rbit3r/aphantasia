@@ -9,23 +9,12 @@ import { navigateBack, navigateForward } from "../../stateManager/backAndForward
 import { AuthContext } from "../../contexts/authContext";
 import { isItIosUnfortunionately as isAppleGodHelpUs } from "../../utility/getOperatingSystem";
 import { StoreContext } from "../../contexts/storeContext";
-import homeIcon from '../../assets/icons/home.svg';
-import epochIcon from '../../assets/icons/galaxy.svg';
-import exploreIcon from '../../assets/icons/bead.svg';
-import createIcon from '../../assets/icons/create_thought.svg';
-import conceptsIcon from '../../assets/icons/concepts.png';
 import nothing from '../../assets/icons/nothing.svg';
-import envelopeIcon from '../../assets/icons/envelope.svg';
-import arrowIcon from '../../assets/icons/arrow.svg';
-import chatIcon from '../../assets/icons/chat.svg';
-import settingsIcon from '../../assets/icons/settings.svg';
-import personIcon from '../../assets/icons/user.svg';
 import { getCurrentExpState } from "../../stateManager/getCurrentExpState";
 import { handleForwardExploration } from "../../stateManager/handleForwardExploration";
 import { api_fetchNotifications } from "../../api/api_notifications";
-import type { ModeType } from "../../stateManager/explorationMode";
 import { ScreenOrientation } from "../../contexts/screenOrientationContext";
-import { EpochPseudoId } from "../../model/dto/epoch";
+import { MODE_CONTRACTS } from "../../stateManager/modes/modeContract";
 
 export default function ModeBar() {
   const authContext = useContext(AuthContext);
@@ -60,19 +49,6 @@ export default function ModeBar() {
     if (isFullscreen()) closeFullscreen();
   });
 
-  const icons: Record<ModeType, string> = {
-    epoch: epochIcon,
-    welcome: homeIcon,
-    welcome_create: createIcon,
-    explore: exploreIcon,
-    create: createIcon,
-    concept: conceptsIcon,
-    inbox: arrowIcon,
-    settings: settingsIcon,
-    chat: chatIcon,
-    profile: personIcon
-  };
-
   return <>
     <div class={css.mode_bar_container} style={{
       ['border-bottom']: '2px solid ' + (authContext.getAuthorizedUser()?.color ?? 'white')
@@ -97,18 +73,16 @@ export default function ModeBar() {
           }}
           img={store.get.modeMenuOpen
             ? nothing
-            : icons[getCurrentExpState(store).mode]} />
+            : MODE_CONTRACTS[getCurrentExpState(store).mode].iconModeBar} />
       </div>
       <div class={css.inbox_button_container}>
         <SymbolButton action={() => {
           if (authContext.getAuthorizedUser()) {
-            if (getCurrentExpState(store).mode === 'chat')
-              handleForwardExploration(store, { mode: 'epoch', focus: String(EpochPseudoId.LATEST_CONTEXT) });
             handleForwardExploration(store, { mode: 'inbox' })
           }
           else
             store.set('screenMessages', prev => [...prev, { color: 'yellow', text: 'Log in to access inbox' }])
-        }} img={envelopeIcon}
+        }} img={MODE_CONTRACTS['inbox'].iconMenu!}
           dim={getCurrentExpState(store).mode !== 'inbox'} />
         <Show when={getCurrentExpState(store).mode != 'inbox' && store.get.contextInbox?.some(n => !n.read)}>
           <div class={css.notifications_indicator}

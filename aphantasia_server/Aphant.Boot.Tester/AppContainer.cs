@@ -23,7 +23,7 @@ public class AppContainer<T> : IDisposable
             .Build();
 
         // // Add modules
-        builder.Services.RegisterDbRepositoryModule(configuration);
+        builder.Services.RegisterDbRepositoryModule();
         builder.Services.RegisterAuthorizationModule(configuration);
         builder.Services.RegisterLogicModule();
         builder.Services.AddSerilog();

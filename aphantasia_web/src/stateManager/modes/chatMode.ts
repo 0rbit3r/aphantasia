@@ -1,6 +1,8 @@
 import { NodeShape, type GraphNode } from 'grafika';
 import type { ModeContract } from './modeContract';
 import type { ChatMessage } from '../../model/dto/chatMessage';
+import { ChatPanel } from '../../components/chat/ChatPanel';
+import chatIcon from '../../assets/icons/chat.svg';
 import {
     buildChatConnection,
     onInitialMessages,
@@ -39,6 +41,15 @@ function loadMessages(store: AphantasiaStoreGetAndSet, messages: ChatMessage[]) 
 
 export const ChatMode: ModeContract = {
     grafikaInitType: 'chat',
+    iconModeBar: chatIcon,
+    iconMenu: chatIcon,
+    contextBanner: {
+        text: (_store) => 'Chat',
+        color: (_store) => '#cccccc',
+        onClick: (store) => store.get.grafika.focusOn('all'),
+    },
+
+    content: () => ChatPanel,
 
     initialize: (store) => {
         store.get.grafika.removeData();
@@ -75,7 +86,9 @@ export const ChatMode: ModeContract = {
         });
         store.get.grafika.interactionEvents.on('backgroundClicked', () => {
             if (getCurrentExpState(store).focus !== undefined)
-                handleForwardExploration(store, { mode: 'chat', focus: undefined })
+                handleForwardExploration(store, { mode: 'chat', focus: undefined });
+            else if (store.get.splitUiLayout !== 'half')
+                store.set('splitUiLayout', 'half');
             else
                 store.set('splitUiLayout', 'graph');
         });
